@@ -48,3 +48,11 @@
 - Added Vitest coverage for basic prompt generation, empty constraints fallback, and missing expected output fallback.
 - Kept the work logic-only; no UI, backend, database, auth, external AI API calls, or additional tools were added.
 - Verified with `npm run test:run` and `npm run lint`.
+
+### AI Coding Prompt Generator UI
+- Added the `/tools/ai-coding-prompt-generator` page with metadata, a client-side prompt form, and SEO/help content.
+- Wired the UI to the tested `generateAiCodingPrompt` function.
+- Added task type, tech stack, feature description, constraints, expected output, generated prompt output, copy, and clear actions.
+- Marked AI Coding Prompt Generator as available in `lib/tools.ts`; unfinished tools remain planned.
+- Kept the implementation browser-only with no backend, database, auth, AdSense, or external AI API calls.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.

@@ -35,7 +35,7 @@ export const tools: Tool[] = [
       "Turn feature notes, constraints, and expected output into a clearer coding prompt.",
     category: "Generators",
     href: "/tools/ai-coding-prompt-generator",
-    status: "planned",
+    status: "available",
   },
   {
     slug: "git-command-helper",
