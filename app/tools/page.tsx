@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createMetadata } from "@/lib/seo";
 import { getToolsByCategory } from "@/lib/tools";
 
@@ -21,9 +22,9 @@ export default function ToolsPage() {
           Developer tools
         </h1>
         <p className="mt-5 text-lg leading-8 text-slate-600">
-          DevToolBox AI will provide small, focused utilities that run in the
-          browser where possible. Individual tools are intentionally not built
-          in this phase.
+          DevToolBox AI provides small, focused utilities that run in the
+          browser where possible. Available tools are linked below, and planned
+          tools are clearly marked.
         </p>
       </div>
 
@@ -42,27 +43,57 @@ export default function ToolsPage() {
                 {category}
               </h2>
               <div className="mt-5 grid gap-4 md:grid-cols-2">
-                {categoryTools.map((tool) => (
-                  <article
-                    key={tool.slug}
-                    className="rounded-lg border border-slate-200 bg-white p-6"
-                  >
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                      <h3 className="text-lg font-semibold text-slate-950">
-                        {tool.title}
-                      </h3>
-                      <span className="w-fit rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
-                        Planned
-                      </span>
-                    </div>
-                    <p className="mt-3 text-sm leading-6 text-slate-600">
-                      {tool.description}
-                    </p>
-                    <p className="mt-5 text-sm text-slate-500">
-                      Target URL: <span className="font-mono">{tool.href}</span>
-                    </p>
-                  </article>
-                ))}
+                {categoryTools.map((tool) => {
+                  const statusLabel =
+                    tool.status === "available" ? "Available" : "Planned";
+                  const statusClassName =
+                    tool.status === "available"
+                      ? "bg-emerald-100 text-emerald-800"
+                      : "bg-amber-100 text-amber-800";
+                  const cardContent = (
+                    <>
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <h3 className="text-lg font-semibold text-slate-950">
+                          {tool.title}
+                        </h3>
+                        <span
+                          className={`w-fit rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${statusClassName}`}
+                        >
+                          {statusLabel}
+                        </span>
+                      </div>
+                      <p className="mt-3 text-sm leading-6 text-slate-600">
+                        {tool.description}
+                      </p>
+                      <p className="mt-5 text-sm font-semibold text-emerald-700">
+                        {tool.status === "available"
+                          ? "Open tool"
+                          : "Coming soon"}
+                      </p>
+                    </>
+                  );
+
+                  if (tool.status === "available") {
+                    return (
+                      <Link
+                        key={tool.slug}
+                        href={tool.href}
+                        className="block rounded-lg border border-slate-200 bg-white p-6 transition hover:border-emerald-300 hover:shadow-sm"
+                      >
+                        {cardContent}
+                      </Link>
+                    );
+                  }
+
+                  return (
+                    <article
+                      key={tool.slug}
+                      className="rounded-lg border border-slate-200 bg-white p-6"
+                    >
+                      {cardContent}
+                    </article>
+                  );
+                })}
               </div>
             </section>
           );

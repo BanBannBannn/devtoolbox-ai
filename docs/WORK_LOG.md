@@ -14,3 +14,17 @@
 - Added Vitest coverage for valid objects, valid arrays, invalid JSON, empty input, nested JSON, and whitespace trimming.
 - Kept the work logic-only; no UI, backend, auth, database, or tool page implementation was added.
 - Verified with `npm run test:run` and `npm run lint`.
+
+### JSON Formatter UI
+- Added the `/tools/json-formatter` page with metadata, a client-side formatter UI, and SEO/help content.
+- Wired the UI to the tested `formatJson` function.
+- Added input, Format JSON, Copy Output, Clear, readable output, and helpful error/copy status messages.
+- Marked JSON Formatter as available in `lib/tools.ts`.
+- Kept the implementation browser-only with no backend, database, auth, or AdSense.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
+### Tools listing link fix
+- Updated `/tools` so available tools render as clickable cards.
+- JSON Formatter now links to `/tools/json-formatter` and shows as available.
+- Kept all other tools marked as planned.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.

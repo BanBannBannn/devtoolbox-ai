@@ -17,7 +17,7 @@ export const tools: Tool[] = [
       "Validate raw JSON and format it with readable two-space indentation.",
     category: "Formatters",
     href: "/tools/json-formatter",
-    status: "planned",
+    status: "available",
   },
   {
     slug: "readme-generator",
