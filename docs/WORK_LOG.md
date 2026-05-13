@@ -34,3 +34,11 @@
 - Added Vitest coverage for all fields, missing project name fallback, empty features, and commands with special characters.
 - Kept the work logic-only; no UI, backend, database, auth, or additional tools were added.
 - Verified with `npm run test:run` and `npm run lint`.
+
+### README Generator UI
+- Added the `/tools/readme-generator` page with metadata, a client-side README form, and SEO/help content.
+- Wired the UI to the tested `generateReadme` function.
+- Added project name, description, tech stack, install command, run command, features, generated markdown output, copy, download, and clear actions.
+- Marked README Generator as available in `lib/tools.ts`; other unfinished tools remain planned.
+- Kept the implementation browser-only with no backend, database, auth, or AdSense.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.

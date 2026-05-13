@@ -26,7 +26,7 @@ export const tools: Tool[] = [
       "Create a structured Markdown README from simple project details.",
     category: "Generators",
     href: "/tools/readme-generator",
-    status: "planned",
+    status: "available",
   },
   {
     slug: "ai-coding-prompt-generator",
