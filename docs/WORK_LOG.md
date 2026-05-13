@@ -42,3 +42,9 @@
 - Marked README Generator as available in `lib/tools.ts`; other unfinished tools remain planned.
 - Kept the implementation browser-only with no backend, database, auth, or AdSense.
 - Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
+### AI Coding Prompt Generator logic
+- Added `generateAiCodingPrompt` as a pure function in `lib/ai-coding-prompt-generator.ts`.
+- Added Vitest coverage for basic prompt generation, empty constraints fallback, and missing expected output fallback.
+- Kept the work logic-only; no UI, backend, database, auth, external AI API calls, or additional tools were added.
+- Verified with `npm run test:run` and `npm run lint`.
