@@ -28,3 +28,9 @@
 - JSON Formatter now links to `/tools/json-formatter` and shows as available.
 - Kept all other tools marked as planned.
 - Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
+### README Generator logic
+- Added `generateReadme` as a pure function in `lib/readme-generator.ts`.
+- Added Vitest coverage for all fields, missing project name fallback, empty features, and commands with special characters.
+- Kept the work logic-only; no UI, backend, database, auth, or additional tools were added.
+- Verified with `npm run test:run` and `npm run lint`.
