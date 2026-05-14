@@ -56,3 +56,11 @@
 - Marked AI Coding Prompt Generator as available in `lib/tools.ts`; unfinished tools remain planned.
 - Kept the implementation browser-only with no backend, database, auth, AdSense, or external AI API calls.
 - Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
+### Git Command Helper logic
+- Added `getGitCommandHelp` as a pure function in `lib/git-command-helper.ts`.
+- Added typed support for all predefined Git helper goals.
+- Added warnings and `isRisky` flags for risky commands.
+- Added Vitest coverage for status, create branch, undo last commit while keeping changes, discard local file changes, and missing branch name fallback.
+- Kept the work logic-only; no UI, backend, database, auth, or command execution was added.
+- Verified with `npm run test:run` and `npm run lint`.
