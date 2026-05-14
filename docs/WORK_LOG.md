@@ -73,3 +73,10 @@
 - Marked Git Command Helper as available in `lib/tools.ts`; unfinished tools remain planned.
 - Kept the implementation browser-only with no backend, database, auth, or AdSense.
 - Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
+### Test Case Checklist Generator logic
+- Added `generateTestCaseChecklist` as a pure function in `lib/test-case-checklist-generator.ts`.
+- Added markdown sections for smoke tests, happy path tests, edge case tests, error handling tests, mobile/responsive tests, accessibility checks, and regression checks.
+- Added Vitest coverage for all fields, missing feature name fallback, and empty edge cases fallback.
+- Kept the work logic-only; no UI, backend, database, auth, or additional tools were added.
+- Verified with `npm run test:run` and `npm run lint`.
