@@ -53,7 +53,7 @@ export const tools: Tool[] = [
       "Draft a practical manual QA checklist for a feature, platform, and flow.",
     category: "Testing",
     href: "/tools/test-case-checklist-generator",
-    status: "planned",
+    status: "available",
   },
 ];
 

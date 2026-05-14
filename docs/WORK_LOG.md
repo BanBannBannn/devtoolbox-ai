@@ -80,3 +80,11 @@
 - Added Vitest coverage for all fields, missing feature name fallback, and empty edge cases fallback.
 - Kept the work logic-only; no UI, backend, database, auth, or additional tools were added.
 - Verified with `npm run test:run` and `npm run lint`.
+
+### Test Case Checklist Generator UI
+- Added the `/tools/test-case-checklist-generator` page with metadata, a client-side checklist form, and SEO/help content.
+- Wired the UI to the tested `generateTestCaseChecklist` function.
+- Added feature name, main user flow, edge cases, platform, generated checklist output, copy, download, and clear actions.
+- Marked Test Case Checklist Generator as available in `lib/tools.ts`.
+- Kept the implementation browser-only with no backend, database, auth, or AdSense.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
