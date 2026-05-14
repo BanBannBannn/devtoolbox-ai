@@ -44,7 +44,7 @@ export const tools: Tool[] = [
       "Pick a common Git goal and review the command before running it yourself.",
     category: "Git",
     href: "/tools/git-command-helper",
-    status: "planned",
+    status: "available",
   },
   {
     slug: "test-case-checklist-generator",

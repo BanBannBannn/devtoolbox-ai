@@ -64,3 +64,12 @@
 - Added Vitest coverage for status, create branch, undo last commit while keeping changes, discard local file changes, and missing branch name fallback.
 - Kept the work logic-only; no UI, backend, database, auth, or command execution was added.
 - Verified with `npm run test:run` and `npm run lint`.
+
+### Git Command Helper UI
+- Added the `/tools/git-command-helper` page with metadata, a client-side goal selector, and SEO/help content.
+- Wired the UI to the tested `getGitCommandHelp` function.
+- Added conditional branch name, commit message, and file path inputs, plus generate, copy, and clear actions.
+- Displayed command, explanation, and warning messages for risky commands without executing anything.
+- Marked Git Command Helper as available in `lib/tools.ts`; unfinished tools remain planned.
+- Kept the implementation browser-only with no backend, database, auth, or AdSense.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
