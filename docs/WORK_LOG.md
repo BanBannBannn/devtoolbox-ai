@@ -2,6 +2,15 @@
 
 ## 2026-05-20
 
+### SEO metadata routes
+- Added `app/sitemap.ts` using the App Router metadata route convention.
+- Added `app/robots.ts` using the App Router metadata route convention.
+- Sitemap includes the home page, tools page, available tool pages from `lib/tools.ts`, and the blog page.
+- Robots allows site crawling and points to `/sitemap.xml`.
+- Used `NEXT_PUBLIC_SITE_URL` when available with a fallback to `https://devtoolbox-ai-murex.vercel.app`.
+- Kept the work SEO-only; no tool logic or unrelated pages were modified.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ### Next.js Code Demo Lab live preview comparison upgrade
 - Updated the Code Demo Lab docs, tests, data model, and UI so working examples can show real fixed live previews while broken or missing-code examples show simulated error/output panels.
 - Added `simulatedError` and optional `livePreviewId` support to lessons.
