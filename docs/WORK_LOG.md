@@ -2,6 +2,13 @@
 
 ## 2026-05-20
 
+### Next.js Code Demo Lab docs
+- Added the Next.js Code Demo Lab feature spec, test cases, and QA checklist.
+- Documented a client-side educational lab for predefined Next.js and React lessons with fixed code snippets, explanations, common mistakes, change notes, and live or simulated previews.
+- Covered initial lessons for `useState`, props, conditional rendering, list rendering, Client Component vs Server Component, Route Handler GET response, and environment variable safety.
+- Captured the v1 safety boundary: no free-form code runner, arbitrary code execution, `eval`, `Function` constructor, Sandpack, backend, database, AI API, or file creation.
+- Kept the work documentation-only; no UI, app pages, tool registry entry, backend, database, AI API, or implementation code was added.
+
 ### Next.js File Tree Visualizer UI
 - Added the `/tools/nextjs-file-tree-visualizer` page with metadata, a client-side visualizer UI, and SEO/help content.
 - Wired the UI to the tested `generateNextjsFileTree` function.
