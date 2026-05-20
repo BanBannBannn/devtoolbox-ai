@@ -63,6 +63,14 @@
 - Kept the work logic-only; no UI, backend, database, auth, or external API calls were added.
 - Verified with `npm run test:run` and `npm run lint`.
 
+### Unix Timestamp Converter UI
+- Added the `/tools/unix-timestamp-converter` page with metadata, a client-side converter UI, and SEO/help content.
+- Wired the UI to the tested `timestampToDate` and `dateToTimestamp` functions.
+- Added mode selector, seconds/milliseconds unit selector, timestamp input, date/time input, Convert, Use Current Time, Copy Result, Clear, visible result fields, and helpful errors.
+- Marked Unix Timestamp Converter as available in `lib/tools.ts` under Calculators.
+- Kept the implementation browser-only with no backend, database, auth, AdSense, or external API calls.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ## 2026-05-14
 
 ### Vitest setup

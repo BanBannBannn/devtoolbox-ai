@@ -61,6 +61,15 @@ export const tools: Tool[] = [
     status: "available",
   },
   {
+    slug: "unix-timestamp-converter",
+    title: "Unix Timestamp Converter",
+    description:
+      "Convert Unix timestamps in seconds or milliseconds to readable dates.",
+    category: "Calculators",
+    href: "/tools/unix-timestamp-converter",
+    status: "available",
+  },
+  {
     slug: "ai-coding-prompt-generator",
     title: "AI Coding Prompt Generator",
     description:
