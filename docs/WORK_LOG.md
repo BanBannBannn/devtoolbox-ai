@@ -109,6 +109,12 @@
 - Did not add AdSense scripts, Auto Ads, manual ad slots, backend, database, or unrelated changes.
 - Verified with `npm run lint` and `npm run build`.
 
+### AdSense ads.txt
+- Added `public/ads.txt` with the Google AdSense authorized seller entry.
+- The file will be publicly served at `/ads.txt` after deployment.
+- Did not add AdSense scripts, Auto Ads, manual ad slots, backend, database, or unrelated changes.
+- Verified with `npm run lint` and `npm run build`.
+
 ## 2026-05-14
 
 ### Vitest setup
