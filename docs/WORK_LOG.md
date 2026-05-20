@@ -1,5 +1,16 @@
 # Work Log
 
+## 2026-05-20
+
+### UUID Generator logic
+- Added the UUID Generator feature spec, test cases, and QA checklist.
+- Added `generateUuidV4List` as a pure function in `lib/uuid-generator.ts`.
+- Validated UUID count with a minimum of `1` and maximum of `100`.
+- Used `crypto.randomUUID` when available, with a Web Crypto fallback for UUID v4 formatting.
+- Added Vitest coverage for single UUID generation, multiple UUIDs, uppercase output, count below minimum, and count above maximum.
+- Kept the work logic-only; no UI, backend, database, auth, or additional tools were added.
+- Verified with `npm run test:run` and `npm run lint`.
+
 ## 2026-05-14
 
 ### Vitest setup
