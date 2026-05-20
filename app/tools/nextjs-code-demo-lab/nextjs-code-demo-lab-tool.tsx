@@ -22,13 +22,15 @@ export function NextjsCodeDemoLabTool() {
     getCodeDemoLessonById(selectedLessonId) ?? getDefaultCodeDemoLesson();
   const previewLabel =
     selectedLesson.previewType === "live" ? "Live preview" : "Simulated preview";
+  const brokenCode = selectedLesson.withoutCode ?? selectedLesson.brokenCode ?? "";
+  const canResetDemo = Boolean(selectedLesson.livePreviewId);
 
-  async function handleCopyCode() {
+  async function handleCopyCode(code: string, label: string) {
     try {
-      await navigator.clipboard.writeText(selectedLesson.code);
-      setStatus("Code copied.");
+      await navigator.clipboard.writeText(code);
+      setStatus(`${label} copied.`);
     } catch {
-      setStatus("Copy failed. Select the code and copy it manually.");
+      setStatus(`Copy failed. Select the ${label.toLowerCase()} and copy it manually.`);
     }
   }
 
@@ -58,18 +60,27 @@ export function NextjsCodeDemoLabTool() {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={handleCopyCode}
+            onClick={() => handleCopyCode(selectedLesson.correctCode, "Working code")}
             className="rounded-md bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
           >
-            Copy Code
+            Copy Working Code
           </button>
           <button
             type="button"
-            onClick={handleResetDemo}
+            onClick={() => handleCopyCode(brokenCode, "Broken code")}
             className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-100"
           >
-            Reset Demo
+            Copy Broken Code
           </button>
+          {canResetDemo ? (
+            <button
+              type="button"
+              onClick={handleResetDemo}
+              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-100"
+            >
+              Reset Demo
+            </button>
+          ) : null}
         </div>
       </div>
 
@@ -125,16 +136,59 @@ export function NextjsCodeDemoLabTool() {
               {selectedLesson.commonMistake}
             </p>
           </div>
+
+          <div className="rounded-lg border border-sky-200 bg-sky-50 p-4">
+            <h3 className="text-sm font-semibold text-sky-950">
+              Mental model
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-sky-900">
+              {selectedLesson.mentalModel}
+            </p>
+          </div>
         </div>
 
         <div className="space-y-5">
-          <div>
-            <h3 className="text-sm font-semibold text-slate-900">
-              Code snippet
-            </h3>
-            <pre className="mt-2 max-h-[28rem] overflow-auto rounded-lg border border-slate-200 bg-slate-950 p-4 text-sm leading-6 text-emerald-100">
-              <code>{selectedLesson.code}</code>
-            </pre>
+          <div className="grid gap-4 xl:grid-cols-2">
+            <section
+              aria-labelledby="with-it-heading"
+              className="rounded-lg border border-emerald-200 bg-emerald-50 p-4"
+            >
+              <h3
+                id="with-it-heading"
+                className="text-sm font-semibold text-emerald-950"
+              >
+                Working code
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-emerald-900">
+                {selectedLesson.correctOutput}
+              </p>
+              <pre className="mt-3 max-h-72 overflow-auto rounded-lg border border-emerald-900/10 bg-slate-950 p-4 text-sm leading-6 text-emerald-100">
+                <code>{selectedLesson.correctCode}</code>
+              </pre>
+            </section>
+
+            <section
+              aria-labelledby="without-it-heading"
+              className="rounded-lg border border-rose-200 bg-rose-50 p-4"
+            >
+              <h3
+                id="without-it-heading"
+                className="text-sm font-semibold text-rose-950"
+              >
+                Without / broken code
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-rose-900">
+                {selectedLesson.brokenOutput}
+              </p>
+              {selectedLesson.simulatedError ? (
+                <p className="mt-3 rounded-md border border-rose-300 bg-white px-3 py-2 font-mono text-xs leading-5 text-rose-800">
+                  {selectedLesson.simulatedError}
+                </p>
+              ) : null}
+              <pre className="mt-3 max-h-72 overflow-auto rounded-lg border border-rose-900/10 bg-slate-950 p-4 text-sm leading-6 text-rose-100">
+                <code>{brokenCode}</code>
+              </pre>
+            </section>
           </div>
 
           <div>
@@ -145,6 +199,39 @@ export function NextjsCodeDemoLabTool() {
               <CodeDemoPreview lesson={selectedLesson} resetKey={resetKey} />
             </div>
           </div>
+
+          <section
+            aria-labelledby="why-it-matters-heading"
+            className="rounded-lg border border-slate-200 bg-white p-4"
+          >
+            <h3
+              id="why-it-matters-heading"
+              className="text-sm font-semibold text-slate-950"
+            >
+              Why it matters
+            </h3>
+            <p className="mt-2 rounded-md bg-sky-50 px-3 py-2 text-sm leading-6 text-sky-900">
+              {selectedLesson.mentalModel}
+            </p>
+            <div className="mt-3 grid gap-4 md:grid-cols-2">
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                  Why it works
+                </h4>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {selectedLesson.whyItWorks}
+                </p>
+              </div>
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-rose-700">
+                  Why it breaks
+                </h4>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {selectedLesson.whyItBreaks}
+                </p>
+              </div>
+            </div>
+          </section>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">

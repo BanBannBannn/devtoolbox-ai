@@ -29,15 +29,48 @@ As a beginner learning Next.js and React, I want to choose a safe predefined les
   - Difficulty.
   - Concept.
   - Code snippet.
+  - Correct code.
+  - Broken code or code without the key concept.
+  - Correct output.
+  - Broken output.
+  - Simulated error when useful.
   - Explanation.
   - Live preview or simulated preview.
   - Common mistake.
   - What changes when the code changes.
+  - Why the correct version works.
+  - Why the broken or missing version fails.
+  - Beginner mental model.
+  - Preview type: `live` or `simulated`.
+  - Optional live preview ID for fixed built-in live demos.
+- UI should show comparison sections or tabs:
+  - Working code.
+  - Without / broken code.
+  - Why it matters.
 - Some lessons can have a real interactive preview.
 - Some lessons can have a simulated preview.
 - User can copy the code snippet.
+- User can copy the working code.
+- User can copy the broken or missing-code example.
 - User can reset the demo when useful.
 - Page is mobile-friendly.
+
+## Data Model Requirements
+Each lesson should support:
+- `id`
+- `title`
+- `difficulty`
+- `concept`
+- `correctCode`
+- `withoutCode` or `brokenCode`
+- `correctOutput`
+- `brokenOutput`
+- `simulatedError`
+- `whyItWorks`
+- `whyItBreaks`
+- `mentalModel`
+- `previewType: "live" | "simulated"`
+- Optional `livePreviewId`
 
 ## Initial Lessons
 1. `useState` Counter
@@ -45,14 +78,35 @@ As a beginner learning Next.js and React, I want to choose a safe predefined les
 3. Conditional Rendering
 4. List Rendering
 5. Client Component vs Server Component
-6. Route Handler GET response
-7. Environment Variable Safety
+6. `page.tsx` creates a route
+7. `layout.tsx` wraps child pages
+8. Route Handler GET response
+9. Environment Variable Safety
+
+## Comparison Lessons To Emphasize First
+- `useState` Counter:
+  - With `"use client"` works.
+  - Without `"use client"` breaks because hooks and event handlers need a Client Component.
+- `page.tsx`:
+  - With `page.tsx` creates a route.
+  - Without `page.tsx` the route has no page to render.
+- `layout.tsx`:
+  - With `layout.tsx` wraps child pages.
+  - Without `layout.tsx` pages render without shared layout.
+- Route Handler:
+  - With `route.ts` creates an API endpoint.
+  - Without `route.ts` there is no API route.
+- Environment Variables:
+  - Server environment variables can keep secrets.
+  - Client-exposed environment variables must use `NEXT_PUBLIC_` and are visible to the browser.
 
 ## Lesson Behavior Requirements
 - `useState` Counter can include a real interactive counter preview.
 - Props Example can include a simulated or simple live preview with fixed props.
 - Conditional Rendering can include a safe toggle that switches predefined UI states.
 - List Rendering can include a fixed list preview.
+- Correct code examples can have real live previews when they map to known built-in demo components.
+- Broken or missing-code examples must not run; they should show simulated error or output panels.
 - Client Component vs Server Component should explain the difference and show a simulated preview.
 - Route Handler GET response should show a simulated JSON response preview only.
 - Environment Variable Safety should show safe public/server-only examples without exposing real secrets.
@@ -62,8 +116,13 @@ Each selected lesson should help the user understand:
 - What concept the snippet demonstrates.
 - Which part of the code matters most.
 - How the visual output connects to the code.
+- What happens with the important code.
+- What happens without the important code.
+- What output appears.
+- What simulated error or warning would happen.
 - A common beginner mistake.
 - What would change if a specific safe part of the example changed.
+- A beginner-friendly mental model.
 
 ## SEO/Help Content Requirements
 The page should include helpful content for:
@@ -98,7 +157,9 @@ The page should include helpful content for:
 ## Acceptance Criteria
 - Spec, test cases, and QA checklist exist for the feature.
 - Future implementation can render predefined lessons with code, explanations, mistakes, change notes, and previews.
+- Working examples can use fixed live previews when available.
+- Broken or missing-code examples show simulated errors or output instead of running.
 - Future implementation clearly distinguishes live previews from simulated previews.
-- Future implementation includes copy code and reset demo actions where useful.
+- Future implementation includes copy buttons for working and broken code, plus reset demo actions where useful.
 - Future implementation is mobile-friendly.
 - Future implementation does not execute arbitrary code, run user-provided code, use `eval`, use the `Function` constructor, add Sandpack, add backend, add database, or call an AI API.

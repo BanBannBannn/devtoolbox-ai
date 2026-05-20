@@ -2,6 +2,24 @@
 
 ## 2026-05-20
 
+### Next.js Code Demo Lab live preview comparison upgrade
+- Updated the Code Demo Lab docs, tests, data model, and UI so working examples can show real fixed live previews while broken or missing-code examples show simulated error/output panels.
+- Added `simulatedError` and optional `livePreviewId` support to lessons.
+- Added separate Copy Working Code and Copy Broken Code actions.
+- Updated live preview selection to use predefined `livePreviewId` values instead of evaluating lesson code.
+- Kept real previews for the counter, props card, conditional toggle, and list rendering lessons, while server/client, route handler, environment variable, `page.tsx`, and `layout.tsx` lessons remain simulated-only.
+- Preserved the safety boundary: no user-provided code execution, `eval`, `Function` constructor, Sandpack, backend, database, AI API, or file creation.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
+### Next.js Code Demo Lab comparison learning
+- Expanded the Code Demo Lab spec, test cases, and QA checklist with comparison-based learning requirements.
+- Added `correctCode`, `brokenCode` or `withoutCode`, `correctOutput`, `brokenOutput`, `whyItWorks`, `whyItBreaks`, and `mentalModel` fields to every lesson.
+- Added comparison lessons for `page.tsx` route creation and `layout.tsx` shared wrappers.
+- Updated the lab UI to show With it, Without it, and Why it matters sections alongside existing live or simulated previews.
+- Updated tests to require comparison fields and to scan all lesson code variants for `eval` and `Function` constructor usage.
+- Kept the implementation safe and predefined-only; no arbitrary code execution, backend, database, AI API, Sandpack, or user-provided code execution was added.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ### Next.js Code Demo Lab UI
 - Added the `/tools/nextjs-code-demo-lab` page with metadata, a client-side lesson selector UI, and SEO/help content.
 - Added `components/code-demo-preview.tsx` for safe built-in previews that switch by predefined lesson ID instead of evaluating code.

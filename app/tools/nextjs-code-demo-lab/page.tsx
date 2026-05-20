@@ -21,8 +21,9 @@ export default function NextjsCodeDemoLabPage() {
         </h1>
         <p className="mt-5 text-lg leading-8 text-slate-600">
           Learn React and Next.js concepts through fixed, safe examples. Pick a
-          lesson, read the snippet, and compare it with a live or simulated
-          preview without running arbitrary code.
+          lesson, compare what happens with the important code versus without
+          it, and use a live or simulated preview without running arbitrary
+          code.
         </p>
       </div>
 
@@ -55,7 +56,7 @@ export default function NextjsCodeDemoLabPage() {
             </h2>
             <ol className="mt-4 list-decimal space-y-2 pl-5 leading-7 text-slate-600">
               <li>Select a lesson from the dropdown.</li>
-              <li>Read the concept and code snippet.</li>
+              <li>Compare the With it and Without it code examples.</li>
               <li>Compare the explanation with the preview.</li>
               <li>Use Copy Code if you want to study the snippet elsewhere.</li>
               <li>Use Reset Demo to return interactive previews to their start.</li>
@@ -89,6 +90,21 @@ export default function NextjsCodeDemoLabPage() {
               sandbox. It does not evaluate user-provided JavaScript, use{" "}
               <code>eval</code>, use the <code>Function</code> constructor, add
               Sandpack, create files, or call a backend.
+            </p>
+          </section>
+
+          <section aria-labelledby="with-without-learning">
+            <h2
+              id="with-without-learning"
+              className="text-2xl font-semibold tracking-tight text-slate-950"
+            >
+              Why compare with it and without it?
+            </h2>
+            <p className="mt-4 leading-7 text-slate-600">
+              Beginners often memorize snippets without seeing why each file,
+              directive, or component pattern matters. The comparison sections
+              show the working version, the missing or broken version, and the
+              mental model that connects the code to the result.
             </p>
           </section>
 

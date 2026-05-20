@@ -97,6 +97,9 @@ function SimulatedPreview({ lesson }: { lesson: CodeDemoLesson }) {
   const previewTextByLessonId: Record<string, string> = {
     "client-vs-server-component":
       "Server content renders first. A small Client Component handles browser-only interaction.",
+    "page-tsx-route": "Visiting /about renders the About page.",
+    "layout-tsx-wrapper":
+      "Dashboard pages render inside a shared layout with dashboard navigation.",
     "route-handler-get-response":
       '{ "ok": true, "service": "DevToolBox AI" }',
     "environment-variable-safety":
@@ -122,16 +125,21 @@ function SimulatedPreview({ lesson }: { lesson: CodeDemoLesson }) {
 }
 
 export function CodeDemoPreview({ lesson, resetKey }: CodeDemoPreviewProps) {
-  switch (lesson.id) {
-    case "use-state-counter":
+  switch (lesson.livePreviewId) {
+    case "counter":
       return <CounterPreview key={resetKey} resetKey={resetKey} />;
-    case "props-example":
+    case "props-card":
       return <PropsPreview />;
-    case "conditional-rendering":
+    case "conditional-toggle":
       return <ConditionalPreview key={resetKey} />;
-    case "list-rendering":
+    case "tool-list":
       return <ListPreview />;
+  }
+
+  switch (lesson.id) {
     case "client-vs-server-component":
+    case "page-tsx-route":
+    case "layout-tsx-wrapper":
     case "route-handler-get-response":
     case "environment-variable-safety":
       return <SimulatedPreview lesson={lesson} />;

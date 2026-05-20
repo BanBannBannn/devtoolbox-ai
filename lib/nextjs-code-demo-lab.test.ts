@@ -12,6 +12,8 @@ const expectedLessonIds = [
   "conditional-rendering",
   "list-rendering",
   "client-vs-server-component",
+  "page-tsx-route",
+  "layout-tsx-wrapper",
   "route-handler-get-response",
   "environment-variable-safety",
 ];
@@ -20,7 +22,7 @@ describe("Next.js Code Demo Lab lessons", () => {
   it("returns all lessons", () => {
     const lessons = getAllCodeDemoLessons();
 
-    expect(lessons).toHaveLength(7);
+    expect(lessons).toHaveLength(9);
     expect(lessons.map((lesson) => lesson.id)).toEqual(expectedLessonIds);
   });
 
@@ -49,10 +51,63 @@ describe("Next.js Code Demo Lab lessons", () => {
       expect(lesson.difficulty).toBeTruthy();
       expect(lesson.concept).toBeTruthy();
       expect(lesson.code).toBeTruthy();
+      expect(lesson.correctCode).toBeTruthy();
+      expect(lesson.brokenCode ?? lesson.withoutCode).toBeTruthy();
+      expect(lesson.correctOutput).toBeTruthy();
+      expect(lesson.brokenOutput ?? lesson.simulatedError).toBeTruthy();
       expect(lesson.explanation).toBeTruthy();
       expect(lesson.commonMistake).toBeTruthy();
       expect(lesson.changeExplanation).toBeTruthy();
+      expect(lesson.whyItWorks).toBeTruthy();
+      expect(lesson.whyItBreaks).toBeTruthy();
+      expect(lesson.mentalModel).toBeTruthy();
       expect(lesson.previewType).toBeTruthy();
+    }
+  });
+
+  it("every lesson has correctCode or code", () => {
+    for (const lesson of getAllCodeDemoLessons()) {
+      expect((lesson.correctCode || lesson.code).trim().length).toBeGreaterThan(
+        0,
+      );
+    }
+  });
+
+  it("every lesson has withoutCode or brokenCode", () => {
+    for (const lesson of getAllCodeDemoLessons()) {
+      const comparisonCode = lesson.withoutCode ?? lesson.brokenCode ?? "";
+
+      expect(comparisonCode.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it("every lesson has comparison explanations", () => {
+    for (const lesson of getAllCodeDemoLessons()) {
+      expect(lesson.whyItWorks.trim().length).toBeGreaterThan(0);
+      expect(lesson.whyItBreaks.trim().length).toBeGreaterThan(0);
+      expect(lesson.mentalModel.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it("every lesson has correct output", () => {
+    for (const lesson of getAllCodeDemoLessons()) {
+      expect(lesson.correctOutput.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it("every lesson has broken output or simulated error", () => {
+    for (const lesson of getAllCodeDemoLessons()) {
+      const brokenResult = lesson.brokenOutput || lesson.simulatedError || "";
+
+      expect(brokenResult.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it("every live lesson has a livePreviewId", () => {
+    for (const lesson of getAllCodeDemoLessons()) {
+      if (lesson.previewType === "live") {
+        expect(lesson.livePreviewId).toBeTruthy();
+      }
     }
   });
 
@@ -70,9 +125,18 @@ describe("Next.js Code Demo Lab lessons", () => {
 
   it("lessons do not include eval or Function constructor", () => {
     for (const lesson of getAllCodeDemoLessons()) {
-      expect(lesson.code).not.toMatch(/\beval\s*\(/);
-      expect(lesson.code).not.toMatch(/\bnew\s+Function\s*\(/);
-      expect(lesson.code).not.toMatch(/\bFunction\s*\(/);
+      const lessonCode = [
+        lesson.code,
+        lesson.correctCode,
+        lesson.brokenCode,
+        lesson.withoutCode,
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      expect(lessonCode).not.toMatch(/\beval\s*\(/);
+      expect(lessonCode).not.toMatch(/\bnew\s+Function\s*\(/);
+      expect(lessonCode).not.toMatch(/\bFunction\s*\(/);
     }
   });
 });
