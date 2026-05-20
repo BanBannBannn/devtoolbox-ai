@@ -29,6 +29,14 @@
 - Kept the work logic-only; no UI, backend, database, auth, JWT signing, JWT generation, or external API calls were added.
 - Verified with `npm run test:run` and `npm run lint`.
 
+### JWT Decoder UI
+- Added the `/tools/jwt-decoder` page with metadata, a client-side decoder UI, and SEO/help content.
+- Wired the UI to the tested `decodeJwt` function.
+- Added JWT input, Decode Token, Clear, formatted header JSON, formatted payload JSON, signature presence, timestamp claim date display, and decode-only warning.
+- Marked JWT Decoder as available in `lib/tools.ts`.
+- Kept the implementation browser-only with no backend, database, auth, JWT generator, JWT signing, JWT verification, AdSense, or external API calls.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ## 2026-05-14
 
 ### Vitest setup

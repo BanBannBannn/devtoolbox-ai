@@ -20,6 +20,15 @@ export const tools: Tool[] = [
     status: "available",
   },
   {
+    slug: "jwt-decoder",
+    title: "JWT Decoder",
+    description:
+      "Decode JWT header and payload JSON without verifying the signature.",
+    category: "Formatters",
+    href: "/tools/jwt-decoder",
+    status: "available",
+  },
+  {
     slug: "readme-generator",
     title: "README Generator",
     description:
