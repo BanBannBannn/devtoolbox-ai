@@ -2,6 +2,12 @@
 
 ## 2026-05-20
 
+### Next.js File Tree Visualizer docs
+- Added the Next.js File Tree Visualizer feature spec, test cases, and QA checklist.
+- Documented a client-side educational tool for mapping App Router route paths to `app` directory file trees.
+- Covered page routes, layouts, loading UI, error UI, API route handlers, dynamic segments, explanations, previews, validation edge cases, mobile support, and SEO/help content.
+- Kept the work documentation-only; no UI, app pages, tool registry entry, backend, database, AI API, file creation, or code execution was added.
+
 ### AI Chatbox UI
 - Added `components/chatbox.tsx` as a gated client-side bottom-right chat widget.
 - Wired the chatbox into `app/layout.tsx` so it can render globally when `NEXT_PUBLIC_CHAT_ENABLED` is `"true"`.
