@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ToolCard } from "@/components/tool-card";
 import { createMetadata } from "@/lib/seo";
 import { getToolsByCategory } from "@/lib/tools";
 
@@ -14,18 +14,28 @@ export default function ToolsPage() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-      <div className="max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
-          Tools
-        </p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950">
-          Developer tools
-        </h1>
-        <p className="mt-5 text-lg leading-8 text-slate-600">
-          DevToolBox AI provides small, focused utilities that run in the
-          browser where possible. Available tools are linked below, and planned
-          tools are clearly marked.
-        </p>
+      <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-slate-950 p-6 sm:p-8">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.12)_1px,transparent_1px)] bg-[size:28px_28px]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-emerald-400/20 blur-3xl"
+        />
+        <div className="relative max-w-3xl">
+          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-300">
+            Tools
+          </p>
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white">
+            Developer tools
+          </h1>
+          <p className="mt-5 text-lg leading-8 text-slate-300">
+            DevToolBox AI provides small, focused utilities that run in the
+            browser where possible. Available tools are linked below, and planned
+            tools are clearly marked.
+          </p>
+        </div>
       </div>
 
       <div className="mt-12 space-y-10">
@@ -43,57 +53,9 @@ export default function ToolsPage() {
                 {category}
               </h2>
               <div className="mt-5 grid gap-4 md:grid-cols-2">
-                {categoryTools.map((tool) => {
-                  const statusLabel =
-                    tool.status === "available" ? "Available" : "Planned";
-                  const statusClassName =
-                    tool.status === "available"
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "bg-amber-100 text-amber-800";
-                  const cardContent = (
-                    <>
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <h3 className="text-lg font-semibold text-slate-950">
-                          {tool.title}
-                        </h3>
-                        <span
-                          className={`w-fit rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${statusClassName}`}
-                        >
-                          {statusLabel}
-                        </span>
-                      </div>
-                      <p className="mt-3 text-sm leading-6 text-slate-600">
-                        {tool.description}
-                      </p>
-                      <p className="mt-5 text-sm font-semibold text-emerald-700">
-                        {tool.status === "available"
-                          ? "Open tool"
-                          : "Coming soon"}
-                      </p>
-                    </>
-                  );
-
-                  if (tool.status === "available") {
-                    return (
-                      <Link
-                        key={tool.slug}
-                        href={tool.href}
-                        className="block rounded-lg border border-slate-200 bg-white p-6 transition hover:border-emerald-300 hover:shadow-sm"
-                      >
-                        {cardContent}
-                      </Link>
-                    );
-                  }
-
-                  return (
-                    <article
-                      key={tool.slug}
-                      className="rounded-lg border border-slate-200 bg-white p-6"
-                    >
-                      {cardContent}
-                    </article>
-                  );
-                })}
+                {categoryTools.map((tool) => (
+                  <ToolCard key={tool.slug} tool={tool} />
+                ))}
               </div>
             </section>
           );

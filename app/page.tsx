@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { ArrowRight, BookOpen, Sparkles } from "lucide-react";
+import { HeroVisual } from "@/components/hero-visual";
+import { ToolCard } from "@/components/tool-card";
 import { createMetadata } from "@/lib/seo";
-import { getFeaturedTools } from "@/lib/tools";
+import { getFeaturedTools, tools } from "@/lib/tools";
 
 const latestArticles = [
   {
@@ -31,15 +34,23 @@ export const metadata = createMetadata({
 
 export default function HomePage() {
   const featuredTools = getFeaturedTools();
+  const availableToolCount = tools.filter(
+    (tool) => tool.status === "available",
+  ).length;
 
   return (
     <>
-      <section className="bg-white">
-        <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:py-20">
+      <section className="relative overflow-hidden bg-white">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:40px_40px] opacity-40"
+        />
+        <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-20">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-800">
+              <Sparkles aria-hidden="true" className="h-4 w-4" />
               Free developer utilities
-            </p>
+            </div>
             <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
               Fast tools and practical guides for everyday development work.
             </h1>
@@ -51,28 +62,38 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/tools"
-                className="rounded-md bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                className="inline-flex items-center gap-2 rounded-md bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
               >
                 Explore tools
+                <ArrowRight aria-hidden="true" className="h-4 w-4" />
               </Link>
               <Link
                 href="/blog"
-                className="rounded-md border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-100"
+                className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-100"
               >
+                <BookOpen aria-hidden="true" className="h-4 w-4" />
                 Read articles
               </Link>
             </div>
+            <div className="mt-10 grid gap-3 sm:grid-cols-3">
+              {[
+                [String(availableToolCount), "available tools"],
+                ["0", "accounts needed"],
+                ["100%", "browser-first"],
+              ].map(([value, label]) => (
+                <div
+                  key={label}
+                  className="rounded-lg border border-slate-200 bg-white/80 p-4 shadow-sm"
+                >
+                  <p className="text-2xl font-semibold text-slate-950">
+                    {value}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-600">{label}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-6">
-            <h2 className="text-lg font-semibold text-slate-950">
-              Built for quick tasks
-            </h2>
-            <ul className="mt-5 space-y-4 text-sm leading-6 text-slate-600">
-              <li>Browser-first tools where possible.</li>
-              <li>No account, database, or paid API required for v1.</li>
-              <li>Useful written context around every tool as the library grows.</li>
-            </ul>
-          </div>
+          <HeroVisual />
         </div>
       </section>
 
@@ -83,36 +104,21 @@ export default function HomePage() {
               Featured tools
             </h2>
             <p className="mt-2 max-w-2xl text-slate-600">
-              The first v1 tools are queued for implementation in upcoming
-              phases.
+              Small utilities for formatting, generating, calculating, and
+              checking everyday development work.
             </p>
           </div>
           <Link
             href="/tools"
-            className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
           >
             View all tools
+            <ArrowRight aria-hidden="true" className="h-4 w-4" />
           </Link>
         </div>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {featuredTools.map((tool) => (
-            <article
-              key={tool.slug}
-              className="rounded-lg border border-slate-200 bg-white p-6"
-            >
-              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                {tool.category}
-              </p>
-              <h3 className="mt-3 text-lg font-semibold text-slate-950">
-                {tool.title}
-              </h3>
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                {tool.description}
-              </p>
-              <p className="mt-5 text-sm font-medium text-slate-500">
-                Planned for v1
-              </p>
-            </article>
+            <ToolCard key={tool.slug} tool={tool} />
           ))}
         </div>
       </section>

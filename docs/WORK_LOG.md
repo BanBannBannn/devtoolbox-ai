@@ -93,6 +93,16 @@
 - Kept the implementation browser-only with no backend, database, auth, AdSense, or external API calls.
 - Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
 
+### Home and tools visual refresh
+- Installed `lucide-react` for reusable icons.
+- Added `lib/tool-visuals.ts` to map tool slugs to icons, accent gradients, and icon badge styles.
+- Added a reusable `ToolCard` component for available and planned tool cards.
+- Added a CSS/Tailwind-only `HeroVisual` component for the home page.
+- Updated the home page with a visual hero, registry-backed stats, icon buttons, and reusable tool cards while preserving existing content.
+- Updated the tools page with a stronger visual header and reusable icon tool cards while keeping available tools clickable and planned tools non-clickable.
+- Kept the work frontend-only with no backend, database, AdSense, individual tool logic changes, or individual tool page changes.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ## 2026-05-14
 
 ### Vitest setup
