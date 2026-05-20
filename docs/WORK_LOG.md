@@ -2,6 +2,14 @@
 
 ## 2026-05-20
 
+### Next.js File Tree Visualizer logic
+- Added `generateNextjsFileTree` as a pure function in `lib/nextjs-file-tree-visualizer.ts`.
+- Added typed support for page, layout, loading, error, and route handler file tree generation.
+- Added route path validation, trailing slash normalization, repeated slash cleanup, safe segment validation, file tree output, educational explanations, and preview text.
+- Added Vitest coverage for root page routes, nested page routes, dynamic routes, API route handlers, layout routes, loading routes, error routes, trailing slash normalization, and invalid paths.
+- Kept the work logic-only; no UI, app pages, tool registry entry, backend, database, file creation, or code execution was added.
+- Verified with `npm run test:run` and `npm run lint`.
+
 ### Next.js File Tree Visualizer docs
 - Added the Next.js File Tree Visualizer feature spec, test cases, and QA checklist.
 - Documented a client-side educational tool for mapping App Router route paths to `app` directory file trees.
