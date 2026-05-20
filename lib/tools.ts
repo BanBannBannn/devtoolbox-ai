@@ -1,4 +1,9 @@
-export type ToolCategory = "Formatters" | "Generators" | "Git" | "Testing";
+export type ToolCategory =
+  | "Formatters"
+  | "Generators"
+  | "Calculators"
+  | "Git"
+  | "Testing";
 
 export type Tool = {
   slug: string;
@@ -47,6 +52,15 @@ export const tools: Tool[] = [
     status: "available",
   },
   {
+    slug: "date-calculator",
+    title: "Date Calculator",
+    description:
+      "Add or subtract days, months, and years, or calculate days between dates.",
+    category: "Calculators",
+    href: "/tools/date-calculator",
+    status: "available",
+  },
+  {
     slug: "ai-coding-prompt-generator",
     title: "AI Coding Prompt Generator",
     description:
@@ -88,6 +102,7 @@ export function getToolsByCategory() {
     {
       Formatters: [],
       Generators: [],
+      Calculators: [],
       Git: [],
       Testing: [],
     },

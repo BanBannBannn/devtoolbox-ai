@@ -46,6 +46,14 @@
 - Kept the work logic-only; no UI, backend, database, auth, or external API calls were added.
 - Verified with `npm run test:run` and `npm run lint`.
 
+### Date Calculator UI
+- Added the `/tools/date-calculator` page with metadata, a client-side calculator UI, and SEO/help content.
+- Wired the UI to the tested date calculator functions.
+- Added mode selector, date input, number input, days-between end date input, Calculate, Clear, visible result output, and 7/30/90 days-from-today quick buttons.
+- Marked Date Calculator as available in `lib/tools.ts` under a new Calculators category.
+- Kept the implementation browser-only with no backend, database, auth, AdSense, or external API calls.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ## 2026-05-14
 
 ### Vitest setup
