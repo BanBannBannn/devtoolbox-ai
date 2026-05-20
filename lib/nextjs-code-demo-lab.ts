@@ -70,7 +70,7 @@ export default function Page() {
       "Treating props like global variables instead of values passed into a component.",
     changeExplanation:
       "Changing name=\"Ada\" to another value changes the rendered greeting while keeping the component reusable.",
-    previewType: "simulated",
+    previewType: "live",
   },
   {
     id: "conditional-rendering",
@@ -118,7 +118,7 @@ export function ToolList() {
       "Forgetting a stable key or using an unstable value when rendering lists.",
     changeExplanation:
       "Adding another string to the tools array adds another list item to the preview.",
-    previewType: "simulated",
+    previewType: "live",
   },
   {
     id: "client-vs-server-component",

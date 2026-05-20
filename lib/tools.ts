@@ -115,6 +115,15 @@ export const tools: Tool[] = [
     href: "/tools/nextjs-file-tree-visualizer",
     status: "available",
   },
+  {
+    slug: "nextjs-code-demo-lab",
+    title: "Next.js Code Demo Lab",
+    description:
+      "Learn React and Next.js concepts with safe predefined code examples and visual previews.",
+    category: "Learning",
+    href: "/tools/nextjs-code-demo-lab",
+    status: "available",
+  },
 ];
 
 export function getFeaturedTools(limit = 3) {

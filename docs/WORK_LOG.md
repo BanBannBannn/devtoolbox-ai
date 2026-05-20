@@ -2,6 +2,16 @@
 
 ## 2026-05-20
 
+### Next.js Code Demo Lab UI
+- Added the `/tools/nextjs-code-demo-lab` page with metadata, a client-side lesson selector UI, and SEO/help content.
+- Added `components/code-demo-preview.tsx` for safe built-in previews that switch by predefined lesson ID instead of evaluating code.
+- Wired the UI to the tested lesson data from `lib/nextjs-code-demo-lab.ts`.
+- Added lesson title, difficulty badge, concept, readable code block, Copy Code, Reset Demo, explanation, common mistake, change explanation, and preview area.
+- Added real built-in previews for the counter, props, conditional rendering, and list lessons, plus simulated previews for server/client, route handler, and environment variable lessons.
+- Marked Next.js Code Demo Lab as available in `lib/tools.ts`.
+- Kept the implementation client-side only; no `eval`, `Function` constructor, user-provided code execution, Sandpack, backend, database, AI API, or file creation was added.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ### Next.js Code Demo Lab logic
 - Added typed lesson data in `lib/nextjs-code-demo-lab.ts` for the initial seven predefined Next.js and React lessons.
 - Added `CodeDemoLesson`, `CodeDemoLessonId`, and `PreviewType` types.
