@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AdSenseScript } from "@/components/adsense-script";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { defaultMetadata } from "@/lib/seo";
@@ -20,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body className="flex min-h-full flex-col bg-slate-50 text-slate-900">
+        <AdSenseScript />
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />

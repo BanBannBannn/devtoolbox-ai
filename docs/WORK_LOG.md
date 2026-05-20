@@ -115,6 +115,15 @@
 - Did not add AdSense scripts, Auto Ads, manual ad slots, backend, database, or unrelated changes.
 - Verified with `npm run lint` and `npm run build`.
 
+### AdSense Auto Ads script support
+- Added `components/adsense-script.tsx` using `next/script`.
+- Wired the script loader into `app/layout.tsx` so it can apply globally when enabled.
+- Added `.env.example` with `NEXT_PUBLIC_ADSENSE_ENABLED=false` and `NEXT_PUBLIC_ADSENSE_CLIENT=ca-pub-7384886862638631`.
+- Updated `.gitignore` so `.env.example` can be tracked while other `.env*` files remain ignored.
+- Kept Auto Ads disabled by default and rendered the script only when `NEXT_PUBLIC_ADSENSE_ENABLED` is `"true"` and a client ID is present.
+- Did not add manual ad slots, `ins adsbygoogle` blocks, backend, database, or individual tool page changes.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ## 2026-05-14
 
 ### Vitest setup
