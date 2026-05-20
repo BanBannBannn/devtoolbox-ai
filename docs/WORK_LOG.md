@@ -85,6 +85,14 @@
 - Kept the work logic-only; no UI, app route, tool registry entry, backend, database, auth, AdSense, or external API calls were added.
 - Verified with `npm run test:run` and `npm run lint`.
 
+### QR Code Generator UI
+- Added the `/tools/qr-code-generator` page with metadata, a client-side QR generator UI, and SEO/help content.
+- Wired the UI to the tested `generateQrCodeDataUrl` function.
+- Added text/URL input, QR size selector, error correction level selector, Generate QR Code, Download PNG, Clear, generated QR preview, and helpful error/status messages.
+- Marked QR Code Generator as available in `lib/tools.ts`.
+- Kept the implementation browser-only with no backend, database, auth, AdSense, or external API calls.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ## 2026-05-14
 
 ### Vitest setup

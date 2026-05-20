@@ -52,6 +52,15 @@ export const tools: Tool[] = [
     status: "available",
   },
   {
+    slug: "qr-code-generator",
+    title: "QR Code Generator",
+    description:
+      "Generate downloadable PNG QR codes from text or URLs in the browser.",
+    category: "Generators",
+    href: "/tools/qr-code-generator",
+    status: "available",
+  },
+  {
     slug: "date-calculator",
     title: "Date Calculator",
     description:
