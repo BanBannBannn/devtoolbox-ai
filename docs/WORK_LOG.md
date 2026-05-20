@@ -76,6 +76,15 @@
 - Documented client-side text/URL QR generation, size selection, error correction level selection, PNG download, clear action, mobile support, and SEO/help content requirements.
 - Kept the work documentation-only; no UI, app route, tool registry entry, backend, database, auth, AdSense, or implementation code was added.
 
+### QR Code Generator logic
+- Added `generateQrCodeDataUrl` as a pure async function in `lib/qr-code-generator.ts`.
+- Used the existing `qrcode` package to generate PNG data URLs.
+- Added typed input and result objects for QR value, size, error correction level, generated data URL, and errors.
+- Validated empty input, clamped QR size to a safe range, and restricted error correction levels to `L`, `M`, `Q`, and `H`.
+- Added Vitest coverage for valid text generation, empty input, size below minimum, size above maximum, valid error correction levels, and invalid error correction level handling.
+- Kept the work logic-only; no UI, app route, tool registry entry, backend, database, auth, AdSense, or external API calls were added.
+- Verified with `npm run test:run` and `npm run lint`.
+
 ## 2026-05-14
 
 ### Vitest setup
