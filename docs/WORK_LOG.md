@@ -54,6 +54,15 @@
 - Kept the implementation browser-only with no backend, database, auth, AdSense, or external API calls.
 - Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
 
+### Unix Timestamp Converter logic
+- Added the Unix Timestamp Converter feature spec, test cases, and QA checklist.
+- Added `timestampToDate` and `dateToTimestamp` as pure functions in `lib/unix-timestamp-converter.ts`.
+- Supported Unix timestamp conversion in both seconds and milliseconds.
+- Returned typed success and failure result objects with helpful invalid timestamp and invalid date errors.
+- Added Vitest coverage for seconds-to-date, milliseconds-to-date, date-to-seconds, date-to-milliseconds, invalid timestamp input, and invalid date input.
+- Kept the work logic-only; no UI, backend, database, auth, or external API calls were added.
+- Verified with `npm run test:run` and `npm run lint`.
+
 ## 2026-05-14
 
 ### Vitest setup
