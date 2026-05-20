@@ -103,6 +103,12 @@
 - Kept the work frontend-only with no backend, database, AdSense, individual tool logic changes, or individual tool page changes.
 - Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
 
+### AdSense ownership verification
+- Added the global `google-adsense-account` ownership verification meta tag through the App Router metadata export in `app/layout.tsx`.
+- Used the public publisher ID `ca-pub-7384886862638631`.
+- Did not add AdSense scripts, Auto Ads, manual ad slots, backend, database, or unrelated changes.
+- Verified with `npm run lint` and `npm run build`.
+
 ## 2026-05-14
 
 ### Vitest setup
