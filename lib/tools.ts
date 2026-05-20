@@ -3,7 +3,8 @@ export type ToolCategory =
   | "Generators"
   | "Calculators"
   | "Git"
-  | "Testing";
+  | "Testing"
+  | "Learning";
 
 export type Tool = {
   slug: string;
@@ -105,6 +106,15 @@ export const tools: Tool[] = [
     href: "/tools/test-case-checklist-generator",
     status: "available",
   },
+  {
+    slug: "nextjs-file-tree-visualizer",
+    title: "Next.js File Tree Visualizer",
+    description:
+      "Map App Router paths to app directory files for pages, layouts, loading UI, errors, and route handlers.",
+    category: "Learning",
+    href: "/tools/nextjs-file-tree-visualizer",
+    status: "available",
+  },
 ];
 
 export function getFeaturedTools(limit = 3) {
@@ -123,6 +133,7 @@ export function getToolsByCategory() {
       Calculators: [],
       Git: [],
       Testing: [],
+      Learning: [],
     },
   );
 }

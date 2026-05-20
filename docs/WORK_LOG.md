@@ -2,6 +2,14 @@
 
 ## 2026-05-20
 
+### Next.js File Tree Visualizer UI
+- Added the `/tools/nextjs-file-tree-visualizer` page with metadata, a client-side visualizer UI, and SEO/help content.
+- Wired the UI to the tested `generateNextjsFileTree` function.
+- Added route path input, route type selector, Generate File Tree, Copy File Tree, Clear, quick examples, normalized route output, generated file tree, explanation list, and preview output.
+- Marked Next.js File Tree Visualizer as available in `lib/tools.ts` under a Learning category.
+- Kept the implementation browser-only and educational-only; no backend, database, AI API, file creation, code execution, unrelated pages, or existing tool logic changes were added.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ### Next.js File Tree Visualizer logic
 - Added `generateNextjsFileTree` as a pure function in `lib/nextjs-file-tree-visualizer.ts`.
 - Added typed support for page, layout, loading, error, and route handler file tree generation.
