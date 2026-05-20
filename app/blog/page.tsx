@@ -1,28 +1,6 @@
+import Link from "next/link";
+import { getAllBlogPosts } from "@/lib/blog";
 import { createMetadata } from "@/lib/seo";
-
-const articles = [
-  {
-    title: "How to write better AI coding prompts",
-    description:
-      "Use context, constraints, examples, and output expectations to make coding assistants more reliable.",
-    date: "Coming soon",
-    tags: ["AI coding", "Prompts"],
-  },
-  {
-    title: "A beginner-friendly manual testing checklist",
-    description:
-      "Cover happy paths, edge cases, validation, accessibility, and regression checks before release.",
-    date: "Coming soon",
-    tags: ["Testing", "QA"],
-  },
-  {
-    title: "When to format, validate, or lint JSON",
-    description:
-      "Understand the difference between readable formatting, syntax validation, and style rules.",
-    date: "Coming soon",
-    tags: ["JSON", "Debugging"],
-  },
-];
 
 export const metadata = createMetadata({
   title: "Blog",
@@ -32,6 +10,8 @@ export const metadata = createMetadata({
 });
 
 export default function BlogPage() {
+  const articles = getAllBlogPosts();
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="max-w-3xl">
@@ -42,16 +22,18 @@ export default function BlogPage() {
           Developer guides and articles
         </h1>
         <p className="mt-5 text-lg leading-8 text-slate-600">
-          The blog will publish focused guides for using developer utilities,
-          improving AI-assisted coding workflows, and planning better tests.
+          Read focused guides for using developer utilities, improving
+          AI-assisted coding workflows, and understanding common development
+          concepts.
         </p>
       </div>
 
       <div className="mt-10 grid gap-4 md:grid-cols-3">
         {articles.map((article) => (
-          <article
-            key={article.title}
-            className="rounded-lg border border-slate-200 bg-white p-6"
+          <Link
+            key={article.slug}
+            href={`/blog/${article.slug}`}
+            className="rounded-lg border border-slate-200 bg-white p-6 transition hover:border-emerald-300 hover:shadow-sm"
           >
             <p className="text-sm font-medium text-slate-500">{article.date}</p>
             <h2 className="mt-3 text-xl font-semibold text-slate-950">
@@ -70,7 +52,7 @@ export default function BlogPage() {
                 </span>
               ))}
             </div>
-          </article>
+          </Link>
         ))}
       </div>
     </div>

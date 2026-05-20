@@ -2,6 +2,16 @@
 
 ## 2026-05-20
 
+### Markdown blog system and first articles
+- Added a markdown-backed blog content system under `content/blog`.
+- Added the first five SEO articles: JSON formatting, README generation, AI coding prompts, beginner Git commands, and Unix timestamps.
+- Added `lib/blog.ts` to read frontmatter and markdown content from local files.
+- Updated `/blog` to list real articles with dates, descriptions, tags, and links.
+- Added static blog detail pages at `/blog/[slug]` with metadata, generated static params, and a simple markdown renderer.
+- Updated `app/sitemap.ts` to include blog post URLs.
+- Kept the implementation static and file-based; no database, CMS, backend, AI API, AdSense placements, or tool logic changes were added.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ### SEO metadata routes
 - Added `app/sitemap.ts` using the App Router metadata route convention.
 - Added `app/robots.ts` using the App Router metadata route convention.

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { getAllBlogPosts } from "@/lib/blog";
 import { tools } from "@/lib/tools";
 
 const fallbackSiteUrl = "https://devtoolbox-ai-murex.vercel.app";
@@ -28,8 +29,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const availableToolPaths = tools
     .filter((tool) => tool.status === "available")
     .map((tool) => tool.href);
+  const blogPostPaths = getAllBlogPosts().map((post) => `/blog/${post.slug}`);
 
-  const paths = ["/", "/tools", ...availableToolPaths, "/blog"];
+  const paths = ["/", "/tools", ...availableToolPaths, "/blog", ...blogPostPaths];
 
   return paths.map((path) =>
     createSitemapEntry(path, lastModified, path === "/" ? 1 : 0.8),
