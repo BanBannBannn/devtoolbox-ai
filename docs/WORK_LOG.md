@@ -71,6 +71,11 @@
 - Kept the implementation browser-only with no backend, database, auth, AdSense, or external API calls.
 - Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
 
+### QR Code Generator docs
+- Added the QR Code Generator feature spec, test cases, and QA checklist.
+- Documented client-side text/URL QR generation, size selection, error correction level selection, PNG download, clear action, mobile support, and SEO/help content requirements.
+- Kept the work documentation-only; no UI, app route, tool registry entry, backend, database, auth, AdSense, or implementation code was added.
+
 ## 2026-05-14
 
 ### Vitest setup
