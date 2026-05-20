@@ -2,6 +2,15 @@
 
 ## 2026-05-20
 
+### Next.js Code Demo Lab logic
+- Added typed lesson data in `lib/nextjs-code-demo-lab.ts` for the initial seven predefined Next.js and React lessons.
+- Added `CodeDemoLesson`, `CodeDemoLessonId`, and `PreviewType` types.
+- Added `getAllCodeDemoLessons`, `getCodeDemoLessonById`, and `getDefaultCodeDemoLesson` pure lookup helpers.
+- Added fixed code snippets, explanations, common mistakes, change explanations, and live or simulated preview types for each lesson.
+- Added Vitest coverage for lesson count, default lesson, lookup by ID, invalid ID handling, required fields, non-empty code, valid preview types, and no `eval` or `Function` constructor usage in snippets.
+- Kept the work logic-only; no UI, app pages, tool registry entry, backend, database, AI API, Sandpack, arbitrary code execution, or user-provided code execution was added.
+- Verified with `npm run test:run` and `npm run lint`.
+
 ### Next.js Code Demo Lab docs
 - Added the Next.js Code Demo Lab feature spec, test cases, and QA checklist.
 - Documented a client-side educational lab for predefined Next.js and React lessons with fixed code snippets, explanations, common mistakes, change notes, and live or simulated previews.
