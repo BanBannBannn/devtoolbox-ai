@@ -37,6 +37,15 @@
 - Kept the implementation browser-only with no backend, database, auth, JWT generator, JWT signing, JWT verification, AdSense, or external API calls.
 - Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
 
+### Date Calculator logic
+- Added the Date Calculator feature spec, test cases, and QA checklist.
+- Added pure date helpers in `lib/date-calculator.ts` for adding days, months, years, and calculating days between dates.
+- Used strict `YYYY-MM-DD` parsing and UTC date math to avoid timezone drift.
+- Added clear errors for invalid dates and non-whole number offsets.
+- Added Vitest coverage for adding 30 days, subtracting days, adding months, adding years, days between dates, and invalid date input.
+- Kept the work logic-only; no UI, backend, database, auth, or external API calls were added.
+- Verified with `npm run test:run` and `npm run lint`.
+
 ## 2026-05-14
 
 ### Vitest setup
