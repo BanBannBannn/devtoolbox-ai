@@ -29,6 +29,15 @@ export const tools: Tool[] = [
     status: "available",
   },
   {
+    slug: "uuid-generator",
+    title: "UUID Generator",
+    description:
+      "Generate one or more UUID v4 strings with lowercase or uppercase output.",
+    category: "Generators",
+    href: "/tools/uuid-generator",
+    status: "available",
+  },
+  {
     slug: "ai-coding-prompt-generator",
     title: "AI Coding Prompt Generator",
     description:

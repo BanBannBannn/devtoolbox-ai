@@ -11,6 +11,14 @@
 - Kept the work logic-only; no UI, backend, database, auth, or additional tools were added.
 - Verified with `npm run test:run` and `npm run lint`.
 
+### UUID Generator UI
+- Added the `/tools/uuid-generator` page with metadata, a client-side UUID generator UI, and SEO/help content.
+- Wired the UI to the tested `generateUuidV4List` function.
+- Added count input, uppercase checkbox, Generate UUIDs, Copy All, Clear, readable output, and helpful copy/status messages.
+- Marked UUID Generator as available in `lib/tools.ts`.
+- Kept the implementation browser-only with no backend, database, auth, AdSense, or external API calls.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ## 2026-05-14
 
 ### Vitest setup
