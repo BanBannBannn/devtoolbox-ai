@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AdSenseScript } from "@/components/adsense-script";
+import { Chatbox } from "@/components/chatbox";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { defaultMetadata } from "@/lib/seo";
@@ -25,6 +26,7 @@ export default function RootLayout({
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />
+        <Chatbox />
       </body>
     </html>
   );

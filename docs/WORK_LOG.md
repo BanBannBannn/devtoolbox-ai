@@ -2,6 +2,13 @@
 
 ## 2026-05-20
 
+### AI Chatbox UI
+- Added `components/chatbox.tsx` as a gated client-side bottom-right chat widget.
+- Wired the chatbox into `app/layout.tsx` so it can render globally when `NEXT_PUBLIC_CHAT_ENABLED` is `"true"`.
+- Added open, close, send, clear, loading, error, mobile-friendly layout, frontend `1000` character input limit, and conversation trimming before POSTing to `/api/chat`.
+- Kept the frontend from accessing `OPENROUTER_API_KEY` or calling OpenRouter directly.
+- Did not add manual ad slots, database, persistent chat history, markdown rendering, tool logic changes, or AdSense script changes.
+
 ### AI Chatbox backend logic
 - Added a POST-only App Router chat API route at `app/api/chat/route.ts`.
 - Added `lib/chat-context.ts` to build the DevToolBox AI assistant system prompt from the current tool list.
