@@ -19,6 +19,16 @@
 - Kept the implementation browser-only with no backend, database, auth, AdSense, or external API calls.
 - Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
 
+### JWT Decoder logic
+- Added the JWT Decoder feature spec, test cases, and QA checklist.
+- Added `decodeJwt` as a pure function in `lib/jwt-decoder.ts`.
+- Added typed success and failure result objects for decoded header, payload, signature, timestamps, and errors.
+- Decoded Base64URL JWT header and payload safely without verifying signatures.
+- Extracted `exp`, `iat`, and `nbf` timestamp claims when present.
+- Added Vitest coverage for valid JWT decoding, empty input, malformed tokens, invalid Base64URL or JSON, and timestamp extraction.
+- Kept the work logic-only; no UI, backend, database, auth, JWT signing, JWT generation, or external API calls were added.
+- Verified with `npm run test:run` and `npm run lint`.
+
 ## 2026-05-14
 
 ### Vitest setup
