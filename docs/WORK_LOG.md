@@ -2,6 +2,13 @@
 
 ## 2026-05-20
 
+### AI Chatbox docs
+- Added the AI Chatbox feature spec, test cases, and QA checklist.
+- Documented a global bottom-right chat widget backed by `/api/chat`, with OpenRouter used only from the server.
+- Captured the required model, environment variables, server-only API key boundary, request validation, input limits, JSON errors, and no-history requirements.
+- Documented assistant behavior requirements, including tool-list context, concise practical replies, unsupported feature handling, and no claims of command, file, or private data access.
+- Kept the work documentation-only; no API route, chatbox component, layout changes, environment file changes, backend calls, or OpenRouter calls were added.
+
 ### UUID Generator logic
 - Added the UUID Generator feature spec, test cases, and QA checklist.
 - Added `generateUuidV4List` as a pure function in `lib/uuid-generator.ts`.
