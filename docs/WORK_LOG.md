@@ -2,6 +2,14 @@
 
 ## 2026-05-20
 
+### AI Chatbox backend logic
+- Added a POST-only App Router chat API route at `app/api/chat/route.ts`.
+- Added `lib/chat-context.ts` to build the DevToolBox AI assistant system prompt from the current tool list.
+- Added `lib/chat-validation.ts` with typed request validation for message arrays, supported roles, non-empty content, a maximum of `10` conversation messages, and user messages up to `1000` characters.
+- Added Vitest coverage for valid chat bodies, missing messages, empty content, overlong user messages, too many messages, unsupported roles, and conversations without user messages.
+- Updated `.env.example` with the OpenRouter and chat feature flag variables.
+- Kept the work backend-only; no chatbox UI, layout wiring, database, auth, streaming, history persistence, or direct browser-to-OpenRouter call was added.
+
 ### AI Chatbox docs
 - Added the AI Chatbox feature spec, test cases, and QA checklist.
 - Documented a global bottom-right chat widget backed by `/api/chat`, with OpenRouter used only from the server.
