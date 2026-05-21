@@ -2,6 +2,15 @@
 
 ## 2026-05-21
 
+### Phase 1 auth dashboard planning
+- Added Phase 1 planning docs for Supabase Auth + Dashboard Shell under `docs/RAG`.
+- Documented the goal of adding login, signup, logout, and a protected `/dashboard` while keeping all public tools accessible without login.
+- Specified `@supabase/ssr` for Next.js App Router integration and the required public Supabase env variables.
+- Documented dashboard placeholder cards for Documents, Usage, RAG Chat, and Settings, with clear later-phase empty states.
+- Captured security boundaries: server-side session reads where possible, no trusted client user IDs or emails, no client service role key, and no auth token logging.
+- Added task breakdown and QA checklist for signup, login, logout, protected dashboard behavior, public route regression, missing env behavior, and mobile layout.
+- Kept the work documentation-only; no Supabase clients, API routes, dashboard pages, dependencies, database tables, vectorization, RAG chat, or existing tool page changes were added.
+
 ### RAG planning documentation polish
 - Clarified that future Supabase integration should use `@supabase/ssr` for Next.js App Router auth and session handling.
 - Clarified that database changes should be migration-first or captured in checked-in SQL scripts.
