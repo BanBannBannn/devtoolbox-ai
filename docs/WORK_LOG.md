@@ -1,5 +1,29 @@
 # Work Log
 
+## 2026-05-21
+
+### RAG planning documentation polish
+- Clarified that future Supabase integration should use `@supabase/ssr` for Next.js App Router auth and session handling.
+- Clarified that database changes should be migration-first or captured in checked-in SQL scripts.
+- Added explicit embedding model and vector dimension decision points before implementing vector storage.
+- Documented that changing embedding models may require re-vectorizing documents and tracking chunk embedding models.
+- Added an optional future `document_vector_jobs` table for vectorization progress, retries, and provider failure tracking.
+- Added a RAG API response contract with `answer`, `sources`, `usage`, and `retrievalDetails`.
+- Clarified that anonymous public chat and authenticated RAG chat need separate quota and rate-limit handling.
+- Clarified that public chat can remain disabled by default if abuse or cost risk is high.
+- Reinforced that retrieval details are source/search diagnostics, not model chain-of-thought.
+- Kept the work documentation-only; no Supabase clients, API routes, dashboard pages, dependencies, existing tool pages, or runtime code were added.
+
+### User-based RAG platform planning
+- Added planning documentation under `docs/RAG` for evolving DevToolBox AI from a public tools website into a user-based RAG platform.
+- Documented the product vision, target users, MVP scope, out-of-scope items, user stories, and success metrics.
+- Documented a Supabase-first architecture for auth, database, storage if needed, and vector search, with OpenRouter used server-side for LLM and embedding providers.
+- Documented proposed database tables for profiles, documents, document chunks, chat sessions, chat messages, plan limits, usage events, and app config.
+- Documented dynamic free-plan limits, quota checking flow, usage event design, and why each limit exists.
+- Documented security requirements for API keys, Supabase auth, Row Level Security, document privacy, prompt injection, retrieval details, and hidden chain-of-thought boundaries.
+- Documented a phased roadmap from docs through auth, dashboard, documents CRUD, usage limits, vectorization, RAG chat, global chatbox upgrade, and later file uploads.
+- Kept the work planning-only; no Supabase client, API routes, dashboard pages, dependencies, existing tool pages, or runtime code were added.
+
 ## 2026-05-20
 
 ### Markdown blog system and first articles
