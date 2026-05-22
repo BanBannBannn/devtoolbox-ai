@@ -6,10 +6,11 @@
 - [ ] Default embedding model is `nvidia/llama-nemotron-embed-vl-1b-v2:free`.
 - [ ] Later RAG LLM model is read from `RAG_LLM_MODEL`.
 - [ ] Default later RAG LLM model is `nvidia/nemotron-3-super-120b-a12b:free`.
-- [ ] Vector dimension is confirmed by a preflight embedding request.
-- [ ] `RAG_EMBEDDING_DIMENSION` is set after the preflight request.
-- [ ] Vector distance metric is selected.
-- [ ] SQL placeholders are replaced before applying SQL.
+- [ ] Vector dimension is confirmed as `2048`.
+- [ ] `RAG_EMBEDDING_DIMENSION=2048` is set.
+- [ ] Vector distance metric is cosine distance for v1.
+- [ ] SQL uses `embedding vector(2048)`.
+- [ ] Future RPC placeholder uses `query_embedding vector(2048)`.
 - [ ] Team understands that changing embedding models may require re-vectorizing documents.
 
 ## Database Setup
@@ -24,7 +25,7 @@
 - [ ] Index on `user_id` exists.
 - [ ] Index on `document_id` exists.
 - [ ] Unique index on `(document_id, chunk_index)` exists.
-- [ ] Vector index is created after dimension/model is decided.
+- [ ] Vector index uses cosine operator class when enabled.
 
 ## API Auth And Ownership
 - [ ] Logged-out user cannot call `POST /api/documents/[id]/vectorize`.

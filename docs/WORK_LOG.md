@@ -2,6 +2,23 @@
 
 ## 2026-05-22
 
+### Phase 4 confirmed embedding dimension docs
+- Updated Phase 4 vectorization docs now that the OpenRouter embedding dimension is confirmed as `2048`.
+- Updated `.env.example` to set `RAG_EMBEDDING_DIMENSION=2048`.
+- Updated the Phase 4 SQL planning template to use valid pgvector syntax: `embedding vector(2048)`.
+- Updated the future RPC placeholder to use `query_embedding vector(2048)`.
+- Set cosine distance as the v1 vector distance metric in the Phase 4 docs.
+- Removed placeholder wording around `<2048>` while keeping the privacy warning for the free OpenRouter model and the note that changing embedding models may require re-vectorizing documents.
+- Kept the work documentation/config-only; no vectorization implementation, API routes, SQL execution, `document_chunks` table creation, public tool changes, or provider calls were added.
+
+### Phase 4 embedding dimension preflight utility
+- Added a local-only OpenRouter embedding dimension preflight script at `scripts/check-embedding-dimension.mjs`.
+- Added `npm run rag:check-embedding-dimension` to call the OpenRouter embeddings endpoint with a tiny non-sensitive test input.
+- The script reads `OPENROUTER_API_KEY` and `RAG_EMBEDDING_MODEL`, defaults to `nvidia/llama-nemotron-embed-vl-1b-v2:free`, prints the selected model, embedding dimension, and first 5 embedding values only.
+- The script avoids printing the API key, full embedding, private document content, or user content.
+- Updated `.env.example` with `RAG_EMBEDDING_MODEL`, `RAG_LLM_MODEL`, and `RAG_EMBEDDING_DIMENSION`.
+- Kept the work scoped to a local/server-only preflight utility; no API routes, SQL execution, `document_chunks` table, vectorization, public tool changes, or dependencies were added.
+
 ### Phase 4 OpenRouter model configuration docs
 - Updated Phase 4 vectorization docs with the selected OpenRouter embedding model `nvidia/llama-nemotron-embed-vl-1b-v2:free`.
 - Documented the later RAG chat LLM model `nvidia/nemotron-3-super-120b-a12b:free`.

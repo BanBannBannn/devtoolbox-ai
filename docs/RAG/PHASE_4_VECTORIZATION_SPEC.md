@@ -16,34 +16,34 @@ Selected configuration:
 - Later RAG LLM model env: `RAG_LLM_MODEL`
 - Default later RAG LLM model: `nvidia/nemotron-3-super-120b-a12b:free`
 - Embedding dimension env: `RAG_EMBEDDING_DIMENSION`
+- Confirmed embedding dimension: `2048`
 - OpenRouter key env: `OPENROUTER_API_KEY`
-- Distance metric: `TBD`, likely cosine distance
+- Distance metric: cosine distance for v1
 
 Required environment variables:
 
 - `OPENROUTER_API_KEY=`
 - `RAG_EMBEDDING_MODEL=nvidia/llama-nemotron-embed-vl-1b-v2:free`
 - `RAG_LLM_MODEL=nvidia/nemotron-3-super-120b-a12b:free`
-- `RAG_EMBEDDING_DIMENSION=`
+- `RAG_EMBEDDING_DIMENSION=2048`
 
 Model names should come from environment variables first. Later, non-secret model configuration can move to `app_config`, but secrets must never be stored in `app_config`.
 
 Do not hardcode model names directly inside API logic. API logic should read config from a small server-only config helper.
 
-## Remaining Blocking Embedding Decision
-The embedding model has been selected, but the vector dimension is not confirmed yet. Do not guess the dimension.
+## Confirmed Embedding Dimension
+The embedding model dimension has been confirmed as `2048` by OpenRouter preflight.
 
-Before creating the final `document_chunks.embedding` vector column, implementation must:
+Phase 4 implementation should use:
 
-1. Make a server-side preflight embedding request through OpenRouter.
-2. Inspect `embedding.length`.
-3. Set `RAG_EMBEDDING_DIMENSION` to that exact value.
-4. Replace the SQL placeholder with that exact value.
-5. Re-review vector index and RPC placeholders.
+- `RAG_EMBEDDING_DIMENSION=2048`
+- `document_chunks.embedding vector(2048)`
+- Future query embeddings as `vector(2048)`
+- Cosine distance for v1 vector comparisons
 
-Why this blocks implementation:
+Why this matters:
 
-- `document_chunks.embedding vector(...)` must match the embedding output dimension.
+- `document_chunks.embedding vector(2048)` must match the embedding output dimension.
 - Vector indexes depend on the vector column dimension and distance metric.
 - Supabase RPC function signatures depend on the selected vector dimension.
 - Test fixtures and provider response validation depend on the model shape.
@@ -111,7 +111,7 @@ Fields:
 - `content text`
 - `character_count integer`
 - `token_estimate integer`
-- `embedding vector(...)`
+- `embedding vector(2048)`
 - `embedding_model text`
 - `source_title text`
 - `source_anchor text nullable`
@@ -253,7 +253,7 @@ If the provider fails after the job starts, the event may remain recorded becaus
 ## Acceptance Criteria
 - `OPENROUTER_API_KEY` is server-side only.
 - Embedding and LLM model names are loaded from env/config, not hardcoded directly in API logic.
-- `RAG_EMBEDDING_DIMENSION` is confirmed by a preflight embedding request before SQL is applied.
+- `RAG_EMBEDDING_DIMENSION=2048` is configured before vectorization is enabled.
 - `document_chunks` table exists with RLS enabled.
 - Logged-out users cannot vectorize documents.
 - Users can vectorize their own documents.

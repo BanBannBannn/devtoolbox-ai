@@ -1,26 +1,24 @@
 # Phase 4 Document Vectorization SQL
 
-This SQL is planning-only. Do not run it until the embedding dimension and distance metric are confirmed.
+This SQL is planning-only. The embedding dimension is confirmed as `2048`, and v1 uses cosine distance.
 
-Replace every `<RAG_EMBEDDING_DIMENSION>` placeholder with the exact dimension returned by a server-side OpenRouter preflight embedding request.
+Do not run this SQL until you are ready to create the `document_chunks` table in Supabase.
 
-## Blocking Values
+## Confirmed Values
 - Embedding provider: `OpenRouter`
 - Embedding model: `nvidia/llama-nemotron-embed-vl-1b-v2:free`
 - Later RAG LLM model: `nvidia/nemotron-3-super-120b-a12b:free`
-- Vector dimension: `<RAG_EMBEDDING_DIMENSION>`
-- Distance metric: `TBD`, likely cosine distance
+- Vector dimension: `2048`
+- Distance metric: cosine distance for v1
 
 Changing the embedding model later may require re-vectorizing existing documents and rebuilding vector indexes.
-
-Do not guess the vector dimension. Before applying this SQL, implementation must run a preflight embedding request, inspect `embedding.length`, set `RAG_EMBEDDING_DIMENSION`, and update this SQL.
 
 ## SQL Template
 
 ```sql
 -- Phase 4: Document Vectorization
 -- Planning SQL only.
--- Replace <RAG_EMBEDDING_DIMENSION> before running this SQL.
+-- Uses confirmed OpenRouter embedding dimension 2048.
 
 create extension if not exists vector;
 create extension if not exists pgcrypto;
@@ -33,7 +31,7 @@ create table if not exists public.document_chunks (
   content text not null check (char_length(content) > 0),
   character_count integer not null check (character_count = char_length(content)),
   token_estimate integer not null check (token_estimate >= 0),
-  embedding vector(<RAG_EMBEDDING_DIMENSION>) not null,
+  embedding vector(2048) not null,
   embedding_model text not null,
   source_title text not null,
   source_anchor text,
@@ -66,8 +64,8 @@ create index if not exists document_chunks_user_document_idx
 on public.document_chunks (user_id, document_id);
 
 -- Vector index placeholder.
--- Choose the index type and operator class after confirming the distance metric.
--- Example for cosine distance with ivfflat:
+-- Use the cosine operator class for v1.
+-- Example with ivfflat:
 --
 -- create index if not exists document_chunks_embedding_cosine_idx
 -- on public.document_chunks
@@ -83,10 +81,10 @@ on public.document_chunks (user_id, document_id);
 The match RPC is expected in Phase 5 for RAG retrieval. Keep it as a placeholder until question embedding and retrieval are implemented.
 
 ```sql
--- Placeholder only. Replace <RAG_EMBEDDING_DIMENSION> and review before Phase 5.
+-- Placeholder only. Review before Phase 5.
 --
 -- create or replace function public.match_document_chunks(
---   query_embedding vector(<RAG_EMBEDDING_DIMENSION>),
+--   query_embedding vector(2048),
 --   match_user_id uuid,
 --   match_count integer
 -- )

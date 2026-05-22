@@ -7,28 +7,25 @@ Implement private document vectorization for saved text/Markdown documents after
 - Use OpenRouter as the embedding provider.
 - Use `RAG_EMBEDDING_MODEL`, defaulting to `nvidia/llama-nemotron-embed-vl-1b-v2:free`.
 - Use `RAG_LLM_MODEL`, defaulting to `nvidia/nemotron-3-super-120b-a12b:free`, for later RAG chat.
-- Confirm the embedding vector dimension.
-- Choose the vector distance metric after confirming provider output shape.
+- Use confirmed embedding vector dimension `2048`.
+- Use cosine distance for v1.
 - Use `OPENROUTER_API_KEY` server-side only.
 - Do not use a separate NVIDIA API key.
 - Do not use `NEXT_PUBLIC_OPENROUTER_API_KEY`.
 
-Do not apply the vector SQL until `RAG_EMBEDDING_DIMENSION` is confirmed.
+Do not apply the vector SQL unless `RAG_EMBEDDING_DIMENSION=2048` is configured in the target environment.
 
-## 0.1. Preflight Embedding Dimension
-Before creating the final vector column:
+## 0.1. Confirmed Embedding Dimension
+The OpenRouter preflight has confirmed:
 
-1. Add a temporary server-only preflight script or route handler helper during implementation.
-2. Call OpenRouter with a tiny test string using `RAG_EMBEDDING_MODEL`.
-3. Inspect `embedding.length`.
-4. Set `RAG_EMBEDDING_DIMENSION` to that exact number.
-5. Update `docs/RAG/PHASE_4_VECTORIZATION_SQL.md` by replacing `<RAG_EMBEDDING_DIMENSION>`.
-6. Remove or lock down any temporary preflight endpoint before deploy.
+- `RAG_EMBEDDING_DIMENSION=2048`
+- SQL vector column: `embedding vector(2048)`
+- Future query embedding argument: `query_embedding vector(2048)`
 
-Do not guess the dimension from memory or unrelated model docs.
+Keep `scripts/check-embedding-dimension.mjs` available as a local sanity check if the embedding model changes later.
 
 ## 1. Apply Database SQL
-- Update `docs/RAG/PHASE_4_VECTORIZATION_SQL.md` by replacing all dimension placeholders.
+- Review `docs/RAG/PHASE_4_VECTORIZATION_SQL.md` with `vector(2048)`.
 - Apply the SQL through Supabase SQL Editor or convert it into the repo migration flow.
 - Confirm `vector` extension is enabled.
 - Confirm `document_chunks` exists.
@@ -42,7 +39,7 @@ Document or update environment variables:
 - `OPENROUTER_API_KEY`
 - `RAG_EMBEDDING_MODEL=nvidia/llama-nemotron-embed-vl-1b-v2:free`
 - `RAG_LLM_MODEL=nvidia/nemotron-3-super-120b-a12b:free`
-- `RAG_EMBEDDING_DIMENSION`
+- `RAG_EMBEDDING_DIMENSION=2048`
 
 Rules:
 
