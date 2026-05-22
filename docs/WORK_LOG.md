@@ -1,6 +1,38 @@
 # Work Log
 
+## 2026-05-22
+
+### Header authentication UI polish
+- Updated the global header logged-out state to show only one Login button while keeping the existing main navigation links.
+- Added a compact circular logged-in user menu in the header instead of showing Dashboard and Sign out directly.
+- Added `components/auth/user-menu.tsx` with Google avatar support from Supabase metadata, email initials fallback, and a generic user icon fallback.
+- Added a dropdown menu with the signed-in email, Dashboard link, and Sign out action.
+- Updated the logout button with a menu variant for the dropdown.
+- Kept signup available through `/login` and `/signup`, and did not remove the `/signup` page.
+- Kept the work scoped to auth UI only; no Supabase auth logic changes, documents CRUD, vectorization, RAG, tool logic changes, AdSense changes, sitemap changes, robots changes, or blog changes were added.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ## 2026-05-21
+
+### Phase 1 authentication UX polish
+- Updated the global header to show Login and Sign up for logged-out users, and Dashboard plus Sign out for logged-in users.
+- Added Google OAuth buttons to `/login` and `/signup` using Supabase `signInWithOAuth` with the `google` provider.
+- Added `/auth/callback` to exchange OAuth codes through Supabase and redirect safely to `/dashboard`.
+- Improved signup copy to explain that email confirmation depends on Supabase project settings and to keep duplicate-email style errors generic.
+- Kept email/password login and signup working through Supabase server actions.
+- Kept auth limited to public Supabase URL and anon key; no service role key, database tables, documents CRUD, vectorization, RAG chat, public tool logic changes, AdSense changes, sitemap changes, robots changes, or blog changes were added.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
+### Phase 1 Supabase auth dashboard shell
+- Implemented Phase 1 Supabase Auth + Dashboard Shell.
+- Added `@supabase/ssr` App Router helpers for browser and server Supabase clients using only the public Supabase URL and anon key.
+- Added Next.js `proxy.ts` route protection and session refresh for `/dashboard`, `/login`, and `/signup` using the Next 16 Proxy convention.
+- Added `/login` and `/signup` pages with email/password Supabase auth forms, user-safe errors, missing-env handling, and links between auth pages.
+- Added protected `/dashboard` with server-side user verification, logout, and placeholder cards for Documents, Usage, RAG Chat, and Settings.
+- Added a logout server action component that signs out through Supabase and redirects to `/login`.
+- Updated `.env.example` with `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+- Kept Phase 1 scoped to auth and dashboard shell only; no documents CRUD, vectorization, RAG chat, database tables, service role key, OpenRouter changes, existing tool logic changes, AdSense changes, sitemap changes, robots changes, or blog changes were added.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
 
 ### Phase 1 auth dashboard planning
 - Added Phase 1 planning docs for Supabase Auth + Dashboard Shell under `docs/RAG`.
