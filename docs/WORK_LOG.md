@@ -2,6 +2,25 @@
 
 ## 2026-05-22
 
+### Phase 4 OpenRouter model configuration docs
+- Updated Phase 4 vectorization docs with the selected OpenRouter embedding model `nvidia/llama-nemotron-embed-vl-1b-v2:free`.
+- Documented the later RAG chat LLM model `nvidia/nemotron-3-super-120b-a12b:free`.
+- Added required environment variables: `OPENROUTER_API_KEY`, `RAG_EMBEDDING_MODEL`, `RAG_LLM_MODEL`, and `RAG_EMBEDDING_DIMENSION`.
+- Clarified that `OPENROUTER_API_KEY` is server-side only, must not use `NEXT_PUBLIC_OPENROUTER_API_KEY`, and all embedding/LLM calls must go through server-side Next.js API routes.
+- Clarified that model names should come from env first, may later move to non-secret `app_config`, and should not be hardcoded directly in API logic.
+- Kept embedding dimension as the remaining blocker; implementation must run a preflight embedding request, inspect `embedding.length`, set `RAG_EMBEDDING_DIMENSION`, and update SQL before creating `document_chunks`.
+- Added free-model privacy warnings for OpenRouter free endpoints and QA checks for missing env vars, client bundle key exposure, and privacy-warning display.
+- Kept the work documentation-only; no API routes, `document_chunks` table, SQL execution, vectorization logic, public tool changes, dependencies, or provider calls were added.
+
+### Phase 4 document vectorization planning
+- Added Phase 4 Document Vectorization planning docs under `docs/RAG`.
+- Documented the goal of vectorizing saved text/Markdown documents into private Supabase `pgvector` chunks for future RAG chat.
+- Added a Phase 4 spec covering the blocking embedding provider/model/dimension decision, vectorization flow, chunking requirements, API response contract, document status transitions, quota enforcement, usage event policy, and security boundaries.
+- Added an implementation task breakdown for embedding model selection, SQL setup, chunking logic, server-only embedding provider wrapper, vectorization data access, `POST /api/documents/[id]/vectorize`, dashboard document UI updates, tests, and QA.
+- Added a QA checklist covering embedding decisions, database setup, auth and ownership, quota enforcement, chunking, status transitions, privacy, and scope boundaries.
+- Added a SQL template for `pgvector`, `document_chunks`, RLS, indexes, vector index placeholder, and a Phase 5 `match_document_chunks` RPC placeholder.
+- Kept the work documentation-only; no app code, API routes, provider calls, vector tables, RAG chat, file upload, PDF/DOCX parsing, payments, teams/workspaces, service role key, public tool changes, or database execution were added.
+
 ### Phase 3 usage limits implementation
 - Implemented database-driven Phase 3 usage limits for authenticated dashboard users.
 - Added server-side usage helpers for profile creation fallback, active plan limit loading, UTC monthly period calculation, saved document count checks, document length checks, and current-period usage summaries.
