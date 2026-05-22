@@ -1,4 +1,5 @@
-import { BookText, Gauge, MessageSquareText, Settings } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, BookText, Gauge, MessageSquareText, Settings } from "lucide-react";
 import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { createMetadata } from "@/lib/seo";
@@ -11,26 +12,31 @@ const dashboardCards = [
   {
     title: "Documents",
     description:
-      "Create and manage text or Markdown documents in Phase 2. Document CRUD is not active yet.",
+      "Create and manage private text or Markdown documents.",
     icon: BookText,
+    href: "/dashboard/documents",
+    cta: "Open documents",
   },
   {
     title: "Usage",
     description:
       "View monthly limits and quota usage in Phase 3. Usage tracking is coming later.",
     icon: Gauge,
+    cta: "Coming in a later phase",
   },
   {
     title: "RAG Chat",
     description:
       "Chat with your vectorized knowledge base in Phase 5 and Phase 6. RAG chat is not active yet.",
     icon: MessageSquareText,
+    cta: "Coming in a later phase",
   },
   {
     title: "Settings",
     description:
       "Manage account and platform preferences in a later phase. Settings are a placeholder for now.",
     icon: Settings,
+    cta: "Coming in a later phase",
   },
 ];
 
@@ -85,11 +91,8 @@ export default async function DashboardPage() {
         {dashboardCards.map((card) => {
           const Icon = card.icon;
 
-          return (
-            <article
-              key={card.title}
-              className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
-            >
+          const cardContent = (
+            <>
               <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
                 <Icon aria-hidden="true" className="h-5 w-5" />
               </div>
@@ -99,9 +102,31 @@ export default async function DashboardPage() {
               <p className="mt-3 text-sm leading-6 text-slate-600">
                 {card.description}
               </p>
-              <p className="mt-5 inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
-                Coming in a later phase
+              <p className="mt-5 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                {card.cta}
+                {card.href ? <ArrowRight aria-hidden="true" className="h-3 w-3" /> : null}
               </p>
+            </>
+          );
+
+          if (card.href) {
+            return (
+              <Link
+                key={card.title}
+                href={card.href}
+                className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
+              >
+                {cardContent}
+              </Link>
+            );
+          }
+
+          return (
+            <article
+              key={card.title}
+              className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+            >
+              {cardContent}
             </article>
           );
         })}

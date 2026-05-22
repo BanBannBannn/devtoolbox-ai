@@ -2,6 +2,17 @@
 
 ## 2026-05-22
 
+### Phase 2 documents CRUD implementation
+- Implemented Phase 2 Documents CRUD for logged-in users.
+- Added server-side document types, validation, temporary `20,000` character limit, Supabase data access helpers, and server actions.
+- Added `/dashboard/documents`, `/dashboard/documents/new`, and `/dashboard/documents/[id]` routes for listing, creating, viewing, editing, and deleting owned documents.
+- Added document UI components for character count, vector status badge, shared create/edit form, and delete confirmation.
+- Updated the dashboard Documents card to link to the documents list while Usage, RAG Chat, and Settings remain later-phase placeholders.
+- Ensured document writes derive `user_id` from the authenticated Supabase session and always send `character_count = content.length`.
+- Reset vector metadata to `not_vectorized`, `vectorized_at = null`, and `last_vectorize_error = null` when content changes.
+- Kept Phase 2 scoped to text/Markdown document CRUD only; no vectorization, `document_chunks`, RAG chat, file upload, PDF/DOCX parsing, dynamic `plan_limits`, service role key, tool logic changes, blog changes, sitemap changes, robots changes, or AdSense changes were added.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ### Phase 2 documents CRUD planning
 - Added Phase 2 Documents CRUD planning docs under `docs/RAG`.
 - Documented the goal of allowing logged-in users to create, list, view, edit, and delete their own text or Markdown documents.
