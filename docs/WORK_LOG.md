@@ -2,6 +2,15 @@
 
 ## 2026-05-22
 
+### Phase 3 usage limits planning
+- Added Phase 3 Usage Limits planning docs under `docs/RAG`.
+- Documented the goal of replacing Phase 2 temporary document limits with database-driven `plan_limits`.
+- Added a Phase 3 spec covering `profiles`, `plan_limits`, `usage_events`, default `free` plan behavior, UTC monthly periods, usage dashboard expectations, security boundaries, and acceptance criteria.
+- Added an implementation task breakdown for SQL setup, server-side limit helpers, Documents CRUD limit enforcement, usage dashboard UI, tests, and QA.
+- Added a QA checklist covering free plan setup, profile creation, plan resolution, document limit enforcement, usage display, dashboard protection, RLS, and public route regression.
+- Added copyable Supabase SQL for `profiles`, `plan_limits`, `usage_events`, free plan seed data, auth-trigger profile creation, backfill, RLS policies, and indexes.
+- Kept the work documentation-only; no app code, Supabase client changes, API routes, vectorization, document chunks, RAG chat, payments, teams, public tool changes, or database execution were added.
+
 ### Phase 2 documents CRUD implementation
 - Implemented Phase 2 Documents CRUD for logged-in users.
 - Added server-side document types, validation, temporary `20,000` character limit, Supabase data access helpers, and server actions.
