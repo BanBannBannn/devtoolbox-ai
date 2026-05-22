@@ -2,6 +2,15 @@
 
 ## 2026-05-22
 
+### Phase 2 documents CRUD planning
+- Added Phase 2 Documents CRUD planning docs under `docs/RAG`.
+- Documented the goal of allowing logged-in users to create, list, view, edit, and delete their own text or Markdown documents.
+- Added a Phase 2 spec covering protected dashboard routes, document fields, ownership rules, UI requirements, temporary document length limits, validation, and out-of-scope items.
+- Added an implementation task breakdown for Supabase SQL, server-side data access, documents list/new/edit pages, dashboard navigation, tests, checks, and work log updates.
+- Added a QA checklist covering logged-out access, create/edit/delete flows, cross-user security, character count, empty state, mobile layout, and public route regressions.
+- Added copyable Supabase SQL for the `documents` table, `updated_at` trigger, RLS policies, and indexes.
+- Kept the work documentation-only; no app code, database execution, document chunks, vectorization, RAG chat, file upload, dynamic `plan_limits`, or public tool changes were added.
+
 ### Header authentication UI polish
 - Updated the global header logged-out state to show only one Login button while keeping the existing main navigation links.
 - Added a compact circular logged-in user menu in the header instead of showing Dashboard and Sign out directly.
