@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { DocumentForm } from "@/components/documents/document-form";
 import { createDocumentAction } from "@/app/dashboard/documents/actions";
-import { getDocumentErrorMessage, requireAuthenticatedSupabase } from "@/lib/documents";
+import { getDocumentErrorMessage } from "@/lib/documents";
 import { createMetadata } from "@/lib/seo";
+import { getCurrentUserProfileAndPlan } from "@/lib/usage/plan-limits";
 
 type NewDocumentPageProps = {
   searchParams: Promise<{
@@ -19,10 +20,30 @@ export const metadata = createMetadata({
 export default async function NewDocumentPage({
   searchParams,
 }: NewDocumentPageProps) {
-  await requireAuthenticatedSupabase();
+  const usageResult = await getCurrentUserProfileAndPlan();
 
   const params = await searchParams;
-  const errorMessage = getDocumentErrorMessage(params.error);
+
+  if (!usageResult.success) {
+    return (
+      <div className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+        <Link
+          href="/dashboard/documents"
+          className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+        >
+          Back to documents
+        </Link>
+        <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-6 text-sm font-medium text-red-800">
+          {usageResult.error}
+        </div>
+      </div>
+    );
+  }
+
+  const errorMessage = getDocumentErrorMessage(
+    params.error,
+    usageResult.planLimits.max_document_characters,
+  );
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
@@ -44,6 +65,7 @@ export default async function NewDocumentPage({
           <DocumentForm
             action={createDocumentAction}
             submitLabel="Create document"
+            maxDocumentCharacters={usageResult.planLimits.max_document_characters}
             errorMessage={errorMessage}
           />
         </div>

@@ -2,6 +2,17 @@
 
 ## 2026-05-22
 
+### Phase 3 usage limits implementation
+- Implemented database-driven Phase 3 usage limits for authenticated dashboard users.
+- Added server-side usage helpers for profile creation fallback, active plan limit loading, UTC monthly period calculation, saved document count checks, document length checks, and current-period usage summaries.
+- Added pure usage calculation tests for period starts, saved document limits, document character limits, and usage event aggregation.
+- Added `/dashboard/usage` to show the current plan, document count, RAG message usage, vectorize job usage, document character limit, chunk limits, retrieval limit, and output token limit.
+- Updated the dashboard Usage card to link to the new usage page.
+- Updated Documents CRUD to create a missing profile server-side, load active `plan_limits`, enforce `max_saved_documents` on create, and enforce `max_document_characters` on create and edit.
+- Updated the document form character counter to use the database-loaded document character limit instead of the Phase 2 temporary constant.
+- Kept Phase 3 scoped to usage limits only; no vectorization, `document_chunks`, RAG chat, file upload, payments, teams/workspaces, service role key, public tool logic changes, blog changes, sitemap changes, robots changes, or AdSense changes were added.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ### Phase 3 usage limits planning
 - Added Phase 3 Usage Limits planning docs under `docs/RAG`.
 - Documented the goal of replacing Phase 2 temporary document limits with database-driven `plan_limits`.

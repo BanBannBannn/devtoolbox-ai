@@ -20,9 +20,10 @@ const dashboardCards = [
   {
     title: "Usage",
     description:
-      "View monthly limits and quota usage in Phase 3. Usage tracking is coming later.",
+      "View your current plan limits, saved document capacity, and monthly usage counters.",
     icon: Gauge,
-    cta: "Coming in a later phase",
+    href: "/dashboard/usage",
+    cta: "Open usage",
   },
   {
     title: "RAG Chat",

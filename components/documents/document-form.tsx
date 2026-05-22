@@ -2,10 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import {
-  TEMP_MAX_DOCUMENT_CHARACTERS,
-  type DocumentContentType,
-} from "@/lib/document-types";
+import type { DocumentContentType } from "@/lib/document-types";
 
 type DocumentFormProps = {
   action: (formData: FormData) => void;
@@ -13,6 +10,7 @@ type DocumentFormProps = {
   content?: string;
   contentType?: DocumentContentType;
   submitLabel: string;
+  maxDocumentCharacters: number;
   errorMessage?: string;
   successMessage?: string;
 };
@@ -23,13 +21,14 @@ export function DocumentForm({
   content = "",
   contentType = "markdown",
   submitLabel,
+  maxDocumentCharacters,
   errorMessage,
   successMessage,
 }: DocumentFormProps) {
   const [currentContent, setCurrentContent] = useState(content);
   const remainingCharacters = useMemo(
-    () => TEMP_MAX_DOCUMENT_CHARACTERS - currentContent.length,
-    [currentContent],
+    () => maxDocumentCharacters - currentContent.length,
+    [currentContent, maxDocumentCharacters],
   );
   const isOverLimit = remainingCharacters < 0;
 
@@ -90,7 +89,7 @@ export function DocumentForm({
             className={`text-sm ${isOverLimit ? "font-semibold text-red-700" : "text-slate-500"}`}
           >
             {currentContent.length.toLocaleString()} /{" "}
-            {TEMP_MAX_DOCUMENT_CHARACTERS.toLocaleString()} characters
+            {maxDocumentCharacters.toLocaleString()} characters
           </p>
         </div>
         <textarea

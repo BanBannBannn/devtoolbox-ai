@@ -1,10 +1,15 @@
 import { redirect } from "next/navigation";
 import {
-  TEMP_MAX_DOCUMENT_CHARACTERS,
   type DocumentInput,
   type DocumentRow,
 } from "@/lib/document-types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import {
+  checkDocumentCountLimit,
+  checkMaxDocumentLength,
+  getCurrentUserProfileAndPlan,
+  getSavedDocumentCount,
+} from "@/lib/usage/plan-limits";
 
 export type DocumentActionResult =
   | {
@@ -21,6 +26,8 @@ export type DocumentActionResult =
         | "invalid_title"
         | "invalid_content"
         | "content_too_long"
+        | "document_limit_reached"
+        | "usage_config_failed"
         | "save_failed"
         | "delete_failed";
     };
@@ -42,6 +49,7 @@ export function getDocumentInputFromFormData(formData: FormData): DocumentInput 
 
 export function validateDocumentInput(
   input: DocumentInput,
+  maxDocumentCharacters: number,
 ): DocumentActionResult | null {
   const title = input.title.trim();
   const content = input.content.trim();
@@ -62,11 +70,11 @@ export function validateDocumentInput(
     };
   }
 
-  if (input.content.length > TEMP_MAX_DOCUMENT_CHARACTERS) {
+  if (!checkMaxDocumentLength(input.content.length, maxDocumentCharacters)) {
     return {
       success: false,
       code: "content_too_long",
-      error: `Document content must be ${TEMP_MAX_DOCUMENT_CHARACTERS.toLocaleString()} characters or fewer.`,
+      error: `Document content must be ${maxDocumentCharacters.toLocaleString()} characters or fewer.`,
     };
   }
 
@@ -138,13 +146,50 @@ export async function getDocumentForCurrentUser(id: string) {
 export async function createDocumentForCurrentUser(
   input: DocumentInput,
 ): Promise<DocumentActionResult> {
-  const invalidResult = validateDocumentInput(input);
+  const usageResult = await getCurrentUserProfileAndPlan();
+
+  if (!usageResult.success) {
+    return {
+      success: false,
+      code: "usage_config_failed",
+      error: usageResult.error,
+    };
+  }
+
+  const invalidResult = validateDocumentInput(
+    input,
+    usageResult.planLimits.max_document_characters,
+  );
 
   if (invalidResult) {
     return invalidResult;
   }
 
-  const { supabase, userId } = await requireAuthenticatedSupabase();
+  const { supabase, user } = usageResult;
+  const userId = user.id;
+  const documentCount = await getSavedDocumentCount(supabase, userId);
+
+  if (documentCount === null) {
+    return {
+      success: false,
+      code: "usage_config_failed",
+      error: "Could not check your document usage. Please try again.",
+    };
+  }
+
+  if (
+    !checkDocumentCountLimit(
+      documentCount,
+      usageResult.planLimits.max_saved_documents,
+    )
+  ) {
+    return {
+      success: false,
+      code: "document_limit_reached",
+      error: `Your plan allows ${usageResult.planLimits.max_saved_documents.toLocaleString()} saved documents. Delete a document before creating another one.`,
+    };
+  }
+
   const normalizedInput = normalizeDocumentInput(input);
   const characterCount = normalizedInput.content.length;
 
@@ -181,13 +226,27 @@ export async function updateDocumentForCurrentUser(
   id: string,
   input: DocumentInput,
 ): Promise<DocumentActionResult> {
-  const invalidResult = validateDocumentInput(input);
+  const usageResult = await getCurrentUserProfileAndPlan();
+
+  if (!usageResult.success) {
+    return {
+      success: false,
+      code: "usage_config_failed",
+      error: usageResult.error,
+    };
+  }
+
+  const invalidResult = validateDocumentInput(
+    input,
+    usageResult.planLimits.max_document_characters,
+  );
 
   if (invalidResult) {
     return invalidResult;
   }
 
-  const { supabase, userId } = await requireAuthenticatedSupabase();
+  const { supabase, user } = usageResult;
+  const userId = user.id;
   const existingDocument = await getDocumentForCurrentUser(id);
 
   if (!existingDocument) {
@@ -262,14 +321,21 @@ export async function deleteDocumentForCurrentUser(
   };
 }
 
-export function getDocumentErrorMessage(code?: string) {
+export function getDocumentErrorMessage(
+  code?: string,
+  maxDocumentCharacters?: number,
+) {
   switch (code) {
     case "invalid_title":
       return "Add a document title before saving.";
     case "invalid_content":
       return "Add document content before saving.";
     case "content_too_long":
-      return `Document content must be ${TEMP_MAX_DOCUMENT_CHARACTERS.toLocaleString()} characters or fewer.`;
+      return `Document content must be ${maxDocumentCharacters?.toLocaleString() ?? "the allowed number of"} characters or fewer.`;
+    case "document_limit_reached":
+      return "You have reached your saved document limit. Delete a document before creating another one.";
+    case "usage_config_failed":
+      return "Usage limits could not be loaded. Please try again later.";
     case "save_failed":
       return "Could not save the document. Please try again.";
     case "delete_failed":

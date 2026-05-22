@@ -1,5 +1,3 @@
-export const TEMP_MAX_DOCUMENT_CHARACTERS = 20000;
-
 export type DocumentContentType = "markdown" | "text";
 export type DocumentVectorStatus =
   | "not_vectorized"
