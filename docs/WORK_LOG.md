@@ -1,5 +1,15 @@
 # Work Log
 
+## 2026-05-25
+
+### Phase 4A text chunking logic
+- Implemented pure text chunking logic for Phase 4A in `lib/rag/chunk-text.ts`.
+- Added typed `ChunkTextInput`, `TextChunk`, and `ChunkTextResult` shapes.
+- Added `chunkTextForEmbedding` with line ending normalization, outer whitespace trimming, default `1000` character chunks, default `150` character overlap, stable source anchors, token estimates, max chunk enforcement, and validation for empty text and invalid chunk settings.
+- Added Vitest coverage for short text, long text, overlap preservation, empty text rejection, empty chunk avoidance, max chunk enforcement, chunk indexes, source anchors, token estimates, and invalid overlap rejection.
+- Kept Phase 4A scoped to pure logic only; no OpenRouter calls, Supabase calls, API routes, vectorization, dashboard UI, backend changes, service role key, or public tool changes were added.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ## 2026-05-22
 
 ### Phase 4 confirmed embedding dimension docs
