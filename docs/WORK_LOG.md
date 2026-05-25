@@ -2,6 +2,15 @@
 
 ## 2026-05-25
 
+### Phase 4D dashboard vectorization UI
+- Added a dashboard document vectorization control for `/dashboard/documents/[id]`.
+- Added `components/rag/vectorize-document-button.tsx` as a client component that calls only the internal `POST /api/documents/[id]/vectorize` route.
+- The document detail page now shows the current vector status near the vectorize action and keeps the existing edit/delete flows intact.
+- Added button states for first-time vectorization, re-vectorization, retry after failure, and in-progress loading.
+- Added success and failure messages using the API response, and refreshes the page after successful vectorization so the server-rendered status updates.
+- Added the visible OpenRouter free-model privacy warning before users click vectorize.
+- Kept Phase 4D scoped to dashboard UI only; no API behavior changes, RAG chat, file upload, streaming, payment behavior, public tool changes, API key exposure, or service-role browser exposure were added.
+
 ### Phase 4C document vectorization API route
 - Added `POST /api/documents/[id]/vectorize` for authenticated document vectorization.
 - Added server-side vectorization orchestration in `lib/rag/vectorize-document.ts`.

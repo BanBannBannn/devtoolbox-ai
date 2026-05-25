@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { DeleteDocumentForm } from "@/components/documents/delete-document-form";
 import { DocumentForm } from "@/components/documents/document-form";
 import { DocumentStatusBadge } from "@/components/documents/document-status-badge";
+import { VectorizeDocumentButton } from "@/components/rag/vectorize-document-button";
 import {
   deleteDocumentAction,
   updateDocumentAction,
@@ -108,6 +109,13 @@ export default async function EditDocumentPage({
             maxDocumentCharacters={usageResult.planLimits.max_document_characters}
             errorMessage={errorMessage}
             successMessage={successMessage}
+          />
+        </div>
+
+        <div className="mt-8 border-t border-slate-200 pt-6">
+          <VectorizeDocumentButton
+            documentId={document.id}
+            initialStatus={document.vector_status}
           />
         </div>
 
