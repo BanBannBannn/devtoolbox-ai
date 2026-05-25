@@ -57,6 +57,22 @@ Create a pure chunking module, for example:
 - `lib/rag/chunk-text.ts`
 - `lib/rag/chunk-text.test.ts`
 
+Use the production v1 chunking defaults:
+
+- `chunkSize: 1200`
+- `chunkOverlap: 150`
+
+The chunking strategy should be deterministic and markdown/paragraph-aware:
+
+- Normalize line endings to `\n`.
+- Keep fenced code blocks together when possible.
+- Start markdown headings as new sections.
+- Keep headings with their following paragraph, list, or code block when possible.
+- Keep paragraphs and consecutive list items together when possible.
+- Pack logical blocks into chunks until the next block would exceed `chunkSize`.
+- Split oversized single blocks by characters with overlap.
+- Add light overlap without duplicating an entire previous chunk.
+
 Suggested types:
 
 - `ChunkTextInput`
@@ -70,13 +86,21 @@ Suggested function:
 Tests:
 
 - Short text creates one chunk.
-- Long text creates multiple chunks.
-- Overlap is preserved.
+- Paragraphs are not split when under `chunkSize`.
+- Markdown heading stays with following paragraph when possible.
+- Heading starts a new section when the previous chunk is already large.
+- List block stays together when possible.
+- Fenced code block stays together when possible.
+- Long paragraph falls back to character splitting with overlap.
+- Long code block falls back safely if it exceeds `chunkSize`.
+- Overlap is preserved and does not duplicate an entire previous chunk.
 - Empty text is rejected.
 - Empty chunks are not returned.
 - Max chunk count is enforced.
 - Chunk indexes are stable.
 - Source anchors are stable.
+
+After this chunking improvement, already-vectorized documents should be re-vectorized to use the new chunk boundaries.
 
 ## 4. Add Embedding Provider Wrapper
 Create a server-only embedding helper, for example:

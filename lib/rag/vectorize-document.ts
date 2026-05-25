@@ -177,8 +177,6 @@ async function vectorizeOwnedDocument({
   const chunkResult = chunkTextForEmbedding({
     text: document.content,
     sourceTitle: document.title,
-    chunkSize: 1000,
-    chunkOverlap: 150,
     maxChunks: planLimits.max_chunks_per_document,
   });
 

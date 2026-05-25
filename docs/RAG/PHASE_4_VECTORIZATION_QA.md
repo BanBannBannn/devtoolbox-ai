@@ -4,6 +4,7 @@
 - Status: ready to close.
 - Manual QA completed on 2026-05-25.
 - Scope confirmed: Phase 4 added document vectorization only. RAG chat, file upload, streaming, payment behavior, and public tool changes remain out of scope.
+- Chunking strategy was later improved to deterministic markdown/paragraph-aware chunks with `1200` character chunks and `150` character overlap. Documents vectorized before that change should be re-vectorized.
 
 ## Completed Manual QA
 - [x] Logged-in user can create and open a document.
@@ -72,7 +73,15 @@
 ## Chunking
 - [ ] Short text creates one chunk.
 - [ ] Long text creates multiple ordered chunks.
+- [ ] Paragraphs are not split when they fit under `chunkSize`.
+- [ ] Markdown headings stay with their following paragraph, list, or code block when possible.
+- [ ] Headings start a new section when the previous chunk is already large.
+- [ ] Consecutive list items stay together when possible.
+- [ ] Fenced code blocks stay together when possible.
+- [ ] Oversized paragraphs fall back to character splitting with overlap.
+- [ ] Oversized code blocks fall back safely when they exceed `chunkSize`.
 - [ ] Overlap works as expected.
+- [ ] Overlap does not duplicate an entire previous chunk.
 - [ ] Empty text is rejected.
 - [ ] Empty chunks are not inserted.
 - [ ] Chunk indexes start at `0` and remain stable.

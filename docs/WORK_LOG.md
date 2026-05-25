@@ -2,6 +2,16 @@
 
 ## 2026-05-25
 
+### Phase 4 chunking strategy improvement
+- Upgraded `chunkTextForEmbedding` from simple fixed-window splitting to deterministic markdown/paragraph-aware chunking.
+- Updated the default chunk size from `1000` to `1200` characters while keeping `150` characters of overlap.
+- The chunker now preserves logical blocks where possible, including fenced code blocks, markdown headings with following content, paragraphs, and consecutive list items.
+- Oversized single blocks still fall back to deterministic character splitting with overlap.
+- Kept the public chunking API compatible, including `chunkIndex`, `content`, `characterCount`, `tokenEstimate`, `sourceTitle`, and stable `sourceAnchor` values like `chunk-0`.
+- Updated vectorization to use the chunker defaults so future vectorization uses the improved chunk boundaries.
+- Expanded chunking tests for markdown block behavior, overlap behavior, validation, stable indexes, stable anchors, token estimates, and empty chunk avoidance.
+- Updated Phase 4 docs to describe the production v1 chunking strategy and noted that already-vectorized documents should be re-vectorized to use the improved chunking.
+
 ### Phase 4 document vectorization closeout
 - Documented completed manual QA for Phase 4 Document Vectorization.
 - Confirmed logged-in document creation/opening, visible privacy warning, internal vectorization API call, successful `vectorized` status update, Supabase `document_chunks` creation, re-vectorization chunk replacement, `vectorize_job` usage tracking, no API key exposure in API responses, and public tools remaining available without login.

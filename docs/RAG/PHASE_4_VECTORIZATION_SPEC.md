@@ -184,11 +184,13 @@ If any provider or database write fails after status becomes `vectorizing`, upda
 ## Chunking Requirements
 Create a pure text chunking function.
 
-Suggested v1 defaults:
+Production v1 defaults:
 
-- Chunk size: `1000` characters.
+- Chunk size: `1200` characters.
 - Overlap: `150` characters.
 - Token estimate: simple approximation such as `Math.ceil(characterCount / 4)` until tokenizer support is chosen.
+
+Phase 4 uses a deterministic markdown/paragraph-aware strategy instead of a simple fixed sliding window. This keeps chunks cheaper than LLM-based semantic chunking while producing better retrieval units for common Markdown documents.
 
 Rules:
 
@@ -196,7 +198,19 @@ Rules:
 - Avoid empty chunks.
 - Preserve source title.
 - Add stable `source_anchor` values such as `chunk-0`, `chunk-1`.
-- Normalize line endings if needed.
+- Normalize line endings to `\n`.
+- Trim outer document whitespace.
+- Split input into logical blocks before packing chunks.
+- Keep fenced code blocks together when possible.
+- Start markdown headings as new sections.
+- Keep headings with the following paragraph, list, or code block when possible.
+- Treat paragraphs separated by blank lines as logical blocks.
+- Keep consecutive list items together as one list block when possible.
+- Build chunks by combining logical blocks until adding the next block would exceed `chunkSize`.
+- Prefer clean markdown/paragraph boundaries over exact chunk size.
+- Add light overlap between chunks using the tail of the previous chunk.
+- Do not let overlap create empty chunks or duplicate an entire previous chunk.
+- If one logical block is larger than `chunkSize`, split that block by characters using `chunkSize` and `chunkOverlap`.
 - Do not execute or parse user content as code.
 - Reject empty text.
 - Return clear errors when max chunk count would be exceeded.
@@ -204,11 +218,20 @@ Rules:
 Tests should cover:
 
 - Short text.
-- Long text.
+- Paragraph preservation.
+- Heading and following block preservation.
+- Heading starts a new section when the previous chunk is already large.
+- List block preservation.
+- Fenced code block preservation.
+- Long paragraph fallback splitting.
+- Long code block fallback splitting.
 - Overlap behavior.
+- Overlap does not duplicate an entire previous chunk.
 - Empty text.
 - Max chunk behavior.
 - Chunk indexes and anchors.
+
+Documents vectorized before this improved strategy should be re-vectorized to regenerate chunks with the markdown/paragraph-aware defaults.
 
 ## Status Behavior
 Document vector status values:
