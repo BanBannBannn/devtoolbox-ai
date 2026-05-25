@@ -2,6 +2,15 @@
 
 ## 2026-05-25
 
+### Phase 4B OpenRouter embedding provider wrapper
+- Implemented a server-side OpenRouter embedding wrapper in `lib/rag/embedding-provider.ts`.
+- Added `getRagEmbeddingConfig` to validate `OPENROUTER_API_KEY`, `RAG_EMBEDDING_MODEL`, `RAG_EMBEDDING_DIMENSION`, and optional `NEXT_PUBLIC_SITE_URL`.
+- Added `generateEmbedding` to call the OpenRouter embeddings endpoint with text input, request float embeddings, validate response shape, validate numeric vectors, and enforce the configured embedding dimension.
+- Returned typed success/error results with user-safe errors and no raw provider payloads or API keys.
+- Added mocked Vitest coverage for missing config, empty input, successful provider responses, wrong dimensions, invalid response shape, non-OK provider responses, and API key redaction from errors.
+- Kept Phase 4B scoped to the provider wrapper only; no vectorization API route, Supabase writes, `document_chunks` inserts, dashboard UI, RAG chat, public tool changes, service role key, or direct NVIDIA API calls were added.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ### Phase 4A text chunking logic
 - Implemented pure text chunking logic for Phase 4A in `lib/rag/chunk-text.ts`.
 - Added typed `ChunkTextInput`, `TextChunk`, and `ChunkTextResult` shapes.
