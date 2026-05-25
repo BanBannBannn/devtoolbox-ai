@@ -2,6 +2,16 @@
 
 ## 2026-05-25
 
+### Phase 4C document vectorization API route
+- Added `POST /api/documents/[id]/vectorize` for authenticated document vectorization.
+- Added server-side vectorization orchestration in `lib/rag/vectorize-document.ts`.
+- The route authenticates with the normal Supabase server client, loads only owned documents, ensures profile/plan limits, checks monthly vectorize quota, checks document length, chunks content, checks replacement chunk totals, updates vector status, generates embeddings, replaces old chunks, records `vectorize_job`, and returns typed JSON.
+- Added a Supabase service-role server client for `document_chunks` writes/deletes only after normal auth and ownership checks.
+- Added `SUPABASE_SERVICE_ROLE_KEY` to `.env.example` as a server-only variable.
+- Added pure helper tests for replacement chunk totals, vectorize quota checks, max chunk total checks, and user-safe error mapping.
+- Kept Phase 4C scoped to the API/data path only; no dashboard UI, RAG chat, public tool changes, SQL changes, or service-role browser exposure were added.
+- Verified with `npm run test:run`, `npm run lint`, and `npm run build`.
+
 ### Phase 4B OpenRouter embedding provider wrapper
 - Implemented a server-side OpenRouter embedding wrapper in `lib/rag/embedding-provider.ts`.
 - Added `getRagEmbeddingConfig` to validate `OPENROUTER_API_KEY`, `RAG_EMBEDDING_MODEL`, `RAG_EMBEDDING_DIMENSION`, and optional `NEXT_PUBLIC_SITE_URL`.
