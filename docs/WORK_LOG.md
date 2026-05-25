@@ -2,6 +2,17 @@
 
 ## 2026-05-25
 
+### Phase 5 RAG Chat API planning
+- Added Phase 5 RAG Chat API planning docs under `docs/RAG`.
+- Documented `POST /api/rag/chat` for authenticated user-owned document retrieval and OpenRouter answer generation.
+- Added the response contract with `answer`, `sources`, `usage`, and `retrievalDetails`.
+- Clarified that `retrievalDetails` are retrieval diagnostics, not model chain-of-thought.
+- Documented query validation, question embedding with the Phase 4 embedding model, user-filtered vector retrieval, prompt injection protection, RAG message quota enforcement, max retrieved chunks, max output tokens, safe logging, and secret handling.
+- Added a Phase 5 task breakdown for SQL review, validation helpers, LLM provider wrapper, prompt builder, retrieval helpers, usage helpers, API route implementation, prompt injection review, tests, and manual QA.
+- Added a Phase 5 QA checklist covering auth, ownership, validation, embedding, retrieval, LLM answers, prompt injection, usage limits, retrieval details, secrets/logging, and public route regression.
+- Added a reviewed `match_document_chunks` SQL plan using `vector(2048)`, cosine distance, and `auth.uid()` internally as the recommended Option A.
+- Kept the work documentation-only; no runtime code, app routes, SQL execution, dependencies, Phase 4 behavior, public tools, or UI were changed.
+
 ### Phase 4 chunking strategy improvement
 - Upgraded `chunkTextForEmbedding` from simple fixed-window splitting to deterministic markdown/paragraph-aware chunking.
 - Updated the default chunk size from `1000` to `1200` characters while keeping `150` characters of overlap.
