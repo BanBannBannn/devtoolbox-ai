@@ -1,5 +1,23 @@
 # Phase 4 Document Vectorization QA Checklist
 
+## Phase 4 Closeout Status
+- Status: ready to close.
+- Manual QA completed on 2026-05-25.
+- Scope confirmed: Phase 4 added document vectorization only. RAG chat, file upload, streaming, payment behavior, and public tool changes remain out of scope.
+
+## Completed Manual QA
+- [x] Logged-in user can create and open a document.
+- [x] Privacy warning appears before vectorization.
+- [x] Logged-in user can click `Vectorize document`.
+- [x] Browser calls the internal API route `POST /api/documents/[id]/vectorize`.
+- [x] Successful vectorization updates document status to `vectorized`.
+- [x] `document_chunks` rows are created in Supabase.
+- [x] Re-vectorization works and replaces old chunks instead of duplicating forever.
+- [x] `usage_events` records `vectorize_job`.
+- [x] API response does not expose `OPENROUTER_API_KEY`.
+- [x] API response does not expose `SUPABASE_SERVICE_ROLE_KEY`.
+- [x] Public tools still work without login.
+
 ## Blocking Decisions
 - [ ] Embedding provider is OpenRouter.
 - [ ] Embedding model is read from `RAG_EMBEDDING_MODEL`.

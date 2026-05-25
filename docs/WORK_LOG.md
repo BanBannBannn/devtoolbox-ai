@@ -2,6 +2,12 @@
 
 ## 2026-05-25
 
+### Phase 4 document vectorization closeout
+- Documented completed manual QA for Phase 4 Document Vectorization.
+- Confirmed logged-in document creation/opening, visible privacy warning, internal vectorization API call, successful `vectorized` status update, Supabase `document_chunks` creation, re-vectorization chunk replacement, `vectorize_job` usage tracking, no API key exposure in API responses, and public tools remaining available without login.
+- Marked Phase 4 as ready to close in the Phase 4 QA checklist.
+- Kept the work documentation-only; no app code, vectorization behavior, SQL, RAG chat, new features, public tools, file upload, streaming, or payment behavior were changed.
+
 ### Phase 4D dashboard vectorization UI
 - Added a dashboard document vectorization control for `/dashboard/documents/[id]`.
 - Added `components/rag/vectorize-document-button.tsx` as a client component that calls only the internal `POST /api/documents/[id]/vectorize` route.
