@@ -1,7 +1,7 @@
 # Phase 5C-1 RAG Runtime Settings Tasks
 
 ## Goal
-Plan a safe RAG runtime settings layer and future admin page without implementing runtime code yet.
+Implement a safe server-side RAG runtime settings reader and keep the future admin page plan documented.
 
 ## 1. Review Current RAG Contract
 - Confirm `POST /api/rag/chat` does not expose exact model names.
@@ -59,8 +59,8 @@ Tests should cover:
 - whitespace trimming.
 - non-admin rejection.
 
-## 5. Future Runtime Settings Helper
-Create pure helpers later:
+## 5. Runtime Settings Helper
+Create pure helpers:
 
 - default settings.
 - safe range definitions.
@@ -87,6 +87,8 @@ Tests should cover:
 - max output tokens cannot exceed plan cap.
 - invalid JSON values fall back safely.
 
+The server-side DB reader may use the service role client for `app_config` because the table is intentionally private and has no direct browser policies. This read path must remain server-only.
+
 ## 6. Future Admin UI
 Planned route:
 
@@ -102,8 +104,7 @@ UI should:
 - save settings through a server-side checked action/route.
 - avoid model-name exposure.
 
-## 7. Future RAG API Integration
-After settings helpers exist:
+## 7. RAG API Integration
 
 - load runtime settings server-side in `POST /api/rag/chat`.
 - use effective `retrievedChunks` for RPC match count.
@@ -111,7 +112,7 @@ After settings helpers exist:
 - use effective `maxOutputTokens` for OpenRouter.
 - use `temperature` for OpenRouter.
 - use `sourceSnippetLength` for response snippets.
-- include safe retrieval diagnostics only when appropriate.
+- include safe retrieval diagnostics only.
 - do not expose model names, API keys, prompts, full chunks, raw embeddings, or provider payloads.
 
 ## Stop Conditions

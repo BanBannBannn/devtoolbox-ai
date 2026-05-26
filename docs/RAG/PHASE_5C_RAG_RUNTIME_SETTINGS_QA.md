@@ -4,8 +4,8 @@
 - [ ] Planning docs are created.
 - [ ] SQL planning doc is created.
 - [ ] `.env.example` includes server-only admin/settings variables.
-- [ ] No runtime code is implemented.
-- [ ] RAG API behavior is unchanged.
+- [ ] Server-side runtime config reader is implemented.
+- [ ] RAG API uses effective runtime settings.
 - [ ] Dashboard admin UI is not implemented yet.
 - [ ] Public tools are unchanged.
 - [ ] SQL is not run from this task.
@@ -45,6 +45,17 @@
 - [ ] `retrievedChunks` cannot exceed `plan_limits.retrieved_chunks_per_answer`.
 - [ ] `maxOutputTokens` cannot exceed `plan_limits.max_output_tokens`.
 
+## RAG API Runtime Behavior
+- [ ] `retrievedChunks` is used as the RPC `match_count`.
+- [ ] `similarityThreshold` filters low-similarity chunks after retrieval.
+- [ ] `maxOutputTokens` is passed to the OpenRouter LLM request.
+- [ ] `temperature` is passed to the OpenRouter LLM request.
+- [ ] `sourceSnippetLength` controls source and retrieval detail snippet length.
+- [ ] Invalid DB config values fall back safely or clamp without crashing the API.
+- [ ] Server env overrides are server-only and also clamped.
+- [ ] Usage response includes counts only, not model names.
+- [ ] Retrieval details may include `similarityThreshold` and `debugRetrievalEnabled`.
+
 ## Admin Access
 - [ ] `RAG_ADMIN_EMAILS` is server-only.
 - [ ] No `NEXT_PUBLIC_RAG_ADMIN_EMAILS` exists.
@@ -60,6 +71,7 @@
 - [ ] Runtime config does not expose API keys.
 - [ ] Runtime config does not expose exact model names to the client.
 - [ ] RAG responses continue to hide model names.
+- [ ] RAG responses do not expose raw runtime DB JSON.
 - [ ] Retrieval details remain safe diagnostics only.
 - [ ] `debugRetrieval` never exposes chain-of-thought.
 - [ ] `debugRetrieval` never exposes full prompts.

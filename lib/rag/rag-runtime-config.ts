@@ -1,0 +1,231 @@
+import { createServiceRoleSupabaseClient } from "../supabase/server";
+
+export type RagRuntimeSettings = {
+  retrievedChunks: number;
+  similarityThreshold: number;
+  maxOutputTokens: number;
+  temperature: number;
+  sourceSnippetLength: number;
+  debugRetrieval: boolean;
+};
+
+export type RagRuntimePlanCaps = {
+  retrieved_chunks_per_answer: number;
+  max_output_tokens: number;
+};
+
+type RuntimeSettingKey = keyof RagRuntimeSettings;
+
+const DEFAULT_RUNTIME_SETTINGS: RagRuntimeSettings = {
+  retrievedChunks: 3,
+  similarityThreshold: 0,
+  maxOutputTokens: 800,
+  temperature: 0.2,
+  sourceSnippetLength: 240,
+  debugRetrieval: false,
+};
+
+const RUNTIME_RANGES = {
+  retrievedChunks: { min: 1, max: 20 },
+  similarityThreshold: { min: 0, max: 1 },
+  maxOutputTokens: { min: 100, max: 2000 },
+  temperature: { min: 0, max: 1 },
+  sourceSnippetLength: { min: 80, max: 500 },
+} satisfies Record<Exclude<RuntimeSettingKey, "debugRetrieval">, {
+  min: number;
+  max: number;
+}>;
+
+const envOverrideKeys = {
+  retrievedChunks: "RAG_RETRIEVED_CHUNKS_OVERRIDE",
+  similarityThreshold: "RAG_SIMILARITY_THRESHOLD",
+  maxOutputTokens: "RAG_MAX_OUTPUT_TOKENS_OVERRIDE",
+  temperature: "RAG_TEMPERATURE",
+  sourceSnippetLength: "RAG_SOURCE_SNIPPET_LENGTH",
+  debugRetrieval: "RAG_DEBUG_RETRIEVAL",
+} satisfies Record<RuntimeSettingKey, string>;
+
+export function resolveRagRuntimeConfig({
+  planLimits,
+  dbConfig,
+  env = process.env,
+}: {
+  planLimits: RagRuntimePlanCaps;
+  dbConfig?: unknown;
+  env?: NodeJS.ProcessEnv;
+}): RagRuntimeSettings {
+  const settings = applyPlanCaps(
+    {
+      ...DEFAULT_RUNTIME_SETTINGS,
+      maxOutputTokens: planLimits.max_output_tokens,
+    },
+    planLimits,
+  );
+
+  const dbSettings = parseRuntimeSettingsObject(dbConfig);
+  const withDbSettings = applyPlanCaps(
+    {
+      ...settings,
+      ...dbSettings,
+    },
+    planLimits,
+  );
+
+  const envSettings = parseEnvOverrides(env);
+
+  return applyPlanCaps(
+    {
+      ...withDbSettings,
+      ...envSettings,
+    },
+    planLimits,
+  );
+}
+
+export async function getStoredRagRuntimeSettings(): Promise<unknown | null> {
+  const supabase = createServiceRoleSupabaseClient();
+
+  if (!supabase) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from("app_config")
+    .select("value")
+    .eq("key", "rag_runtime_settings")
+    .maybeSingle();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return data.value;
+}
+
+export function filterChunksBySimilarity<
+  TChunk extends { similarity: number },
+>(chunks: TChunk[], similarityThreshold: number) {
+  return chunks.filter((chunk) => chunk.similarity >= similarityThreshold);
+}
+
+function parseRuntimeSettingsObject(value: unknown): Partial<RagRuntimeSettings> {
+  if (!isRecord(value)) {
+    return {};
+  }
+
+  const parsed: Partial<RagRuntimeSettings> = {};
+
+  for (const key of Object.keys(RUNTIME_RANGES) as Array<
+    keyof typeof RUNTIME_RANGES
+  >) {
+    const numericValue = parseNumber(value[key]);
+
+    if (numericValue !== null) {
+      parsed[key] = clamp(numericValue, RUNTIME_RANGES[key]);
+    }
+  }
+
+  if (typeof value.debugRetrieval === "boolean") {
+    parsed.debugRetrieval = value.debugRetrieval;
+  }
+
+  return parsed;
+}
+
+function parseEnvOverrides(env: NodeJS.ProcessEnv): Partial<RagRuntimeSettings> {
+  const parsed: Partial<RagRuntimeSettings> = {};
+
+  for (const key of Object.keys(RUNTIME_RANGES) as Array<
+    keyof typeof RUNTIME_RANGES
+  >) {
+    const rawValue = env[envOverrideKeys[key]];
+
+    if (rawValue === undefined || rawValue === "") {
+      continue;
+    }
+
+    const numericValue = parseNumber(rawValue);
+
+    if (numericValue !== null) {
+      parsed[key] = clamp(numericValue, RUNTIME_RANGES[key]);
+    }
+  }
+
+  const debugValue = env[envOverrideKeys.debugRetrieval];
+
+  if (debugValue !== undefined && debugValue !== "") {
+    parsed.debugRetrieval = parseBoolean(debugValue);
+  }
+
+  return parsed;
+}
+
+function applyPlanCaps(
+  settings: RagRuntimeSettings,
+  planLimits: RagRuntimePlanCaps,
+): RagRuntimeSettings {
+  return {
+    retrievedChunks: Math.min(
+      clamp(settings.retrievedChunks, RUNTIME_RANGES.retrievedChunks),
+      Math.max(1, planLimits.retrieved_chunks_per_answer),
+    ),
+    similarityThreshold: clamp(
+      settings.similarityThreshold,
+      RUNTIME_RANGES.similarityThreshold,
+    ),
+    maxOutputTokens: Math.min(
+      clamp(settings.maxOutputTokens, RUNTIME_RANGES.maxOutputTokens),
+      Math.max(1, planLimits.max_output_tokens),
+    ),
+    temperature: clamp(settings.temperature, RUNTIME_RANGES.temperature),
+    sourceSnippetLength: clamp(
+      settings.sourceSnippetLength,
+      RUNTIME_RANGES.sourceSnippetLength,
+    ),
+    debugRetrieval: settings.debugRetrieval,
+  };
+}
+
+function parseNumber(value: unknown) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    const numberValue = Number(value);
+
+    if (Number.isFinite(numberValue)) {
+      return numberValue;
+    }
+  }
+
+  return null;
+}
+
+function parseBoolean(value: unknown) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+
+    if (["1", "true", "yes", "on"].includes(normalized)) {
+      return true;
+    }
+
+    if (["0", "false", "no", "off"].includes(normalized)) {
+      return false;
+    }
+  }
+
+  return false;
+}
+
+function clamp(value: number, { min, max }: { min: number; max: number }) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}

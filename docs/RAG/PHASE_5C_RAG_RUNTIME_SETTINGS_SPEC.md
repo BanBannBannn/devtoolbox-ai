@@ -1,9 +1,9 @@
 # Phase 5C-1 RAG Runtime Settings Spec
 
 ## Goal
-Add a planned runtime settings layer for RAG retrieval and answer generation so an admin can tune quality-related settings without editing code every time.
+Add a runtime settings layer for RAG retrieval and answer generation so quality-related settings can be tuned without editing code every time.
 
-This phase is planning and SQL only. It does not implement runtime code, admin UI, RAG API changes, benchmarking, markdown answer formatting, dependencies, or SQL execution.
+Phase 5C-1B implements the server-side config reader and applies effective runtime settings to `POST /api/rag/chat`. It does not implement the admin UI, benchmarking, markdown answer formatting, dependencies, or SQL execution.
 
 ## Future Admin Page
 Planned route:
@@ -106,7 +106,7 @@ Initial key:
 - Runtime config must not expose API keys.
 
 ## RAG API Future Behavior
-When runtime code is implemented later:
+Runtime behavior:
 
 - Load safe defaults.
 - Load current user's plan limits.
@@ -120,11 +120,12 @@ When runtime code is implemented later:
 - Use `sourceSnippetLength` when creating source snippets and retrieval details.
 - Use `debugRetrieval` only for safe diagnostics; never expose chain-of-thought, model names, prompts, full chunks, raw embeddings, provider payloads, or secrets.
 
+The RAG API may use a server-only service role client to read `app_config` because the table is private by default and has no direct browser select policy. This service role path must stay server-only and must not be used to bypass user-owned document or chunk access. Retrieval still uses the authenticated Supabase server client and the `match_document_chunks` RPC that filters by `auth.uid()`.
+
 ## Scope Boundaries
 Out of scope:
 
 - Admin UI implementation.
-- Runtime RAG API update.
 - Benchmark tooling.
 - Answer markdown formatting.
 - Model-name exposure.

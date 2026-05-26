@@ -25,6 +25,8 @@ export type RagRetrievalDetails = {
   matchedChunkCount: number;
   similarityMetric: "cosine";
   retrievedChunks: RagRetrievalDetailsChunk[];
+  similarityThreshold?: number;
+  debugRetrievalEnabled?: boolean;
 };
 
 export type RagPromptMessages = {
@@ -47,34 +49,45 @@ export function createSafeSnippet(
   return `${normalized.slice(0, Math.max(maxLength - 3, 0)).trimEnd()}...`;
 }
 
-export function mapChunksToSources(chunks: RetrievedDocumentChunk[]) {
+export function mapChunksToSources(
+  chunks: RetrievedDocumentChunk[],
+  { snippetMaxLength = SNIPPET_MAX_LENGTH }: { snippetMaxLength?: number } = {},
+) {
   return chunks.map((chunk): RagSource => ({
     documentId: chunk.documentId,
     chunkIndex: chunk.chunkIndex,
     sourceTitle: chunk.sourceTitle,
     sourceAnchor: chunk.sourceAnchor,
-    snippet: createSafeSnippet(chunk.content),
+    snippet: createSafeSnippet(chunk.content, snippetMaxLength),
   }));
 }
 
 export function createRetrievalDetails({
   chunks,
   queryEmbedded,
+  snippetMaxLength,
+  similarityThreshold,
+  debugRetrievalEnabled,
 }: {
   chunks: RetrievedDocumentChunk[];
   queryEmbedded: boolean;
+  snippetMaxLength?: number;
+  similarityThreshold?: number;
+  debugRetrievalEnabled?: boolean;
 }): RagRetrievalDetails {
   return {
     queryEmbedded,
     matchedChunkCount: chunks.length,
     similarityMetric: "cosine",
+    similarityThreshold,
+    debugRetrievalEnabled,
     retrievedChunks: chunks.map((chunk) => ({
       documentId: chunk.documentId,
       chunkIndex: chunk.chunkIndex,
       sourceTitle: chunk.sourceTitle,
       sourceAnchor: chunk.sourceAnchor,
       similarity: chunk.similarity,
-      snippet: createSafeSnippet(chunk.content),
+      snippet: createSafeSnippet(chunk.content, snippetMaxLength),
     })),
   };
 }

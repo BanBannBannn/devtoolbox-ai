@@ -2,6 +2,16 @@
 
 ## 2026-05-26
 
+### Phase 5C-1B RAG runtime config reader
+- Added a server-side RAG runtime config helper that resolves safe defaults, `plan_limits` caps, private `app_config.rag_runtime_settings`, and server env overrides.
+- Added clamping for `retrievedChunks`, `similarityThreshold`, `maxOutputTokens`, `temperature`, `sourceSnippetLength`, and `debugRetrieval`.
+- Applied effective runtime settings to `POST /api/rag/chat`: RPC match count, post-retrieval similarity filtering, LLM max output tokens, LLM temperature, source snippets, and retrieval diagnostics.
+- Kept model names, API keys, raw embeddings, prompts, full chunks, provider payloads, and service role keys out of client-facing RAG responses.
+- Used a server-only service role read path for private `app_config` settings while preserving authenticated-user RPC retrieval for user-owned chunks.
+- Added pure Vitest coverage for defaults, DB config, invalid config clamping/fallback, env overrides, plan caps, similarity filtering, configurable snippets, and safe retrieval details.
+- Updated Phase 5C docs and QA notes to reflect the implemented server-side runtime config reader.
+- Kept the work scoped to runtime config and RAG API integration; no admin UI, benchmark, streaming, SQL execution, public tools, model-name exposure, or markdown formatting changes were added.
+
 ### Phase 5C-1 RAG runtime settings SQL re-run safety
 - Changed the `rag_runtime_settings` seed in the Phase 5C-1 SQL doc to use `on conflict (key) do nothing`.
 - Added a note that re-running the SQL must preserve admin-edited runtime settings instead of resetting them to defaults.

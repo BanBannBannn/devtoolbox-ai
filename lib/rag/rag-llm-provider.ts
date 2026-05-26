@@ -69,10 +69,12 @@ export async function generateRagAnswer({
   systemPrompt,
   userPrompt,
   maxOutputTokens,
+  temperature,
 }: {
   systemPrompt: string;
   userPrompt: string;
   maxOutputTokens: number;
+  temperature: number;
 }): Promise<GenerateRagAnswerResult> {
   const configResult = getRagLlmConfig();
   const model = configResult.success
@@ -114,7 +116,7 @@ export async function generateRagAnswer({
             content: userPrompt,
           },
         ],
-        temperature: 0.3,
+        temperature,
         max_tokens: maxOutputTokens,
       }),
     });

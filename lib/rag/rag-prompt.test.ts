@@ -46,6 +46,21 @@ describe("rag prompt helpers", () => {
     expect("embedding" in sources[0]).toBe(false);
   });
 
+  it("uses configured snippet length for sources", () => {
+    const sources = mapChunksToSources(
+      [
+        {
+          ...chunks[0],
+          content: "x".repeat(120),
+        },
+      ],
+      { snippetMaxLength: 80 },
+    );
+
+    expect(sources[0].snippet).toHaveLength(80);
+    expect(sources[0].snippet.endsWith("...")).toBe(true);
+  });
+
   it("creates retrieval details without raw embeddings or full content fields", () => {
     const details = createRetrievalDetails({
       chunks,
@@ -69,6 +84,21 @@ describe("rag prompt helpers", () => {
     expect("models" in details).toBe(false);
     expect("embeddingModel" in details).toBe(false);
     expect("llmModel" in details).toBe(false);
+  });
+
+  it("can include safe runtime retrieval settings without model names", () => {
+    const details = createRetrievalDetails({
+      chunks,
+      queryEmbedded: true,
+      snippetMaxLength: 80,
+      similarityThreshold: 0.5,
+      debugRetrievalEnabled: true,
+    });
+
+    expect(details.similarityThreshold).toBe(0.5);
+    expect(details.debugRetrievalEnabled).toBe(true);
+    expect(details.retrievedChunks[0].snippet.length).toBeLessThanOrEqual(80);
+    expect("models" in details).toBe(false);
   });
 
   it("builds a prompt that treats retrieved chunks as untrusted context", () => {

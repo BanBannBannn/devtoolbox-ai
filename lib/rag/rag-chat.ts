@@ -11,6 +11,11 @@ import {
 } from "./rag-prompt";
 import { createRagUsageSummary, type RagUsageSummary } from "./rag-response";
 import { validateRagChatRequestBody } from "./rag-chat-validation";
+import {
+  filterChunksBySimilarity,
+  getStoredRagRuntimeSettings,
+  resolveRagRuntimeConfig,
+} from "./rag-runtime-config";
 import { createServerSupabaseClient } from "../supabase/server";
 import {
   ensureProfileForCurrentUser,
@@ -85,6 +90,12 @@ export async function answerRagChatForCurrentUser(
     );
   }
 
+  const storedRuntimeSettings = await getStoredRagRuntimeSettings();
+  const runtimeConfig = resolveRagRuntimeConfig({
+    planLimits,
+    dbConfig: storedRuntimeSettings,
+  });
+
   const ragMessagesUsed = await countMonthlyRagMessages(supabase, user.id);
 
   if (ragMessagesUsed === null) {
@@ -110,26 +121,35 @@ export async function answerRagChatForCurrentUser(
   const retrievedChunks = await retrieveMatchedChunks({
     supabase,
     queryEmbedding: embeddingResult.embedding,
-    matchCount: planLimits.retrieved_chunks_per_answer,
+    matchCount: runtimeConfig.retrievedChunks,
   });
 
   if (!retrievedChunks.success) {
     return createFailure(retrievedChunks.error, 500);
   }
 
-  const sources = mapChunksToSources(retrievedChunks.chunks);
+  const filteredChunks = filterChunksBySimilarity(
+    retrievedChunks.chunks,
+    runtimeConfig.similarityThreshold,
+  );
+  const sources = mapChunksToSources(filteredChunks, {
+    snippetMaxLength: runtimeConfig.sourceSnippetLength,
+  });
   const retrievalDetails = createRetrievalDetails({
-    chunks: retrievedChunks.chunks,
+    chunks: filteredChunks,
     queryEmbedded: true,
+    snippetMaxLength: runtimeConfig.sourceSnippetLength,
+    similarityThreshold: runtimeConfig.similarityThreshold,
+    debugRetrievalEnabled: runtimeConfig.debugRetrieval,
   });
   const usage = createRagUsageSummary({
     ragMessagesUsed: ragMessagesUsed + 1,
     ragMessagesLimit: planLimits.monthly_rag_messages,
-    retrievedChunks: retrievedChunks.chunks.length,
-    maxRetrievedChunks: planLimits.retrieved_chunks_per_answer,
+    retrievedChunks: filteredChunks.length,
+    maxRetrievedChunks: runtimeConfig.retrievedChunks,
   });
 
-  if (retrievedChunks.chunks.length === 0) {
+  if (filteredChunks.length === 0) {
     return {
       success: true,
       answer:
@@ -142,12 +162,13 @@ export async function answerRagChatForCurrentUser(
 
   const prompt = createRagPromptMessages({
     message: validation.request.message,
-    chunks: retrievedChunks.chunks,
+    chunks: filteredChunks,
   });
   const answerResult = await generateRagAnswer({
     systemPrompt: prompt.system,
     userPrompt: prompt.user,
-    maxOutputTokens: planLimits.max_output_tokens,
+    maxOutputTokens: runtimeConfig.maxOutputTokens,
+    temperature: runtimeConfig.temperature,
   });
 
   if (!answerResult.success) {
