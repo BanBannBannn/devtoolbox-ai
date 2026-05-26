@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type RagSource = {
   documentId: string;
@@ -265,9 +267,7 @@ export function RagChatPanel() {
       {response ? (
         <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-950">Answer</h2>
-          <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-slate-700">
-            {response.answer}
-          </p>
+          <MarkdownAnswer content={response.answer} />
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <UsagePill
@@ -379,6 +379,64 @@ function UsagePill({ label, value }: { label: string; value: string }) {
         {label}
       </p>
       <p className="mt-1 text-sm font-semibold text-slate-950">{value}</p>
+    </div>
+  );
+}
+
+function MarkdownAnswer({ content }: { content: string }) {
+  return (
+    <div className="mt-4 rounded-md bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-700">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        skipHtml
+        components={{
+          h1: ({ children }) => (
+            <h3 className="mb-3 mt-5 text-xl font-semibold text-slate-950 first:mt-0">
+              {children}
+            </h3>
+          ),
+          h2: ({ children }) => (
+            <h3 className="mb-3 mt-5 text-lg font-semibold text-slate-950 first:mt-0">
+              {children}
+            </h3>
+          ),
+          h3: ({ children }) => (
+            <h3 className="mb-2 mt-4 text-base font-semibold text-slate-950 first:mt-0">
+              {children}
+            </h3>
+          ),
+          p: ({ children }) => <p className="my-3 first:mt-0">{children}</p>,
+          ul: ({ children }) => (
+            <ul className="my-3 list-disc space-y-1 pl-5">{children}</ul>
+          ),
+          ol: ({ children }) => (
+            <ol className="my-3 list-decimal space-y-1 pl-5">{children}</ol>
+          ),
+          li: ({ children }) => <li className="pl-1">{children}</li>,
+          strong: ({ children }) => (
+            <strong className="font-semibold text-slate-950">{children}</strong>
+          ),
+          em: ({ children }) => <em className="italic">{children}</em>,
+          code: ({ children, className }) => (
+            <code
+              className={
+                className
+                  ? `${className} font-mono text-sm text-slate-100`
+                  : "rounded bg-slate-200 px-1.5 py-0.5 font-mono text-[0.85em] text-slate-950"
+              }
+            >
+              {children}
+            </code>
+          ),
+          pre: ({ children }) => (
+            <pre className="my-4 overflow-x-auto rounded-md bg-slate-950 p-4 text-sm leading-6 text-slate-100">
+              {children}
+            </pre>
+          ),
+        }}
+      >
+        {content}
+      </ReactMarkdown>
     </div>
   );
 }

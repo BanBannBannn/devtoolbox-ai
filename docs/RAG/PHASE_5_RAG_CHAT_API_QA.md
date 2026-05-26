@@ -119,6 +119,22 @@
 - [ ] `retrievalDetails` do not expose raw provider responses.
 - [ ] `retrievalDetails` do not expose API keys or service role keys.
 
+## Dashboard Answer Rendering
+- [ ] RAG answer Markdown renders in the dashboard UI.
+- [ ] Bold text renders correctly.
+- [ ] Italic text renders correctly.
+- [ ] Bullet lists render correctly.
+- [ ] Numbered lists render correctly.
+- [ ] Inline code renders correctly.
+- [ ] Fenced code blocks render correctly.
+- [ ] Paragraphs and simple headings render cleanly.
+- [ ] Raw HTML is not rendered as HTML.
+- [ ] Script tags are not executed.
+- [ ] The renderer does not use `dangerouslySetInnerHTML`.
+- [ ] Sources remain short snippets.
+- [ ] Retrieval details remain structured UI, not raw Markdown.
+- [ ] Model names still do not appear in the UI.
+
 ## Secrets And Logging
 - [ ] `OPENROUTER_API_KEY` stays server-side only.
 - [ ] `SUPABASE_SERVICE_ROLE_KEY`, if used anywhere, stays server-side only.

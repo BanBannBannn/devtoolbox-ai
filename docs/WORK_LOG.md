@@ -2,6 +2,15 @@
 
 ## 2026-05-26
 
+### RAG dashboard answer Markdown rendering
+- Added safe Markdown rendering for dashboard RAG answers.
+- Installed `react-markdown` and `remark-gfm`.
+- Supported bold, italic, bullet lists, numbered lists, inline code, fenced code blocks, paragraphs, and simple headings.
+- Configured answer rendering to skip raw HTML and avoid `dangerouslySetInnerHTML`.
+- Kept sources and retrieval details as structured UI with short plain-text snippets.
+- Kept chain-of-thought, model names, prompts, raw embeddings, full chunks, API keys, service role keys, and provider payloads out of the UI.
+- Updated Phase 5 docs and QA notes for safe Markdown answer rendering.
+
 ### Phase 5C-1C RAG runtime settings admin UI
 - Added protected admin-only `/dashboard/admin/rag-settings`.
 - Added server-side admin allowlist helpers for `RAG_ADMIN_EMAILS` with trimming and case-insensitive matching.

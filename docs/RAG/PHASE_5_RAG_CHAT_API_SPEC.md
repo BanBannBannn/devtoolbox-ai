@@ -223,6 +223,26 @@ The panel must not show:
 - exact embedding or LLM model names
 - API keys
 
+## Dashboard Answer Rendering
+The dashboard RAG chat UI may render the `answer` field as safe Markdown for readability.
+
+Supported Markdown can include:
+
+- bold and italic text
+- bullet and numbered lists
+- inline code
+- fenced code blocks
+- paragraphs
+- simple headings
+
+The renderer must treat model output as untrusted content:
+
+- Do not render raw HTML.
+- Do not allow scripts.
+- Do not use `dangerouslySetInnerHTML`.
+- Do not expose chain-of-thought, prompts, raw embeddings, full chunks, API keys, service role keys, provider payloads, or model names.
+- Keep sources and retrieval details as structured UI with short snippets, not raw Markdown.
+
 ## Safe Server Logging
 Development logs may include safe metadata:
 
