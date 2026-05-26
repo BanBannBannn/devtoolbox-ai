@@ -2,6 +2,14 @@
 
 ## 2026-05-26
 
+### Phase 5A RAG response model-name privacy patch
+- Removed exact RAG embedding and LLM model names from client-facing `POST /api/rag/chat` success responses.
+- Removed `usage.llmModel`, `usage.embeddingModel`, and `retrievalDetails.models` from the public response contract.
+- Kept `RAG_LLM_MODEL` and `RAG_EMBEDDING_MODEL` in server-side provider/config behavior.
+- Updated pure response helper tests to verify usage and retrieval details do not expose model names.
+- Updated Phase 5 docs and RAG security notes to clarify that model names stay server-side implementation details by default.
+- Kept the patch scoped to response shaping and documentation; no OpenRouter behavior, retrieval logic, dashboard UI, global chatbox, streaming, SQL, dependencies, or public tools were changed.
+
 ### Phase 5A RAG Chat API route
 - Added `POST /api/rag/chat` for authenticated RAG questions against the current user's vectorized document chunks.
 - Added pure request validation for required messages, empty messages, `2000` character max length, and optional UUID `sessionId`.

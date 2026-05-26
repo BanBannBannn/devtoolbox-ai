@@ -7,6 +7,8 @@
 - Do not log API keys.
 - Do not include API keys in error responses.
 - Store model names and non-secret configuration separately from secrets.
+- Treat exact provider model names as server-side implementation details unless a product decision explicitly requires exposing them.
+- Do not include exact RAG embedding or LLM model names in client-facing RAG chat responses by default.
 
 ## Auth Rules
 - Use Supabase auth for signup, login, and session management.
@@ -102,6 +104,7 @@ Do not show hidden model thinking:
 - No private system prompts.
 - No raw provider debug traces.
 - No secret configuration.
+- No exact provider model names unless intentionally exposed by product policy.
 
 The UI should label retrieval details as source/debug information, not as the model's private reasoning.
 

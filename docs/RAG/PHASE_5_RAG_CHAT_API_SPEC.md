@@ -55,9 +55,7 @@ Request body:
     "ragMessagesUsed": 1,
     "ragMessagesLimit": 30,
     "retrievedChunks": 3,
-    "maxRetrievedChunks": 3,
-    "llmModel": "nvidia/nemotron-3-super-120b-a12b:free",
-    "embeddingModel": "nvidia/llama-nemotron-embed-vl-1b-v2:free"
+    "maxRetrievedChunks": 3
   },
   "retrievalDetails": {
     "queryEmbedded": true,
@@ -72,14 +70,12 @@ Request body:
         "similarity": 0.82,
         "snippet": "short safe snippet"
       }
-    ],
-    "models": {
-      "embeddingModel": "nvidia/llama-nemotron-embed-vl-1b-v2:free",
-      "llmModel": "nvidia/nemotron-3-super-120b-a12b:free"
-    }
+    ]
   }
 }
 ```
+
+Client-facing RAG chat responses must not expose exact embedding or LLM model names. Model names are backend implementation details and should remain server-side unless a later product decision explicitly requires showing them.
 
 ## Failure Response
 ```json
@@ -113,6 +109,7 @@ Request body:
 - Validate `RAG_EMBEDDING_DIMENSION=2048`.
 - Validate returned embedding length equals `2048`.
 - Do not expose raw embeddings in responses.
+- Do not expose the exact embedding model name in client-facing responses.
 - Do not log raw question text in production.
 - Do not call OpenRouter from the browser.
 
@@ -135,6 +132,7 @@ Request body:
 - Use OpenRouter server-side.
 - Use `RAG_LLM_MODEL` from env.
 - Default LLM model: `nvidia/nemotron-3-super-120b-a12b:free`.
+- Keep the exact LLM model name server-side; do not return it to the browser.
 - Enforce `plan_limits.max_output_tokens` as the answer token cap.
 - Use retrieved chunks as context.
 - The assistant should answer from retrieved context when possible.
@@ -188,8 +186,6 @@ Do not call retrieval details "thinking." Retrieval details are not hidden model
 - source anchors
 - similarity scores
 - short snippets
-- embedding model
-- LLM model
 - safe duration metadata
 
 `retrievalDetails` must not include:
@@ -200,6 +196,7 @@ Do not call retrieval details "thinking." Retrieval details are not hidden model
 - full retrieved context
 - raw embeddings
 - raw provider responses
+- exact embedding or LLM model names
 - API keys
 - Supabase service role key
 - private server environment variables
@@ -215,7 +212,6 @@ The panel may show:
 - chunk indexes
 - similarity scores
 - short snippets
-- models used
 - quota usage
 
 The panel must not show:
@@ -224,6 +220,7 @@ The panel must not show:
 - full prompts
 - full private documents
 - raw embeddings
+- exact embedding or LLM model names
 - API keys
 
 ## Safe Server Logging

@@ -49,8 +49,6 @@ describe("rag prompt helpers", () => {
   it("creates retrieval details without raw embeddings or full content fields", () => {
     const details = createRetrievalDetails({
       chunks,
-      embeddingModel: "embedding-model",
-      llmModel: "llm-model",
       queryEmbedded: true,
     });
 
@@ -58,10 +56,6 @@ describe("rag prompt helpers", () => {
       queryEmbedded: true,
       matchedChunkCount: 1,
       similarityMetric: "cosine",
-      models: {
-        embeddingModel: "embedding-model",
-        llmModel: "llm-model",
-      },
     });
     expect(details.retrievedChunks[0]).toMatchObject({
       documentId: "document-id",
@@ -72,6 +66,9 @@ describe("rag prompt helpers", () => {
     });
     expect("content" in details.retrievedChunks[0]).toBe(false);
     expect("embedding" in details.retrievedChunks[0]).toBe(false);
+    expect("models" in details).toBe(false);
+    expect("embeddingModel" in details).toBe(false);
+    expect("llmModel" in details).toBe(false);
   });
 
   it("builds a prompt that treats retrieved chunks as untrusted context", () => {

@@ -25,10 +25,6 @@ export type RagRetrievalDetails = {
   matchedChunkCount: number;
   similarityMetric: "cosine";
   retrievedChunks: RagRetrievalDetailsChunk[];
-  models: {
-    embeddingModel: string;
-    llmModel: string;
-  };
 };
 
 export type RagPromptMessages = {
@@ -63,13 +59,9 @@ export function mapChunksToSources(chunks: RetrievedDocumentChunk[]) {
 
 export function createRetrievalDetails({
   chunks,
-  embeddingModel,
-  llmModel,
   queryEmbedded,
 }: {
   chunks: RetrievedDocumentChunk[];
-  embeddingModel: string;
-  llmModel: string;
   queryEmbedded: boolean;
 }): RagRetrievalDetails {
   return {
@@ -84,10 +76,6 @@ export function createRetrievalDetails({
       similarity: chunk.similarity,
       snippet: createSafeSnippet(chunk.content),
     })),
-    models: {
-      embeddingModel,
-      llmModel,
-    },
   };
 }
 

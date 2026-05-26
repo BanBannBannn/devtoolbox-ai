@@ -74,6 +74,7 @@
 - [ ] Answer does not invent sources.
 - [ ] Answer does not reveal hidden chain-of-thought.
 - [ ] Answer does not reveal prompts, API keys, provider payloads, or raw embeddings.
+- [ ] Answer response does not expose exact embedding or LLM model names.
 
 ## Prompt Injection
 - [ ] Retrieved chunks are treated as untrusted data.
@@ -107,9 +108,9 @@
 - [ ] `retrievalDetails.retrievedChunks` includes source anchors.
 - [ ] `retrievalDetails.retrievedChunks` includes similarity scores.
 - [ ] `retrievalDetails.retrievedChunks` includes short snippets only.
-- [ ] `retrievalDetails.models.embeddingModel` is present.
-- [ ] `retrievalDetails.models.llmModel` is present.
 - [ ] `retrievalDetails` are not called "thinking."
+- [ ] `retrievalDetails` do not include a `models` object.
+- [ ] `retrievalDetails` do not expose exact embedding or LLM model names.
 - [ ] `retrievalDetails` do not expose chain-of-thought.
 - [ ] `retrievalDetails` do not expose full prompts.
 - [ ] `retrievalDetails` do not expose full document content.
@@ -124,6 +125,8 @@
 - [ ] No `NEXT_PUBLIC_OPENROUTER_API_KEY` exists.
 - [ ] API response does not expose OpenRouter API key.
 - [ ] API response does not expose Supabase service role key.
+- [ ] API response does not expose `RAG_EMBEDDING_MODEL`.
+- [ ] API response does not expose `RAG_LLM_MODEL`.
 - [ ] Client bundle does not expose provider keys.
 - [ ] Production logs do not include full prompt.
 - [ ] Production logs do not include full document content.

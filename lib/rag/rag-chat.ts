@@ -1,6 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 import { generateEmbedding } from "./embedding-provider";
-import { generateRagAnswer, getDefaultRagLlmModel } from "./rag-llm-provider";
+import { generateRagAnswer } from "./rag-llm-provider";
 import {
   createRagPromptMessages,
   createRetrievalDetails,
@@ -9,6 +9,7 @@ import {
   type RagSource,
   type RetrievedDocumentChunk,
 } from "./rag-prompt";
+import { createRagUsageSummary, type RagUsageSummary } from "./rag-response";
 import { validateRagChatRequestBody } from "./rag-chat-validation";
 import { createServerSupabaseClient } from "../supabase/server";
 import {
@@ -21,14 +22,7 @@ export type RagChatSuccess = {
   success: true;
   answer: string;
   sources: RagSource[];
-  usage: {
-    ragMessagesUsed: number;
-    ragMessagesLimit: number;
-    retrievedChunks: number;
-    maxRetrievedChunks: number;
-    llmModel: string;
-    embeddingModel: string;
-  };
+  usage: RagUsageSummary;
   retrievalDetails: RagRetrievalDetails;
 };
 
@@ -101,8 +95,6 @@ export async function answerRagChatForCurrentUser(
     return createFailure("Monthly RAG chat quota is exhausted.", 429);
   }
 
-  const llmModel = getDefaultRagLlmModel();
-
   const usageRecorded = await recordRagMessageUsageEvent(supabase, user.id);
 
   if (!usageRecorded) {
@@ -128,18 +120,14 @@ export async function answerRagChatForCurrentUser(
   const sources = mapChunksToSources(retrievedChunks.chunks);
   const retrievalDetails = createRetrievalDetails({
     chunks: retrievedChunks.chunks,
-    embeddingModel: embeddingResult.model,
-    llmModel,
     queryEmbedded: true,
   });
-  const usage = {
+  const usage = createRagUsageSummary({
     ragMessagesUsed: ragMessagesUsed + 1,
     ragMessagesLimit: planLimits.monthly_rag_messages,
     retrievedChunks: retrievedChunks.chunks.length,
     maxRetrievedChunks: planLimits.retrieved_chunks_per_answer,
-    llmModel,
-    embeddingModel: embeddingResult.model,
-  };
+  });
 
   if (retrievedChunks.chunks.length === 0) {
     return {
@@ -170,17 +158,8 @@ export async function answerRagChatForCurrentUser(
     success: true,
     answer: answerResult.answer,
     sources,
-    usage: {
-      ...usage,
-      llmModel: answerResult.model,
-    },
-    retrievalDetails: {
-      ...retrievalDetails,
-      models: {
-        ...retrievalDetails.models,
-        llmModel: answerResult.model,
-      },
-    },
+    usage,
+    retrievalDetails,
   };
 }
 
