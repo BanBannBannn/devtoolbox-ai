@@ -2,6 +2,18 @@
 
 ## 2026-05-26
 
+### Phase 5C-1C RAG runtime settings admin UI
+- Added protected admin-only `/dashboard/admin/rag-settings`.
+- Added server-side admin allowlist helpers for `RAG_ADMIN_EMAILS` with trimming and case-insensitive matching.
+- Added a RAG runtime settings form for `retrievedChunks`, `similarityThreshold`, `maxOutputTokens`, `temperature`, `sourceSnippetLength`, and `debugRetrieval`.
+- Added server actions that re-authenticate the user, re-check admin access, clamp all values server-side, save only safe runtime config fields to `app_config`, and set `updated_by`.
+- Added a reset-to-safe-defaults action.
+- Added an admin dashboard card that is shown only to admins while keeping route protection server-side.
+- Kept `app_config` reads/writes on the server-only service role path; the browser does not read or write `app_config` directly.
+- Added tests for admin email parsing/matching and form settings clamping.
+- Updated Phase 5C docs and QA notes for the implemented admin UI.
+- Kept the work scoped to admin runtime settings; no benchmark, markdown answer formatting, streaming, global chatbox changes, SQL execution, public tools, API key exposure, or model-name exposure were added.
+
 ### Phase 5C-1B RAG runtime config reader
 - Added a server-side RAG runtime config helper that resolves safe defaults, `plan_limits` caps, private `app_config.rag_runtime_settings`, and server env overrides.
 - Added clamping for `retrievedChunks`, `similarityThreshold`, `maxOutputTokens`, `temperature`, `sourceSnippetLength`, and `debugRetrieval`.

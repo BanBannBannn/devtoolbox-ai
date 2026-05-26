@@ -1,7 +1,15 @@
 import Link from "next/link";
-import { ArrowRight, BookText, Gauge, MessageSquareText, Settings } from "lucide-react";
+import {
+  ArrowRight,
+  BookText,
+  Gauge,
+  MessageSquareText,
+  Settings,
+  ShieldCheck,
+} from "lucide-react";
 import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { isRagAdminEmail } from "@/lib/rag/rag-admin";
 import { createMetadata } from "@/lib/seo";
 import {
   createServerSupabaseClient,
@@ -69,6 +77,20 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  const cards = isRagAdminEmail(user.email)
+    ? [
+        ...dashboardCards,
+        {
+          title: "Admin RAG Settings",
+          description:
+            "Tune private RAG runtime retrieval and answer generation settings.",
+          icon: ShieldCheck,
+          href: "/dashboard/admin/rag-settings",
+          cta: "Open admin settings",
+        },
+      ]
+    : dashboardCards;
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-5 rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8 md:flex-row md:items-start md:justify-between">
@@ -90,7 +112,7 @@ export default async function DashboardPage() {
       </div>
 
       <section className="mt-8 grid gap-4 md:grid-cols-2">
-        {dashboardCards.map((card) => {
+        {cards.map((card) => {
           const Icon = card.icon;
 
           const cardContent = (

@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   filterChunksBySimilarity,
+  getRagRuntimeSettingsFromFormData,
   resolveRagRuntimeConfig,
+  sanitizeRagRuntimeSettings,
   type RagRuntimePlanCaps,
 } from "./rag-runtime-config";
 
@@ -147,5 +149,37 @@ describe("rag runtime config", () => {
       { id: "a", similarity: 0.9 },
       { id: "c", similarity: 0.7 },
     ]);
+  });
+
+  it("clamps settings parsed from form data", () => {
+    const formData = new FormData();
+    formData.set("retrievedChunks", "50");
+    formData.set("similarityThreshold", "-1");
+    formData.set("maxOutputTokens", "50");
+    formData.set("temperature", "2");
+    formData.set("sourceSnippetLength", "1000");
+    formData.set("debugRetrieval", "on");
+
+    expect(getRagRuntimeSettingsFromFormData(formData)).toEqual({
+      retrievedChunks: 20,
+      similarityThreshold: 0,
+      maxOutputTokens: 100,
+      temperature: 1,
+      sourceSnippetLength: 500,
+      debugRetrieval: true,
+    });
+  });
+
+  it("sanitizes stored settings without applying user plan caps", () => {
+    expect(
+      sanitizeRagRuntimeSettings({
+        retrievedChunks: 10,
+        maxOutputTokens: 1500,
+      }),
+    ).toMatchObject({
+      retrievedChunks: 10,
+      maxOutputTokens: 1500,
+      temperature: 0.2,
+    });
   });
 });

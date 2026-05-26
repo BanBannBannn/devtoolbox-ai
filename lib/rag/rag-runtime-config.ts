@@ -16,7 +16,7 @@ export type RagRuntimePlanCaps = {
 
 type RuntimeSettingKey = keyof RagRuntimeSettings;
 
-const DEFAULT_RUNTIME_SETTINGS: RagRuntimeSettings = {
+export const DEFAULT_RUNTIME_SETTINGS: RagRuntimeSettings = {
   retrievedChunks: 3,
   similarityThreshold: 0,
   maxOutputTokens: 800,
@@ -25,7 +25,7 @@ const DEFAULT_RUNTIME_SETTINGS: RagRuntimeSettings = {
   debugRetrieval: false,
 };
 
-const RUNTIME_RANGES = {
+export const RUNTIME_RANGES = {
   retrievedChunks: { min: 1, max: 20 },
   similarityThreshold: { min: 0, max: 1 },
   maxOutputTokens: { min: 100, max: 2000 },
@@ -82,6 +82,13 @@ export function resolveRagRuntimeConfig({
   );
 }
 
+export function sanitizeRagRuntimeSettings(value: unknown): RagRuntimeSettings {
+  return {
+    ...DEFAULT_RUNTIME_SETTINGS,
+    ...parseRuntimeSettingsObject(value),
+  };
+}
+
 export async function getStoredRagRuntimeSettings(): Promise<unknown | null> {
   const supabase = createServiceRoleSupabaseClient();
 
@@ -102,10 +109,84 @@ export async function getStoredRagRuntimeSettings(): Promise<unknown | null> {
   return data.value;
 }
 
+export async function saveStoredRagRuntimeSettings({
+  settings,
+  updatedBy,
+}: {
+  settings: RagRuntimeSettings;
+  updatedBy: string;
+}) {
+  const supabase = createServiceRoleSupabaseClient();
+
+  if (!supabase) {
+    return {
+      success: false,
+      error: "RAG runtime settings storage is not configured.",
+    };
+  }
+
+  const { error } = await supabase.from("app_config").upsert(
+    {
+      key: "rag_runtime_settings",
+      value: settings,
+      description:
+        "Server-side RAG retrieval and answer generation runtime settings. Values must be clamped in application code and must not contain secrets or model names.",
+      updated_by: updatedBy,
+    },
+    {
+      onConflict: "key",
+    },
+  );
+
+  if (error) {
+    return {
+      success: false,
+      error: "Could not save RAG runtime settings.",
+    };
+  }
+
+  return {
+    success: true,
+  };
+}
+
 export function filterChunksBySimilarity<
   TChunk extends { similarity: number },
 >(chunks: TChunk[], similarityThreshold: number) {
   return chunks.filter((chunk) => chunk.similarity >= similarityThreshold);
+}
+
+export function getRagRuntimeSettingsFromFormData(
+  formData: FormData,
+): RagRuntimeSettings {
+  return {
+    retrievedChunks: clamp(
+      parseNumber(formData.get("retrievedChunks")) ??
+        DEFAULT_RUNTIME_SETTINGS.retrievedChunks,
+      RUNTIME_RANGES.retrievedChunks,
+    ),
+    similarityThreshold: clamp(
+      parseNumber(formData.get("similarityThreshold")) ??
+        DEFAULT_RUNTIME_SETTINGS.similarityThreshold,
+      RUNTIME_RANGES.similarityThreshold,
+    ),
+    maxOutputTokens: clamp(
+      parseNumber(formData.get("maxOutputTokens")) ??
+        DEFAULT_RUNTIME_SETTINGS.maxOutputTokens,
+      RUNTIME_RANGES.maxOutputTokens,
+    ),
+    temperature: clamp(
+      parseNumber(formData.get("temperature")) ??
+        DEFAULT_RUNTIME_SETTINGS.temperature,
+      RUNTIME_RANGES.temperature,
+    ),
+    sourceSnippetLength: clamp(
+      parseNumber(formData.get("sourceSnippetLength")) ??
+        DEFAULT_RUNTIME_SETTINGS.sourceSnippetLength,
+      RUNTIME_RANGES.sourceSnippetLength,
+    ),
+    debugRetrieval: formData.get("debugRetrieval") === "on",
+  };
 }
 
 function parseRuntimeSettingsObject(value: unknown): Partial<RagRuntimeSettings> {

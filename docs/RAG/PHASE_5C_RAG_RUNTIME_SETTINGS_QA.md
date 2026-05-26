@@ -6,7 +6,7 @@
 - [ ] `.env.example` includes server-only admin/settings variables.
 - [ ] Server-side runtime config reader is implemented.
 - [ ] RAG API uses effective runtime settings.
-- [ ] Dashboard admin UI is not implemented yet.
+- [ ] Dashboard admin UI is implemented at `/dashboard/admin/rag-settings`.
 - [ ] Public tools are unchanged.
 - [ ] SQL is not run from this task.
 
@@ -61,10 +61,22 @@
 - [ ] No `NEXT_PUBLIC_RAG_ADMIN_EMAILS` exists.
 - [ ] Logged-out users are redirected to login.
 - [ ] Logged-in non-admin users receive not found or forbidden.
-- [ ] Logged-in admins can access the future settings page.
+- [ ] Logged-in admins can access `/dashboard/admin/rag-settings`.
 - [ ] Admin check is server-side.
 - [ ] Admin writes re-check allowlist server-side.
 - [ ] Client-side hiding is not the only admin protection.
+
+## Admin UI
+- [ ] Admin can view current saved runtime settings.
+- [ ] Missing `rag_runtime_settings` row shows safe defaults.
+- [ ] Admin can save settings.
+- [ ] Admin can reset settings to safe defaults.
+- [ ] Invalid values are clamped server-side.
+- [ ] `updated_by` is set to the authenticated admin user id when saving.
+- [ ] Admin dashboard link is shown only to admins.
+- [ ] Non-admin users cannot access the page even if they know the URL.
+- [ ] Browser does not write `app_config` directly.
+- [ ] Browser/network responses do not expose `RAG_ADMIN_EMAILS`, API keys, service role key, model names, prompts, raw embeddings, or provider payloads.
 
 ## Security
 - [ ] Runtime config does not contain secrets.

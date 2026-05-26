@@ -90,19 +90,27 @@ Tests should cover:
 The server-side DB reader may use the service role client for `app_config` because the table is intentionally private and has no direct browser policies. This read path must remain server-only.
 
 ## 6. Future Admin UI
-Planned route:
+Route:
 
 - `/dashboard/admin/rag-settings`
 
 UI should:
 
 - be server-protected.
-- show current effective values.
-- show DB stored values.
+- show DB stored values or safe defaults when the row is missing.
 - show safe ranges.
-- show whether env overrides are active without revealing secrets.
 - save settings through a server-side checked action/route.
+- set `updated_by` to the authenticated admin user id.
+- provide a reset-to-safe-defaults action when practical.
 - avoid model-name exposure.
+
+Implemented scope:
+
+- server-side page auth and admin allowlist check.
+- server action auth/admin re-check before update.
+- server-only `app_config` read/write path.
+- safe clamped settings form.
+- dashboard admin card shown only for admins.
 
 ## 7. RAG API Integration
 

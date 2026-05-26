@@ -3,14 +3,14 @@
 ## Goal
 Add a runtime settings layer for RAG retrieval and answer generation so quality-related settings can be tuned without editing code every time.
 
-Phase 5C-1B implements the server-side config reader and applies effective runtime settings to `POST /api/rag/chat`. It does not implement the admin UI, benchmarking, markdown answer formatting, dependencies, or SQL execution.
+Phase 5C-1B implements the server-side config reader and applies effective runtime settings to `POST /api/rag/chat`. Phase 5C-1C implements the protected admin settings UI. This phase does not implement benchmarking, markdown answer formatting, dependencies, streaming, global chatbox changes, public tool changes, or SQL execution.
 
-## Future Admin Page
-Planned route:
+## Admin Page
+Route:
 
 - `/dashboard/admin/rag-settings`
 
-The page must be protected server-side. Do not rely only on client-side hiding.
+The page is protected server-side. Do not rely only on client-side hiding.
 
 ## Settings
 Supported settings:
@@ -77,6 +77,15 @@ Do not create `NEXT_PUBLIC_RAG_ADMIN_EMAILS`.
 - Email comparison should trim whitespace and use case-insensitive matching.
 - Server actions or route handlers must re-check admin access before reading or writing admin-only settings.
 - Client-side UI hiding is not sufficient protection.
+
+## Admin UI Behavior
+- The admin page reads `app_config.rag_runtime_settings` server-side.
+- If the row is missing, the page shows safe defaults and allows saving.
+- Saving settings runs through a server action.
+- The server action authenticates the user, checks `RAG_ADMIN_EMAILS`, clamps all values, and writes only safe config fields.
+- `updated_by` should be set to the authenticated admin user's id when saving.
+- A reset action can store the safe defaults.
+- Normal users should not see admin links, but route protection must not depend on hidden links.
 
 ## Database Plan
 Create `public.app_config` if it does not exist.
