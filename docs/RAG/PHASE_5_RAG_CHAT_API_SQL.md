@@ -1,6 +1,54 @@
 # Phase 5 RAG Chat API SQL
 
-This SQL is planning-only until Phase 5 implementation begins. Review it before running in Supabase SQL Editor or converting it into the repo migration flow.
+This SQL is ready for review and copy into Supabase SQL Editor before Phase 5 implementation begins. Do not run it from the app, and do not create the RAG Chat API in this step.
+
+## Final SQL To Copy
+
+```sql
+create extension if not exists vector;
+
+create or replace function public.match_document_chunks(
+  query_embedding vector(2048),
+  match_count integer
+)
+returns table (
+  id uuid,
+  document_id uuid,
+  chunk_index integer,
+  content text,
+  source_title text,
+  source_anchor text,
+  similarity double precision
+)
+language sql
+stable
+security invoker
+set search_path = public
+as $$
+  select
+    document_chunks.id,
+    document_chunks.document_id,
+    document_chunks.chunk_index,
+    document_chunks.content,
+    document_chunks.source_title,
+    document_chunks.source_anchor,
+    1 - (document_chunks.embedding <=> query_embedding) as similarity
+  from public.document_chunks
+  where document_chunks.user_id = auth.uid()
+    and auth.uid() is not null
+  order by document_chunks.embedding <=> query_embedding
+  limit least(greatest(coalesce(match_count, 3), 1), 20);
+$$;
+
+revoke execute on function public.match_document_chunks(vector(2048), integer)
+from public;
+
+revoke execute on function public.match_document_chunks(vector(2048), integer)
+from anon;
+
+grant execute on function public.match_document_chunks(vector(2048), integer)
+to authenticated;
+```
 
 ## Recommendation
 Use Option A for this project:
@@ -31,6 +79,8 @@ Option B, `match_document_chunks_for_user(query_embedding, match_user_id, match_
 ## Option A: Recommended RPC
 
 ```sql
+create extension if not exists vector;
+
 create or replace function public.match_document_chunks(
   query_embedding vector(2048),
   match_count integer
@@ -59,9 +109,16 @@ as $$
     1 - (document_chunks.embedding <=> query_embedding) as similarity
   from public.document_chunks
   where document_chunks.user_id = auth.uid()
+    and auth.uid() is not null
   order by document_chunks.embedding <=> query_embedding
-  limit greatest(0, least(match_count, 20));
+  limit least(greatest(coalesce(match_count, 3), 1), 20);
 $$;
+
+revoke execute on function public.match_document_chunks(vector(2048), integer)
+from public;
+
+revoke execute on function public.match_document_chunks(vector(2048), integer)
+from anon;
 
 grant execute on function public.match_document_chunks(vector(2048), integer)
 to authenticated;
@@ -71,7 +128,10 @@ to authenticated;
 - The function uses `auth.uid()` and does not accept `match_user_id`.
 - `security invoker` keeps the function aligned with the caller's permissions and RLS behavior.
 - The API route should still enforce plan limits before choosing `match_count`.
-- The `least(match_count, 20)` guard is a database safety cap. The application should use the smaller `plan_limits.retrieved_chunks_per_answer` value.
+- `match_count` is clamped with `least(greatest(coalesce(match_count, 3), 1), 20)`.
+- The SQL fallback is `3`, matching the current free plan's `retrieved_chunks_per_answer`.
+- The SQL hard cap is `20` to avoid accidentally huge retrievals. The application should use the smaller `plan_limits.retrieved_chunks_per_answer` value.
+- Execute permission is revoked from `public` and `anon`, then granted to `authenticated`.
 - Do not expose raw embeddings to this RPC from browser code in v1.
 - The API route should call this RPC from server code after authenticating the user.
 

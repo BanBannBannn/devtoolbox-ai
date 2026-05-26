@@ -1,6 +1,27 @@
 # Work Log
 
+## 2026-05-26
+
+### Phase 5A RAG Chat API route
+- Added `POST /api/rag/chat` for authenticated RAG questions against the current user's vectorized document chunks.
+- Added pure request validation for required messages, empty messages, `2000` character max length, and optional UUID `sessionId`.
+- Added pure prompt/source helpers for short snippets, source mapping, retrieval details, and untrusted-context prompt construction.
+- Added a server-side OpenRouter RAG LLM wrapper using `RAG_LLM_MODEL`, `OPENROUTER_API_KEY`, `NEXT_PUBLIC_SITE_URL`, `temperature: 0.3`, and `plan_limits.max_output_tokens`.
+- Added RAG chat orchestration that authenticates through Supabase, loads/creates the profile, loads active plan limits, enforces `monthly_rag_messages`, records `rag_message` usage after validation/quota checks and before provider work, embeds the question with the Phase 4 embedding helper, retrieves chunks through `match_document_chunks`, and returns `answer`, `sources`, `usage`, and `retrievalDetails`.
+- The API uses the normal authenticated Supabase server client for retrieval RPC because the RPC uses `auth.uid()` internally.
+- No-chunk results return `success: true` with a helpful answer, empty sources, and retrieval diagnostics.
+- Added pure Vitest coverage for validation, snippet generation, source mapping, retrieval details shaping, and prompt safety wording.
+- Kept Phase 5A scoped to the server API only; no dashboard chat UI, global chatbox changes, streaming, chat history persistence, file upload, SQL execution, dependency changes, or public tool changes were added.
+
 ## 2026-05-25
+
+### Phase 5 match RPC SQL finalization
+- Reviewed and finalized the Phase 5 `match_document_chunks` RPC SQL before Supabase execution.
+- Kept the safest Option A design: `public.match_document_chunks(query_embedding vector(2048), match_count integer)` uses `auth.uid()` internally and does not accept a client-provided user ID.
+- Confirmed cosine distance with `embedding <=> query_embedding` and `vector(2048)`.
+- Added safe `match_count` clamping with a default of `3` and hard cap of `20`.
+- Added explicit execute permission hardening by revoking from `public` and `anon`, then granting only to `authenticated`.
+- Kept the work documentation-only; no app code, dashboard UI, runtime routes, SQL execution, or public tools were changed.
 
 ### Phase 5 RAG Chat API planning
 - Added Phase 5 RAG Chat API planning docs under `docs/RAG`.
