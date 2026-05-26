@@ -2,6 +2,21 @@
 
 ## 2026-05-26
 
+### Phase 5C-1 RAG runtime settings SQL re-run safety
+- Changed the `rag_runtime_settings` seed in the Phase 5C-1 SQL doc to use `on conflict (key) do nothing`.
+- Added a note that re-running the SQL must preserve admin-edited runtime settings instead of resetting them to defaults.
+- Kept `app_config` private by default with RLS enabled and no direct browser policies.
+- Kept the work documentation-only; no runtime code, admin UI, SQL execution, dependencies, public tools, or RAG API behavior were changed.
+
+### Phase 5C-1 RAG runtime settings planning
+- Added Phase 5C-1 planning docs for server-side RAG runtime settings.
+- Documented future `/dashboard/admin/rag-settings` admin page behavior, protected by server-side `RAG_ADMIN_EMAILS`.
+- Planned runtime settings for `retrievedChunks`, `similarityThreshold`, `maxOutputTokens`, `temperature`, `sourceSnippetLength`, and `debugRetrieval`.
+- Clarified config priority: safe defaults, `plan_limits` quota caps, DB `app_config.rag_runtime_settings`, then server env overrides, with final safe-range clamping.
+- Added SQL planning for `public.app_config`, RLS, conservative no-direct-client policies, and a seeded `rag_runtime_settings` row.
+- Updated `.env.example` with server-only admin and emergency runtime override placeholders.
+- Kept the work documentation/config-only; no admin UI, RAG API changes, benchmark, answer formatting changes, model-name exposure, SQL execution, dependencies, or public tool changes were added.
+
 ### Phase 5B Dashboard RAG Chat UI
 - Added protected `/dashboard/rag-chat` for logged-in users to ask questions against their own vectorized documents.
 - Added `components/rag/rag-chat-panel.tsx` as a client component that calls only the internal `POST /api/rag/chat` route.
