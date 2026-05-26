@@ -7,6 +7,7 @@
 - [ ] Server-side runtime config reader is implemented.
 - [ ] RAG API uses effective runtime settings.
 - [ ] Dashboard admin UI is implemented at `/dashboard/admin/rag-settings`.
+- [ ] Dashboard admin UI includes both runtime settings and plan limits.
 - [ ] Public tools are unchanged.
 - [ ] SQL is not run from this task.
 
@@ -36,14 +37,35 @@
 - [ ] `debugRetrieval` default is `false`.
 - [ ] `debugRetrieval` is boolean.
 
+## Plan Limits
+- [ ] Admin can view existing `plan_limits` rows.
+- [ ] Admin can edit the free plan at minimum.
+- [ ] Multiple plan rows are shown if they exist.
+- [ ] `plan_key` is shown as the plan name for the current schema.
+- [ ] `monthly_rag_messages` is clamped to `0` to `100000`.
+- [ ] `monthly_vectorize_jobs` is clamped to `0` to `100000`.
+- [ ] `max_saved_documents` is clamped to `0` to `100000`.
+- [ ] `max_document_characters` is clamped to `100` to `1000000`.
+- [ ] `max_chunks_per_document` is clamped to `1` to `10000`.
+- [ ] `max_chunks_total` is clamped to `1` to `1000000`.
+- [ ] `retrieved_chunks_per_answer` is clamped to `1` to `20`.
+- [ ] `max_output_tokens` is clamped to `100` to `4000`.
+- [ ] `is_active` can be viewed and updated when present.
+- [ ] Browser does not write `plan_limits` directly.
+
 ## Config Priority
 - [ ] Safe hardcoded defaults are first.
-- [ ] `plan_limits` remain the quota cap source.
-- [ ] DB `app_config.rag_runtime_settings` is applied after defaults and plan caps.
-- [ ] Server env overrides are applied last.
+- [ ] Env tuning values are fallback only when DB values are missing or invalid.
+- [ ] DB `app_config.rag_runtime_settings` is the normal source of truth.
+- [ ] Server env values override DB values only when `RAG_FORCE_ENV_OVERRIDES=true`.
 - [ ] Final effective values are clamped to safe ranges.
+- [ ] `plan_limits` remain the final quota cap source.
 - [ ] `retrievedChunks` cannot exceed `plan_limits.retrieved_chunks_per_answer`.
 - [ ] `maxOutputTokens` cannot exceed `plan_limits.max_output_tokens`.
+- [ ] Effective preview shows runtime value, plan cap, and effective value.
+- [ ] Runtime settings cannot silently bypass plan limits.
+- [ ] Admin UI changes take effect when env values exist but `RAG_FORCE_ENV_OVERRIDES` is not true.
+- [ ] `RAG_FORCE_ENV_OVERRIDES` is server-only and has no `NEXT_PUBLIC_` equivalent.
 
 ## RAG API Runtime Behavior
 - [ ] `retrievedChunks` is used as the RPC `match_count`.
@@ -68,8 +90,10 @@
 
 ## Admin UI
 - [ ] Admin can view current saved runtime settings.
+- [ ] Admin can view current plan limits.
 - [ ] Missing `rag_runtime_settings` row shows safe defaults.
 - [ ] Admin can save settings.
+- [ ] Admin can save plan limits.
 - [ ] Admin can reset settings to safe defaults.
 - [ ] Invalid values are clamped server-side.
 - [ ] `updated_by` is set to the authenticated admin user id when saving.

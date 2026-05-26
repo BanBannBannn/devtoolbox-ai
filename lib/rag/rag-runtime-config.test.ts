@@ -78,7 +78,7 @@ describe("rag runtime config", () => {
     });
   });
 
-  it("applies server env overrides after DB config", () => {
+  it("uses app_config over env by default", () => {
     expect(
       resolveRagRuntimeConfig({
         planLimits: {
@@ -103,12 +103,61 @@ describe("rag runtime config", () => {
         },
       }),
     ).toEqual({
+      retrievedChunks: 2,
+      similarityThreshold: 0.1,
+      maxOutputTokens: 500,
+      temperature: 0.2,
+      sourceSnippetLength: 120,
+      debugRetrieval: false,
+    });
+  });
+
+  it("uses env overrides after app_config only when forced", () => {
+    expect(
+      resolveRagRuntimeConfig({
+        planLimits: {
+          retrieved_chunks_per_answer: 10,
+          max_output_tokens: 1200,
+        },
+        dbConfig: {
+          retrievedChunks: 5,
+          maxOutputTokens: 800,
+          debugRetrieval: false,
+        },
+        env: {
+          RAG_FORCE_ENV_OVERRIDES: "true",
+          RAG_RETRIEVED_CHUNKS_OVERRIDE: "8",
+          RAG_MAX_OUTPUT_TOKENS_OVERRIDE: "900",
+          RAG_DEBUG_RETRIEVAL: "true",
+        },
+      }),
+    ).toMatchObject({
       retrievedChunks: 8,
-      similarityThreshold: 0.55,
       maxOutputTokens: 900,
-      temperature: 0.6,
-      sourceSnippetLength: 320,
       debugRetrieval: true,
+    });
+  });
+
+  it("uses env as fallback when app_config values are missing or invalid", () => {
+    expect(
+      resolveRagRuntimeConfig({
+        planLimits: {
+          retrieved_chunks_per_answer: 10,
+          max_output_tokens: 1200,
+        },
+        dbConfig: {
+          retrievedChunks: "invalid",
+          similarityThreshold: 0.4,
+        },
+        env: {
+          RAG_RETRIEVED_CHUNKS_OVERRIDE: "6",
+          RAG_MAX_OUTPUT_TOKENS_OVERRIDE: "900",
+        },
+      }),
+    ).toMatchObject({
+      retrievedChunks: 6,
+      similarityThreshold: 0.4,
+      maxOutputTokens: 900,
     });
   });
 
@@ -132,6 +181,25 @@ describe("rag runtime config", () => {
       temperature: 0,
       sourceSnippetLength: 500,
       debugRetrieval: true,
+    });
+  });
+
+  it("keeps effective values under runtime hard caps even when plan caps are higher", () => {
+    expect(
+      resolveRagRuntimeConfig({
+        planLimits: {
+          retrieved_chunks_per_answer: 50,
+          max_output_tokens: 5000,
+        },
+        dbConfig: {
+          retrievedChunks: 30,
+          maxOutputTokens: 5000,
+        },
+        env: {},
+      }),
+    ).toMatchObject({
+      retrievedChunks: 20,
+      maxOutputTokens: 2000,
     });
   });
 

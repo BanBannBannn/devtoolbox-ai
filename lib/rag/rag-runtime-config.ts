@@ -54,32 +54,29 @@ export function resolveRagRuntimeConfig({
   dbConfig?: unknown;
   env?: NodeJS.ProcessEnv;
 }): RagRuntimeSettings {
-  const settings = applyPlanCaps(
+  const defaults = applyPlanCaps(
     {
       ...DEFAULT_RUNTIME_SETTINGS,
       maxOutputTokens: planLimits.max_output_tokens,
     },
     planLimits,
   );
-
   const dbSettings = parseRuntimeSettingsObject(dbConfig);
-  const withDbSettings = applyPlanCaps(
-    {
-      ...settings,
-      ...dbSettings,
-    },
-    planLimits,
-  );
-
   const envSettings = parseEnvOverrides(env);
+  const forceEnvOverrides = parseBoolean(env.RAG_FORCE_ENV_OVERRIDES);
+  const mergedSettings = forceEnvOverrides
+    ? {
+        ...defaults,
+        ...dbSettings,
+        ...envSettings,
+      }
+    : {
+        ...defaults,
+        ...envSettings,
+        ...dbSettings,
+      };
 
-  return applyPlanCaps(
-    {
-      ...withDbSettings,
-      ...envSettings,
-    },
-    planLimits,
-  );
+  return applyPlanCaps(mergedSettings, planLimits);
 }
 
 export function sanitizeRagRuntimeSettings(value: unknown): RagRuntimeSettings {

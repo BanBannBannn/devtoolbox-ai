@@ -2,6 +2,26 @@
 
 ## 2026-05-26
 
+### RAG runtime config priority fix
+- Changed RAG runtime config resolution so `app_config.rag_runtime_settings` is the normal source of truth.
+- Env tuning values now act as fallback when DB values are missing or invalid.
+- Added `RAG_FORCE_ENV_OVERRIDES=true` as the explicit server-only switch for emergency env overrides.
+- Kept final effective `retrievedChunks` and `maxOutputTokens` clamped by safe hard caps and `plan_limits`.
+- Updated `.env.example` with `RAG_FORCE_ENV_OVERRIDES=false` and comments explaining env tuning values are fallback/emergency only.
+- Updated Phase 5C docs and QA notes to clarify the new priority.
+- Added tests for app_config winning over env by default, forced env overrides, env fallback behavior, hard caps, and plan-limit caps.
+
+### RAG admin plan limits editing
+- Extended `/dashboard/admin/rag-settings` with separate sections for RAG Runtime Settings and Plan Limits.
+- Added server-side plan limit admin helpers to load and update existing `plan_limits` rows through the server-only service role path.
+- Added editable plan limit fields for monthly RAG messages, monthly vectorize jobs, saved documents, document characters, chunks per document, total chunks, retrieved chunks per answer, max output tokens, and active status.
+- Displayed `plan_key` as the current schema's plan name without adding a schema migration.
+- Added server actions that re-authenticate the user, re-check `RAG_ADMIN_EMAILS`, clamp plan limit values server-side, and save plan limits without trusting client input.
+- Added an effective preview showing how runtime settings are capped by plan limits for an active/free plan.
+- Clarified in docs that `plan_limits` are product quota caps, `app_config.rag_runtime_settings` are quality/runtime tuning knobs, and effective RAG values use `min(runtime, plan cap, safe hard cap)`.
+- Added pure tests for plan limit validation/clamping and hard-cap interaction with runtime settings.
+- Kept the work scoped to admin settings; no SQL/schema change, benchmark, streaming, markdown rendering change, global chatbox change, public tool change, model-name exposure, or SQL execution was added.
+
 ### RAG dashboard answer Markdown rendering
 - Added safe Markdown rendering for dashboard RAG answers.
 - Installed `react-markdown` and `remark-gfm`.

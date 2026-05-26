@@ -1,6 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import {
+  getPlanLimitInputFromFormData,
+  saveAdminPlanLimit,
+} from "@/lib/rag/plan-limit-admin";
 import { isRagAdminEmail } from "@/lib/rag/rag-admin";
 import {
   DEFAULT_RUNTIME_SETTINGS,
@@ -58,4 +62,16 @@ export async function resetRagRuntimeSettingsAction() {
   }
 
   redirect("/dashboard/admin/rag-settings?message=reset");
+}
+
+export async function savePlanLimitAction(planId: string, formData: FormData) {
+  await requireRagSettingsAdmin();
+  const input = getPlanLimitInputFromFormData(planId, formData);
+  const result = await saveAdminPlanLimit(planId, input);
+
+  if (!result.success) {
+    redirect("/dashboard/admin/rag-settings?error=plan_save_failed");
+  }
+
+  redirect("/dashboard/admin/rag-settings?message=plan_saved");
 }

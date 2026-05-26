@@ -80,6 +80,44 @@ Benefits:
 
 Anonymous public chat should use separate rate-limit and quota controls from authenticated RAG chat. Public chat can be disabled by default or kept behind a stricter limit if abuse or cost risk is high.
 
+## Admin Editing And Runtime Settings
+Admins can tune plan limits from `/dashboard/admin/rag-settings`.
+
+Important distinction:
+
+- `plan_limits` are product quota caps. They define what each plan is allowed to use.
+- `app_config.rag_runtime_settings` are RAG quality/runtime tuning knobs. They change retrieval and answer behavior but do not own quota.
+
+Effective RAG values must always respect both layers:
+
+- `effectiveRetrievedChunks = min(runtime.retrievedChunks, plan_limits.retrieved_chunks_per_answer, safe hard cap)`
+- `effectiveMaxOutputTokens = min(runtime.maxOutputTokens, plan_limits.max_output_tokens, safe hard cap)`
+
+For example:
+
+- Runtime `retrievedChunks` is `5`.
+- Free plan `retrieved_chunks_per_answer` is `3`.
+- Free users receive `3` retrieved chunks.
+
+Runtime settings must not silently bypass plan limits. Lowering a plan limit should immediately cap future RAG chat requests for users on that plan.
+
+By default, admin UI settings stored in `app_config.rag_runtime_settings` win over RAG tuning environment variables. Env tuning variables are fallback/emergency controls: they fill missing or invalid DB values, and they override DB settings only when `RAG_FORCE_ENV_OVERRIDES=true`.
+
+Current admin validation ranges:
+
+| Plan limit | Safe range |
+| --- | --- |
+| `monthly_rag_messages` | `0` to `100000` |
+| `monthly_vectorize_jobs` | `0` to `100000` |
+| `max_saved_documents` | `0` to `100000` |
+| `max_document_characters` | `100` to `1000000` |
+| `max_chunks_per_document` | `1` to `10000` |
+| `max_chunks_total` | `1` to `1000000` |
+| `retrieved_chunks_per_answer` | `1` to `20` |
+| `max_output_tokens` | `100` to `4000` |
+
+The current schema stores the visible plan name as `plan_key`. If a separate `plan_name` display field is needed later, add it through a migration instead of assuming it exists.
+
 ## `usage_events` Design
 Use append-only usage events for quota accounting.
 
