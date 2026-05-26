@@ -28,9 +28,10 @@ const dashboardCards = [
   {
     title: "RAG Chat",
     description:
-      "Chat with your vectorized knowledge base in Phase 5 and Phase 6. RAG chat is not active yet.",
+      "Ask questions against your private vectorized documents with cited sources and retrieval diagnostics.",
     icon: MessageSquareText,
-    cta: "Coming in a later phase",
+    href: "/dashboard/rag-chat",
+    cta: "Open RAG chat",
   },
   {
     title: "Settings",

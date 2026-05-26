@@ -2,6 +2,16 @@
 
 ## 2026-05-26
 
+### Phase 5B Dashboard RAG Chat UI
+- Added protected `/dashboard/rag-chat` for logged-in users to ask questions against their own vectorized documents.
+- Added `components/rag/rag-chat-panel.tsx` as a client component that calls only the internal `POST /api/rag/chat` route.
+- Added client-side validation for empty questions and the `2000` character API limit.
+- Added loading, safe error, answer, sources, usage counts, and retrieval diagnostics states.
+- Added a collapsible "How this answer was retrieved" panel with safe diagnostics only: query embedding status, matched chunk count, cosine similarity metric, source titles, chunk indexes, source anchors, similarity scores, and snippets.
+- Kept model names, prompts, full chunks, raw embeddings, API keys, and service role keys out of the UI.
+- Updated the dashboard RAG Chat card to link to `/dashboard/rag-chat`.
+- Kept Phase 5B scoped to dashboard UI only; no RAG API behavior changes, global chatbox changes, streaming, file upload, payments, public tool changes, or SQL changes were added.
+
 ### Phase 5A RAG response model-name privacy patch
 - Removed exact RAG embedding and LLM model names from client-facing `POST /api/rag/chat` success responses.
 - Removed `usage.llmModel`, `usage.embeddingModel`, and `retrievalDetails.models` from the public response contract.
