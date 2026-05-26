@@ -2,6 +2,16 @@
 
 ## 2026-05-26
 
+### Phase 5D RAG chat sessions planning
+- Added Phase 5D planning docs for persisted dashboard RAG chat sessions and message history.
+- Documented user outcomes for creating multiple sessions, listing previous sessions, continuing a session, and seeing persisted user/assistant messages.
+- Planned `chat_sessions` and `chat_messages` tables with user ownership, RLS, indexes, and `updated_at` handling.
+- Documented `POST /api/rag/chat` session behavior: create a session when `sessionId` is missing, verify ownership when present, save messages, and return `sessionId`.
+- Planned `chatHistoryMessages` runtime setting with default `6`, safe range `0` to `20`, and optional `RAG_CHAT_HISTORY_MESSAGES` env fallback.
+- Clarified that v1 embeds only the current user question; history-aware query rewriting is a future v1.5 option.
+- Added QA coverage for session ownership, persistence, context window limits, prompt safety, retrieval ownership, dashboard UI, and secret/model-name safety.
+- Kept the work documentation-only; no runtime code, SQL execution, route changes, streaming, global chatbox changes, query rewriting, file upload, payments, benchmarking, or public tool changes were added.
+
 ### RAG runtime config priority fix
 - Changed RAG runtime config resolution so `app_config.rag_runtime_settings` is the normal source of truth.
 - Env tuning values now act as fallback when DB values are missing or invalid.
