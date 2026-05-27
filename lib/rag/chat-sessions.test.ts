@@ -3,6 +3,7 @@ import {
   generateSessionTitle,
   mapChatMessageRow,
   mapChatSessionRow,
+  validateChatSessionTitle,
 } from "./chat-sessions";
 
 describe("chat session helpers", () => {
@@ -18,6 +19,26 @@ describe("chat session helpers", () => {
 
   it("uses a fallback title for empty input", () => {
     expect(generateSessionTitle(" \n\t ")).toBe("New RAG chat");
+  });
+
+  it("validates and normalizes renamed session titles", () => {
+    expect(validateChatSessionTitle("  Project\n notes  ")).toEqual({
+      success: true,
+      title: "Project notes",
+    });
+  });
+
+  it("rejects empty renamed session titles", () => {
+    expect(validateChatSessionTitle(" \n\t ")).toEqual({
+      success: false,
+      error: "Session title is required.",
+    });
+  });
+
+  it("rejects renamed session titles over 120 characters", () => {
+    const result = validateChatSessionTitle("a".repeat(121));
+
+    expect(result.success).toBe(false);
   });
 
   it("maps session rows with safe title fallback", () => {

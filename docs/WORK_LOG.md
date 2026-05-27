@@ -2,6 +2,16 @@
 
 ## 2026-05-26
 
+### Phase 5D-3 RAG chat session rename/delete
+- Added server-side validation for chat session titles with trim/whitespace normalization, non-empty enforcement, and a `120` character max.
+- Added owned-session rename and delete helpers that scope updates/deletes by the authenticated user's ID.
+- Added server actions for renaming and deleting RAG chat sessions without accepting `user_id` from the browser.
+- Added compact rename/delete controls to the RAG chat session list with cancel, pending, success, and safe error states.
+- Delete actions require browser confirmation; deleting the currently open session navigates back to `/dashboard/rag-chat`.
+- Refactored the RAG session list into a reusable component shared by the new-chat and saved-session pages.
+- Updated Phase 5D QA with rename/delete ownership, validation, persistence, and cascade-delete checks.
+- Kept the work scoped to session management; no RAG answer generation, streaming, query rewriting, summary memory, global chatbox, SQL execution, public tools, model-name exposure, or secret exposure was changed.
+
 ### RAG chat fixed-height layout
 - Updated dashboard RAG chat pages to use a viewport-based, fixed-height chat layout.
 - Made the recent session list scroll independently from the main chat panel.

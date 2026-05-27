@@ -53,7 +53,37 @@ type ChatMessageRow = {
 };
 
 const titleMaxLength = 60;
+export const chatSessionTitleMaxLength = 120;
 const fallbackSessionTitle = "New RAG chat";
+
+export type ChatSessionTitleValidationResult =
+  | {
+      success: true;
+      title: string;
+    }
+  | {
+      success: false;
+      error: string;
+    };
+
+export type RenameChatSessionResult =
+  | {
+      success: true;
+      session: RagChatSessionSummary;
+    }
+  | {
+      success: false;
+      error: string;
+    };
+
+export type DeleteChatSessionResult =
+  | {
+      success: true;
+    }
+  | {
+      success: false;
+      error: string;
+    };
 
 export function generateSessionTitle(message: string) {
   const normalized = message.replace(/\s+/g, " ").trim();
@@ -65,6 +95,31 @@ export function generateSessionTitle(message: string) {
   return normalized.length <= titleMaxLength
     ? normalized
     : normalized.slice(0, titleMaxLength).trimEnd();
+}
+
+export function validateChatSessionTitle(
+  title: string,
+): ChatSessionTitleValidationResult {
+  const normalized = title.replace(/\s+/g, " ").trim();
+
+  if (!normalized) {
+    return {
+      success: false,
+      error: "Session title is required.",
+    };
+  }
+
+  if (normalized.length > chatSessionTitleMaxLength) {
+    return {
+      success: false,
+      error: `Session title must be ${chatSessionTitleMaxLength.toLocaleString()} characters or fewer.`,
+    };
+  }
+
+  return {
+    success: true,
+    title: normalized,
+  };
 }
 
 export async function getOrCreateOwnedChatSession({
@@ -268,6 +323,76 @@ export async function bumpChatSessionUpdatedAt({
     .eq("user_id", userId);
 
   return !error;
+}
+
+export async function renameOwnedChatSession({
+  supabase,
+  userId,
+  sessionId,
+  title,
+}: {
+  supabase: SupabaseServerClient;
+  userId: string;
+  sessionId: string;
+  title: string;
+}): Promise<RenameChatSessionResult> {
+  const titleValidation = validateChatSessionTitle(title);
+
+  if (!titleValidation.success) {
+    return titleValidation;
+  }
+
+  const { data, error } = await supabase
+    .from("chat_sessions")
+    .update({
+      title: titleValidation.title,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", sessionId)
+    .eq("user_id", userId)
+    .select("id,title,created_at,updated_at")
+    .maybeSingle();
+
+  if (error || !data) {
+    return {
+      success: false,
+      error: "Could not rename this chat session.",
+    };
+  }
+
+  return {
+    success: true,
+    session: mapChatSessionRow(data),
+  };
+}
+
+export async function deleteOwnedChatSession({
+  supabase,
+  userId,
+  sessionId,
+}: {
+  supabase: SupabaseServerClient;
+  userId: string;
+  sessionId: string;
+}): Promise<DeleteChatSessionResult> {
+  const { data, error } = await supabase
+    .from("chat_sessions")
+    .delete()
+    .eq("id", sessionId)
+    .eq("user_id", userId)
+    .select("id")
+    .maybeSingle();
+
+  if (error || !data) {
+    return {
+      success: false,
+      error: "Could not delete this chat session.",
+    };
+  }
+
+  return {
+    success: true,
+  };
 }
 
 export function mapChatSessionRow(row: {

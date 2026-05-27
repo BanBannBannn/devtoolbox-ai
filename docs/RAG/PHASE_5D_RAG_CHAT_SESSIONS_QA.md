@@ -86,6 +86,15 @@
 - [ ] User can create a new chat.
 - [ ] User can open a previous chat.
 - [ ] User can continue a previous chat.
+- [ ] User can rename an owned chat session.
+- [ ] Renamed session title persists after refresh.
+- [ ] Empty rename is blocked with a safe message.
+- [ ] Rename over 120 characters is blocked with a safe message.
+- [ ] User can cancel rename without changing the saved title.
+- [ ] User can delete an owned chat session after confirmation.
+- [ ] Deleted session disappears from the session list.
+- [ ] Deleting the currently open session navigates safely back to `/dashboard/rag-chat`.
+- [ ] Deleting a session removes related messages by database cascade.
 - [ ] Previous messages render after refresh.
 - [ ] Chat page uses a fixed-height app-like layout instead of growing endlessly with long conversations.
 - [ ] Session list scrolls independently when there are many sessions.
@@ -101,6 +110,10 @@
 
 ## Security
 - [ ] Browser never sends `user_id`.
+- [ ] Rename action verifies session ownership server-side.
+- [ ] Delete action verifies session ownership server-side.
+- [ ] User cannot rename another user's session by guessing UUID.
+- [ ] User cannot delete another user's session by guessing UUID.
 - [ ] Browser never receives API keys.
 - [ ] Browser never receives service role key.
 - [ ] Browser never receives model names.
