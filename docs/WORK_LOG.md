@@ -2,6 +2,17 @@
 
 ## 2026-05-27
 
+### Phase 6C public database-backed blog
+- Updated the public `/blog` listing to read published posts from Supabase `blog_posts` instead of rendering the legacy static markdown article list.
+- Updated `/blog/[slug]` to load only `status = published` posts by slug and return `notFound()` for drafts, pending review, rejected, archived, missing, or unpublished posts.
+- Added public blog helpers for published post queries, tag mapping, safe author display fallback, published-status filtering, and safe `content_text` paragraph rendering.
+- Added `/blog/tags/[slug]` for public tag pages that list only published posts connected through `blog_post_tags`.
+- Added a small safe share button using browser share or clipboard APIs without raw HTML rendering.
+- Updated the sitemap to include only published database-backed blog posts while keeping public tools and core routes.
+- Kept the old markdown files in `content/blog` as legacy seed/reference content; database-published posts are now the public source of truth.
+- Added pure tests for public post mapping, safe defaults, published-status filtering, and `content_text` paragraph handling.
+- Kept the work scoped to public read surfaces; no Tiptap editor, writer dashboard, moderation UI, likes/bookmarks/comments/reports runtime, SQL execution, RAG behavior, or public tool changes were added.
+
 ### Phase 6B role helper foundation
 - Added blog role helper names for `user`, `moderator`, and `admin` roles after the Phase 6B schema was applied manually.
 - Added safe role parsing through `parseUserRole`, with invalid or missing values falling back to `user`.
