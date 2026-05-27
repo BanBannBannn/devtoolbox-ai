@@ -1,7 +1,11 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { RagChatPanel } from "@/components/rag/rag-chat-panel";
-import { listOwnedChatSessions } from "@/lib/rag/chat-sessions";
+import {
+  listOwnedChatMessages,
+  listOwnedChatSessions,
+  loadOwnedChatSession,
+} from "@/lib/rag/chat-sessions";
 import { createMetadata } from "@/lib/seo";
 import {
   createServerSupabaseClient,
@@ -9,13 +13,18 @@ import {
 } from "@/lib/supabase/server";
 
 export const metadata = createMetadata({
-  title: "RAG Chat",
+  title: "RAG Chat Session",
   description:
-    "Ask questions against your private vectorized DevToolBox AI documents.",
+    "Continue a private DevToolBox AI RAG chat against your vectorized documents.",
   path: "/dashboard/rag-chat",
 });
 
-export default async function DashboardRagChatPage() {
+export default async function DashboardRagChatSessionPage({
+  params,
+}: {
+  params: Promise<{ sessionId: string }>;
+}) {
+  const { sessionId } = await params;
   const authConfig = getSupabaseServerEnv();
 
   if (!authConfig.isConfigured) {
@@ -36,51 +45,68 @@ export default async function DashboardRagChatPage() {
     redirect("/login");
   }
 
-  const sessions = await listOwnedChatSessions({
-    supabase,
-    userId: user.id,
-  });
+  const [session, sessions, messages] = await Promise.all([
+    loadOwnedChatSession({
+      supabase,
+      userId: user.id,
+      sessionId,
+    }),
+    listOwnedChatSessions({
+      supabase,
+      userId: user.id,
+    }),
+    listOwnedChatMessages({
+      supabase,
+      userId: user.id,
+      sessionId,
+    }),
+  ]);
+
+  if (!session) {
+    notFound();
+  }
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <Link
-        href="/dashboard"
+        href="/dashboard/rag-chat"
         className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
       >
-        Back to dashboard
+        Back to RAG chats
       </Link>
 
       <div className="mt-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
         <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
-          Private RAG chat
+          Saved RAG chat
         </p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950">
-          RAG Chat
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
+          {session.title}
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">
-          Ask questions against chunks retrieved from your own vectorized
-          documents. Vectorize documents first from{" "}
-          <Link
-            href="/dashboard/documents"
-            className="font-semibold text-emerald-700 hover:text-emerald-800"
-          >
-            Dashboard - Documents
-          </Link>
-          . Retrieval details show search diagnostics, not AI thinking.
+          Continue this saved conversation. Retrieval still searches only your
+          own vectorized document chunks, and diagnostics are not AI thinking.
         </p>
       </div>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
-        <SessionList sessions={sessions ?? []} />
-        <RagChatPanel />
+        <SessionList
+          activeSessionId={session.id}
+          sessions={sessions ?? []}
+        />
+        <RagChatPanel
+          sessionId={session.id}
+          initialMessages={messages ?? []}
+        />
       </div>
     </div>
   );
 }
 
 function SessionList({
+  activeSessionId,
   sessions,
 }: {
+  activeSessionId: string;
   sessions: {
     id: string;
     title: string;
@@ -101,25 +127,32 @@ function SessionList({
 
       {sessions.length === 0 ? (
         <p className="mt-4 rounded-md bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
-          No RAG chat sessions yet. Ask a question to create your first saved
-          session.
+          No RAG chat sessions yet.
         </p>
       ) : (
         <div className="mt-4 grid gap-2">
-          {sessions.map((session) => (
-            <Link
-              key={session.id}
-              href={`/dashboard/rag-chat/${session.id}`}
-              className="rounded-md border border-slate-200 px-3 py-3 transition hover:border-emerald-200 hover:bg-emerald-50"
-            >
-              <p className="line-clamp-2 text-sm font-semibold text-slate-950">
-                {session.title}
-              </p>
-              <p className="mt-1 text-xs text-slate-500">
-                Updated {formatDateTime(session.updatedAt)}
-              </p>
-            </Link>
-          ))}
+          {sessions.map((chatSession) => {
+            const isActive = chatSession.id === activeSessionId;
+
+            return (
+              <Link
+                key={chatSession.id}
+                href={`/dashboard/rag-chat/${chatSession.id}`}
+                className={`rounded-md border px-3 py-3 transition ${
+                  isActive
+                    ? "border-emerald-300 bg-emerald-50"
+                    : "border-slate-200 hover:border-emerald-200 hover:bg-emerald-50"
+                }`}
+              >
+                <p className="line-clamp-2 text-sm font-semibold text-slate-950">
+                  {chatSession.title}
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Updated {formatDateTime(chatSession.updatedAt)}
+                </p>
+              </Link>
+            );
+          })}
         </div>
       )}
     </aside>

@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import type { RagChatStoredMessage } from "@/lib/rag/chat-sessions";
 
 type RagSource = {
   documentId: string;
@@ -18,6 +20,7 @@ type RagRetrievalChunk = RagSource & {
 
 type RagChatSuccessResponse = {
   success: true;
+  sessionId: string;
   answer: string;
   sources: RagSource[];
   usage: {
@@ -31,6 +34,8 @@ type RagChatSuccessResponse = {
     matchedChunkCount: number;
     similarityMetric: "cosine";
     retrievedChunks: RagRetrievalChunk[];
+    similarityThreshold?: number;
+    debugRetrievalEnabled?: boolean;
   };
 };
 
@@ -40,6 +45,8 @@ type RagChatFailureResponse = {
 };
 
 type RagChatResponse = RagChatSuccessResponse | RagChatFailureResponse;
+
+type ChatMessage = RagChatStoredMessage;
 
 const maxMessageLength = 2000;
 
@@ -59,14 +66,11 @@ function isSource(value: unknown): value is RagSource {
 }
 
 function isRetrievalChunk(value: unknown): value is RagRetrievalChunk {
-  if (!isRecord(value)) {
-    return false;
-  }
-
-  const record = value;
-  const hasSimilarity = typeof record["similarity"] === "number";
-
-  return hasSimilarity && isSource(record);
+  return (
+    isRecord(value) &&
+    typeof value.similarity === "number" &&
+    isSource(value)
+  );
 }
 
 function parseRagChatResponse(value: unknown): RagChatResponse | null {
@@ -82,6 +86,7 @@ function parseRagChatResponse(value: unknown): RagChatResponse | null {
   }
 
   if (
+    typeof value.sessionId !== "string" ||
     typeof value.answer !== "string" ||
     !Array.isArray(value.sources) ||
     !isRecord(value.usage) ||
@@ -107,6 +112,7 @@ function parseRagChatResponse(value: unknown): RagChatResponse | null {
 
   return {
     success: true,
+    sessionId: value.sessionId,
     answer: value.answer,
     sources: value.sources,
     usage: {
@@ -120,6 +126,14 @@ function parseRagChatResponse(value: unknown): RagChatResponse | null {
       matchedChunkCount: value.retrievalDetails.matchedChunkCount,
       similarityMetric: value.retrievalDetails.similarityMetric,
       retrievedChunks: value.retrievalDetails.retrievedChunks,
+      similarityThreshold:
+        typeof value.retrievalDetails.similarityThreshold === "number"
+          ? value.retrievalDetails.similarityThreshold
+          : undefined,
+      debugRetrievalEnabled:
+        typeof value.retrievalDetails.debugRetrievalEnabled === "boolean"
+          ? value.retrievalDetails.debugRetrievalEnabled
+          : undefined,
     },
   };
 }
@@ -132,12 +146,18 @@ function formatSimilarity(value: number) {
   return value.toFixed(3);
 }
 
-export function RagChatPanel() {
+export function RagChatPanel({
+  sessionId,
+  initialMessages = [],
+}: {
+  sessionId?: string;
+  initialMessages?: RagChatStoredMessage[];
+}) {
+  const router = useRouter();
   const [message, setMessage] = useState("");
-  const [response, setResponse] = useState<RagChatSuccessResponse | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const remainingCharacters = useMemo(
     () => maxMessageLength - message.length,
@@ -170,7 +190,10 @@ export function RagChatPanel() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: trimmedMessage }),
+        body: JSON.stringify({
+          message: trimmedMessage,
+          ...(sessionId ? { sessionId } : {}),
+        }),
       });
       const rawData: unknown = await fetchResponse.json().catch(() => null);
       const data = parseRagChatResponse(rawData);
@@ -185,10 +208,36 @@ export function RagChatPanel() {
         );
       }
 
-      setResponse(data);
-      setDetailsOpen(false);
+      if (!sessionId) {
+        router.push(`/dashboard/rag-chat/${data.sessionId}`);
+        return;
+      }
+
+      const now = new Date().toISOString();
+      setMessages((currentMessages) => [
+        ...currentMessages,
+        {
+          id: `user-${now}`,
+          role: "user",
+          content: trimmedMessage,
+          sources: [],
+          retrievalDetails: null,
+          usage: null,
+          createdAt: now,
+        },
+        {
+          id: `assistant-${now}`,
+          role: "assistant",
+          content: data.answer,
+          sources: data.sources,
+          retrievalDetails: data.retrievalDetails,
+          usage: data.usage,
+          createdAt: now,
+        },
+      ]);
+      setMessage("");
+      router.refresh();
     } catch (error) {
-      setResponse(null);
       setErrorMessage(
         error instanceof Error
           ? error.message
@@ -199,15 +248,55 @@ export function RagChatPanel() {
     }
   }
 
-  function clearChat() {
+  function clearComposer() {
     setMessage("");
-    setResponse(null);
     setErrorMessage(null);
-    setDetailsOpen(false);
   }
 
   return (
     <div className="space-y-6">
+      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-slate-950">
+              Conversation
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Answers are grounded in retrieved chunks from your vectorized
+              documents. Retrieval details are diagnostics, not AI thinking.
+            </p>
+          </div>
+          {!sessionId ? (
+            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
+              New chat
+            </span>
+          ) : null}
+        </div>
+
+        {messages.length === 0 ? (
+          <div className="mt-6 rounded-md bg-slate-50 px-4 py-5 text-sm leading-6 text-slate-600">
+            Ask your first question to create a saved RAG chat session. If the
+            answer has no useful context, vectorize documents first from
+            Dashboard - Documents.
+          </div>
+        ) : (
+          <div className="mt-6 space-y-4">
+            {messages.map((chatMessage) => (
+              <ChatMessageBubble
+                key={chatMessage.id}
+                message={chatMessage}
+              />
+            ))}
+          </div>
+        )}
+
+        {isLoading ? (
+          <div className="mt-6 rounded-md border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+            Searching your vectorized document chunks...
+          </div>
+        ) : null}
+      </section>
+
       <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
         <label
           htmlFor="rag-question"
@@ -218,7 +307,7 @@ export function RagChatPanel() {
         <textarea
           id="rag-question"
           value={message}
-          rows={6}
+          rows={5}
           maxLength={maxMessageLength + 200}
           onChange={(event) => setMessage(event.target.value)}
           placeholder="Ask a question about your saved and vectorized documents..."
@@ -234,7 +323,7 @@ export function RagChatPanel() {
           <div className="flex flex-col gap-2 sm:flex-row">
             <button
               type="button"
-              onClick={clearChat}
+              onClick={clearComposer}
               className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-100"
             >
               Clear
@@ -255,120 +344,65 @@ export function RagChatPanel() {
           </p>
         ) : null}
       </section>
-
-      {isLoading ? (
-        <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium text-slate-600">
-            Searching your vectorized document chunks...
-          </p>
-        </section>
-      ) : null}
-
-      {response ? (
-        <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-semibold text-slate-950">Answer</h2>
-          <MarkdownAnswer content={response.answer} />
-
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <UsagePill
-              label="RAG messages"
-              value={`${response.usage.ragMessagesUsed.toLocaleString()} / ${response.usage.ragMessagesLimit.toLocaleString()}`}
-            />
-            <UsagePill
-              label="Retrieved chunks"
-              value={`${response.usage.retrievedChunks.toLocaleString()} / ${response.usage.maxRetrievedChunks.toLocaleString()}`}
-            />
-            <UsagePill
-              label="Query embedded"
-              value={response.retrievalDetails.queryEmbedded ? "Yes" : "No"}
-            />
-            <UsagePill
-              label="Similarity"
-              value={response.retrievalDetails.similarityMetric}
-            />
-          </div>
-
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold text-slate-950">Sources</h3>
-            {response.sources.length === 0 ? (
-              <p className="mt-3 rounded-md bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                No source chunks were returned for this answer.
-              </p>
-            ) : (
-              <div className="mt-3 grid gap-3">
-                {response.sources.map((source) => (
-                  <SourceCard
-                    key={`${source.documentId}-${source.chunkIndex}-${source.sourceAnchor}`}
-                    source={source}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="mt-8 rounded-lg border border-slate-200">
-            <button
-              type="button"
-              onClick={() => setDetailsOpen((current) => !current)}
-              className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-sm font-semibold text-slate-950 transition hover:bg-slate-50"
-            >
-              <span>How this answer was retrieved</span>
-              <span className="text-slate-500">
-                {detailsOpen ? "Hide" : "Show"}
-              </span>
-            </button>
-            {detailsOpen ? (
-              <div className="border-t border-slate-200 p-4">
-                <div className="grid gap-3 text-sm text-slate-700 sm:grid-cols-3">
-                  <DetailRow
-                    label="Query embedded"
-                    value={
-                      response.retrievalDetails.queryEmbedded ? "Yes" : "No"
-                    }
-                  />
-                  <DetailRow
-                    label="Matched chunks"
-                    value={response.retrievalDetails.matchedChunkCount.toLocaleString()}
-                  />
-                  <DetailRow
-                    label="Similarity metric"
-                    value={response.retrievalDetails.similarityMetric}
-                  />
-                </div>
-                <div className="mt-4 grid gap-3">
-                  {response.retrievalDetails.retrievedChunks.map((chunk) => (
-                    <article
-                      key={`${chunk.documentId}-${chunk.chunkIndex}-${chunk.sourceAnchor}`}
-                      className="rounded-md bg-slate-50 p-4"
-                    >
-                      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                        <h4 className="font-semibold text-slate-950">
-                          {chunk.sourceTitle}
-                        </h4>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                          Similarity {formatSimilarity(chunk.similarity)}
-                        </p>
-                      </div>
-                      <p className="mt-2 text-xs text-slate-500">
-                        Chunk {chunk.chunkIndex} · {chunk.sourceAnchor}
-                      </p>
-                      <p className="mt-3 text-sm leading-6 text-slate-700">
-                        {chunk.snippet}
-                      </p>
-                    </article>
-                  ))}
-                </div>
-                <p className="mt-4 text-xs leading-5 text-slate-500">
-                  Retrieval details are search diagnostics, not AI thinking.
-                  They do not include prompts, full document chunks, raw
-                  embeddings, model names, or API keys.
-                </p>
-              </div>
-            ) : null}
-          </div>
-        </section>
-      ) : null}
     </div>
+  );
+}
+
+function ChatMessageBubble({ message }: { message: ChatMessage }) {
+  if (message.role === "user") {
+    return (
+      <article className="ml-auto max-w-3xl rounded-lg bg-slate-950 px-4 py-3 text-sm leading-6 text-white">
+        <p className="whitespace-pre-wrap">{message.content}</p>
+      </article>
+    );
+  }
+
+  return (
+    <article className="max-w-4xl rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+        Assistant
+      </p>
+      <MarkdownAnswer content={message.content} />
+
+      {message.usage ? (
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <UsagePill
+            label="RAG messages"
+            value={`${message.usage.ragMessagesUsed.toLocaleString()} / ${message.usage.ragMessagesLimit.toLocaleString()}`}
+          />
+          <UsagePill
+            label="Retrieved chunks"
+            value={`${message.usage.retrievedChunks.toLocaleString()} / ${message.usage.maxRetrievedChunks.toLocaleString()}`}
+          />
+          <UsagePill
+            label="Query embedded"
+            value={message.retrievalDetails?.queryEmbedded ? "Yes" : "No"}
+          />
+          <UsagePill
+            label="Similarity"
+            value={message.retrievalDetails?.similarityMetric ?? "cosine"}
+          />
+        </div>
+      ) : null}
+
+      {message.sources.length > 0 ? (
+        <div className="mt-8">
+          <h3 className="text-lg font-semibold text-slate-950">Sources</h3>
+          <div className="mt-3 grid gap-3">
+            {message.sources.map((source) => (
+              <SourceCard
+                key={`${source.documentId}-${source.chunkIndex}-${source.sourceAnchor}`}
+                source={source}
+              />
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {message.retrievalDetails ? (
+        <RetrievalDetails details={message.retrievalDetails} />
+      ) : null}
+    </article>
   );
 }
 
@@ -455,6 +489,64 @@ function SourceCard({ source }: { source: RagSource }) {
         {source.snippet}
       </p>
     </article>
+  );
+}
+
+function RetrievalDetails({
+  details,
+}: {
+  details: RagChatSuccessResponse["retrievalDetails"];
+}) {
+  return (
+    <details className="mt-8 rounded-lg border border-slate-200">
+      <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-50">
+        How this answer was retrieved
+      </summary>
+      <div className="border-t border-slate-200 p-4">
+        <div className="grid gap-3 text-sm text-slate-700 sm:grid-cols-3">
+          <DetailRow
+            label="Query embedded"
+            value={details.queryEmbedded ? "Yes" : "No"}
+          />
+          <DetailRow
+            label="Matched chunks"
+            value={details.matchedChunkCount.toLocaleString()}
+          />
+          <DetailRow
+            label="Similarity metric"
+            value={details.similarityMetric}
+          />
+        </div>
+        <div className="mt-4 grid gap-3">
+          {details.retrievedChunks.map((chunk) => (
+            <article
+              key={`${chunk.documentId}-${chunk.chunkIndex}-${chunk.sourceAnchor}`}
+              className="rounded-md bg-slate-50 p-4"
+            >
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                <h4 className="font-semibold text-slate-950">
+                  {chunk.sourceTitle}
+                </h4>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Similarity {formatSimilarity(chunk.similarity)}
+                </p>
+              </div>
+              <p className="mt-2 text-xs text-slate-500">
+                Chunk {chunk.chunkIndex} - {chunk.sourceAnchor}
+              </p>
+              <p className="mt-3 text-sm leading-6 text-slate-700">
+                {chunk.snippet}
+              </p>
+            </article>
+          ))}
+        </div>
+        <p className="mt-4 text-xs leading-5 text-slate-500">
+          Retrieval details are search diagnostics, not AI thinking. They do not
+          include prompts, full document chunks, raw embeddings, model names, or
+          API keys.
+        </p>
+      </div>
+    </details>
   );
 }
 

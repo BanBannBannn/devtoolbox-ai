@@ -2,6 +2,16 @@
 
 ## 2026-05-26
 
+### Phase 5D-2 RAG chat session UI
+- Upgraded `/dashboard/rag-chat` into a session hub with a recent chat list, newest-first sorting, updated timestamps, and a new-chat composer.
+- Added `/dashboard/rag-chat/[sessionId]` for continuing a saved RAG chat session with server-side ownership checks.
+- Updated the dashboard RAG chat panel to render persisted user and assistant messages after refresh.
+- Assistant messages keep safe Markdown rendering and show stored sources, usage, and retrieval diagnostics when available.
+- New chats send no `sessionId`, then navigate to the returned saved session URL after the backend creates the session.
+- Existing chats send `sessionId` to `POST /api/rag/chat` and append the new user/assistant turn in the UI.
+- Added safe mapping helpers/tests for stored session rows and message JSON fields so model names, raw embeddings, and other forbidden fields are not exposed.
+- Kept the work scoped to session UI; no streaming, query rewriting, summary memory, global chatbox changes, SQL changes, SQL execution, or public tool changes were added.
+
 ### Phase 5D-1 RAG chat sessions backend
 - Implemented backend support for persisted RAG chat sessions in `POST /api/rag/chat`.
 - Added session helpers for safe title generation, owned session loading/creation, message insertion, recent history loading, and session `updated_at` bumping.
