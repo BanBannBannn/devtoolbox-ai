@@ -2,6 +2,15 @@
 
 ## 2026-05-26
 
+### RAG chat fixed-height layout
+- Updated dashboard RAG chat pages to use a viewport-based, fixed-height chat layout.
+- Made the recent session list scroll independently from the main chat panel.
+- Changed the RAG chat panel into a flex layout with a scrollable message area and a bottom composer that stays visible.
+- Added message-area auto-scroll after new messages and loading state changes without scrolling the whole browser page.
+- Constrained the textarea and kept Markdown/code blocks/retrieval details inside the scrollable message panel.
+- Updated Phase 5D QA with fixed-height chat layout checks.
+- Kept the work scoped to layout; no RAG API behavior, persistence logic, streaming, query rewriting, public tools, model-name exposure, or secret exposure was changed.
+
 ### Phase 5D-2 RAG chat session UI
 - Upgraded `/dashboard/rag-chat` into a session hub with a recent chat list, newest-first sorting, updated timestamps, and a new-chat composer.
 - Added `/dashboard/rag-chat/[sessionId]` for continuing a saved RAG chat session with server-side ownership checks.

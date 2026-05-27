@@ -67,7 +67,7 @@ export default async function DashboardRagChatSessionPage({
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
       <Link
         href="/dashboard/rag-chat"
         className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
@@ -75,7 +75,7 @@ export default async function DashboardRagChatSessionPage({
         Back to RAG chats
       </Link>
 
-      <div className="mt-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <div className="mt-5 shrink-0 rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
           Saved RAG chat
         </p>
@@ -88,7 +88,7 @@ export default async function DashboardRagChatSessionPage({
         </p>
       </div>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+      <div className="mt-6 grid h-[calc(100vh-24rem)] min-h-[680px] gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
         <SessionList
           activeSessionId={session.id}
           sessions={sessions ?? []}
@@ -114,45 +114,51 @@ function SessionList({
   }[];
 }) {
   return (
-    <aside className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-24 lg:self-start">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-slate-950">Recent chats</h2>
-        <Link
-          href="/dashboard/rag-chat"
-          className="rounded-md bg-slate-950 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800"
-        >
-          New chat
-        </Link>
+    <aside className="flex max-h-64 min-h-0 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm lg:h-full lg:max-h-none">
+      <div className="shrink-0 border-b border-slate-200 p-5">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-slate-950">
+            Recent chats
+          </h2>
+          <Link
+            href="/dashboard/rag-chat"
+            className="rounded-md bg-slate-950 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800"
+          >
+            New chat
+          </Link>
+        </div>
       </div>
 
       {sessions.length === 0 ? (
-        <p className="mt-4 rounded-md bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
+        <p className="m-5 rounded-md bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
           No RAG chat sessions yet.
         </p>
       ) : (
-        <div className="mt-4 grid gap-2">
-          {sessions.map((chatSession) => {
-            const isActive = chatSession.id === activeSessionId;
+        <div className="min-h-0 flex-1 overflow-y-auto p-5">
+          <div className="grid gap-2">
+            {sessions.map((chatSession) => {
+              const isActive = chatSession.id === activeSessionId;
 
-            return (
-              <Link
-                key={chatSession.id}
-                href={`/dashboard/rag-chat/${chatSession.id}`}
-                className={`rounded-md border px-3 py-3 transition ${
-                  isActive
-                    ? "border-emerald-300 bg-emerald-50"
-                    : "border-slate-200 hover:border-emerald-200 hover:bg-emerald-50"
-                }`}
-              >
-                <p className="line-clamp-2 text-sm font-semibold text-slate-950">
-                  {chatSession.title}
-                </p>
-                <p className="mt-1 text-xs text-slate-500">
-                  Updated {formatDateTime(chatSession.updatedAt)}
-                </p>
-              </Link>
-            );
-          })}
+              return (
+                <Link
+                  key={chatSession.id}
+                  href={`/dashboard/rag-chat/${chatSession.id}`}
+                  className={`rounded-md border px-3 py-3 transition ${
+                    isActive
+                      ? "border-emerald-300 bg-emerald-50"
+                      : "border-slate-200 hover:border-emerald-200 hover:bg-emerald-50"
+                  }`}
+                >
+                  <p className="line-clamp-2 text-sm font-semibold text-slate-950">
+                    {chatSession.title}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-500">
+                    Updated {formatDateTime(chatSession.updatedAt)}
+                  </p>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       )}
     </aside>

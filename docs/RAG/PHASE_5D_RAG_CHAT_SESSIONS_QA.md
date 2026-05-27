@@ -87,9 +87,16 @@
 - [ ] User can open a previous chat.
 - [ ] User can continue a previous chat.
 - [ ] Previous messages render after refresh.
+- [ ] Chat page uses a fixed-height app-like layout instead of growing endlessly with long conversations.
+- [ ] Session list scrolls independently when there are many sessions.
+- [ ] Message list scrolls independently when there are many messages.
+- [ ] Composer remains visible at the bottom of the chat panel.
+- [ ] Sending or receiving a message auto-scrolls the message list, not the whole browser page.
 - [ ] Assistant Markdown rendering still works safely.
 - [ ] Sources still show short snippets.
 - [ ] Retrieval details remain structured diagnostics, not thinking.
+- [ ] Expanded retrieval details stay inside the scrollable message area and do not break the layout.
+- [ ] Long code blocks scroll horizontally inside assistant Markdown.
 - [ ] UI is mobile-friendly.
 
 ## Security

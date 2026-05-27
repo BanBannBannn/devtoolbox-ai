@@ -42,7 +42,7 @@ export default async function DashboardRagChatPage() {
   });
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-6xl flex-col px-4 py-6 sm:px-6 lg:px-8">
       <Link
         href="/dashboard"
         className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
@@ -50,11 +50,11 @@ export default async function DashboardRagChatPage() {
         Back to dashboard
       </Link>
 
-      <div className="mt-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <div className="mt-5 shrink-0 rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
           Private RAG chat
         </p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950">
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
           RAG Chat
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">
@@ -70,7 +70,7 @@ export default async function DashboardRagChatPage() {
         </p>
       </div>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+      <div className="mt-6 grid h-[calc(100vh-24rem)] min-h-[680px] gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
         <SessionList sessions={sessions ?? []} />
         <RagChatPanel />
       </div>
@@ -88,8 +88,9 @@ function SessionList({
   }[];
 }) {
   return (
-    <aside className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-24 lg:self-start">
-      <div className="flex items-center justify-between gap-3">
+    <aside className="flex max-h-64 min-h-0 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm lg:h-full lg:max-h-none">
+      <div className="shrink-0 border-b border-slate-200 p-5">
+        <div className="flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-slate-950">Recent chats</h2>
         <Link
           href="/dashboard/rag-chat"
@@ -97,15 +98,17 @@ function SessionList({
         >
           New chat
         </Link>
+        </div>
       </div>
 
       {sessions.length === 0 ? (
-        <p className="mt-4 rounded-md bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
+        <p className="m-5 rounded-md bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-600">
           No RAG chat sessions yet. Ask a question to create your first saved
           session.
         </p>
       ) : (
-        <div className="mt-4 grid gap-2">
+        <div className="min-h-0 flex-1 overflow-y-auto p-5">
+          <div className="grid gap-2">
           {sessions.map((session) => (
             <Link
               key={session.id}
@@ -120,6 +123,7 @@ function SessionList({
               </p>
             </Link>
           ))}
+          </div>
         </div>
       )}
     </aside>

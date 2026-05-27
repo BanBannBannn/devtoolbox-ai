@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -154,6 +154,7 @@ export function RagChatPanel({
   initialMessages?: RagChatStoredMessage[];
 }) {
   const router = useRouter();
+  const messageListRef = useRef<HTMLDivElement | null>(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -164,6 +165,19 @@ export function RagChatPanel({
     [message],
   );
   const isOverLimit = remainingCharacters < 0;
+
+  useEffect(() => {
+    const messageList = messageListRef.current;
+
+    if (!messageList) {
+      return;
+    }
+
+    messageList.scrollTo({
+      top: messageList.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages.length, isLoading]);
 
   async function submitQuestion() {
     const trimmedMessage = message.trim();
@@ -254,8 +268,8 @@ export function RagChatPanel({
   }
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <section className="flex h-full min-h-[560px] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="shrink-0 border-b border-slate-200 p-5 sm:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h2 className="text-xl font-semibold text-slate-950">
@@ -272,15 +286,20 @@ export function RagChatPanel({
             </span>
           ) : null}
         </div>
+      </div>
 
+      <div
+        ref={messageListRef}
+        className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6"
+      >
         {messages.length === 0 ? (
-          <div className="mt-6 rounded-md bg-slate-50 px-4 py-5 text-sm leading-6 text-slate-600">
+          <div className="rounded-md bg-slate-50 px-4 py-5 text-sm leading-6 text-slate-600">
             Ask your first question to create a saved RAG chat session. If the
             answer has no useful context, vectorize documents first from
             Dashboard - Documents.
           </div>
         ) : (
-          <div className="mt-6 space-y-4">
+          <div className="space-y-4">
             {messages.map((chatMessage) => (
               <ChatMessageBubble
                 key={chatMessage.id}
@@ -295,9 +314,9 @@ export function RagChatPanel({
             Searching your vectorized document chunks...
           </div>
         ) : null}
-      </section>
+      </div>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="shrink-0 border-t border-slate-200 bg-white p-4 sm:p-5">
         <label
           htmlFor="rag-question"
           className="text-sm font-semibold text-slate-950"
@@ -311,7 +330,7 @@ export function RagChatPanel({
           maxLength={maxMessageLength + 200}
           onChange={(event) => setMessage(event.target.value)}
           placeholder="Ask a question about your saved and vectorized documents..."
-          className="mt-3 w-full rounded-md border border-slate-300 bg-white px-3 py-3 text-sm leading-6 text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+          className="mt-3 max-h-36 min-h-24 w-full resize-y rounded-md border border-slate-300 bg-white px-3 py-3 text-sm leading-6 text-slate-950 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
         />
         <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p
@@ -343,8 +362,8 @@ export function RagChatPanel({
             {errorMessage}
           </p>
         ) : null}
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }
 
@@ -358,7 +377,7 @@ function ChatMessageBubble({ message }: { message: ChatMessage }) {
   }
 
   return (
-    <article className="max-w-4xl rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <article className="max-w-4xl overflow-hidden rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
       <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
         Assistant
       </p>
@@ -419,7 +438,7 @@ function UsagePill({ label, value }: { label: string; value: string }) {
 
 function MarkdownAnswer({ content }: { content: string }) {
   return (
-    <div className="mt-4 rounded-md bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-700">
+    <div className="mt-4 overflow-hidden rounded-md bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-700">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         skipHtml
@@ -477,7 +496,7 @@ function MarkdownAnswer({ content }: { content: string }) {
 
 function SourceCard({ source }: { source: RagSource }) {
   return (
-    <article className="rounded-md border border-slate-200 p-4">
+    <article className="overflow-hidden rounded-md border border-slate-200 p-4">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
         <h4 className="font-semibold text-slate-950">{source.sourceTitle}</h4>
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -498,7 +517,7 @@ function RetrievalDetails({
   details: RagChatSuccessResponse["retrievalDetails"];
 }) {
   return (
-    <details className="mt-8 rounded-lg border border-slate-200">
+    <details className="mt-8 overflow-hidden rounded-lg border border-slate-200">
       <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-50">
         How this answer was retrieved
       </summary>
@@ -521,7 +540,7 @@ function RetrievalDetails({
           {details.retrievedChunks.map((chunk) => (
             <article
               key={`${chunk.documentId}-${chunk.chunkIndex}-${chunk.sourceAnchor}`}
-              className="rounded-md bg-slate-50 p-4"
+              className="overflow-hidden rounded-md bg-slate-50 p-4"
             >
               <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <h4 className="font-semibold text-slate-950">
