@@ -21,7 +21,11 @@
 - [ ] Users cannot change their own role.
 - [ ] Role changes are server-side protected.
 - [ ] `profiles.role` is not editable by normal users.
+- [ ] Existing `profiles` policies are reviewed with the Phase 6B preflight query before adding `profiles.role`.
+- [ ] After Phase 6B SQL is applied, default user role is `user`.
+- [ ] Phase 6B role helper foundation exists for parsing roles, moderator/admin checks, blog moderation permission, and admin-only role management permission.
 - [ ] Existing profile update flows do not allow self-promotion.
+- [ ] Role helper functions revoke execute from `public` and grant execute only to `authenticated`.
 - [ ] Client-provided role is never trusted.
 
 ## Post Lifecycle
@@ -46,6 +50,7 @@
 - [ ] One bookmark per user per post.
 - [ ] Bookmarks are private.
 - [ ] Logged-in users can comment on published posts.
+- [ ] Normal users cannot change comment moderation status through comment edits.
 - [ ] MVP comments avoid infinite nesting.
 - [ ] Server actions reject replies to replies.
 - [ ] Reply parent must be visible and top-level.
@@ -75,9 +80,12 @@
 - [ ] JPEG/PNG/WebP are allowed.
 - [ ] SVG is excluded from MVP unless sanitized.
 - [ ] Storage paths are planned as `userId/postId/fileName`.
+- [ ] Normal users can delete only images attached to their own draft/rejected posts.
+- [ ] Normal users cannot delete images attached to published posts.
 
 ## SQL Planning
 - [ ] `profiles.role` is planned.
+- [ ] Phase 6B implementation SQL exists for `profiles.role`.
 - [ ] `blog_posts` is planned.
 - [ ] `blog_tags` is planned.
 - [ ] `blog_post_tags` is planned.
@@ -88,6 +96,7 @@
 - [ ] `blog_images` is planned.
 - [ ] Optional future `blog_post_shares` is documented.
 - [ ] Required indexes are documented.
+- [ ] Phase 6B implementation SQL includes table creation, indexes, and RLS policies.
 - [ ] Full text search planning is documented.
 - [ ] Title length limit is 1 to 120 characters.
 - [ ] Slug length limit is 1 to 140 characters.
@@ -96,6 +105,7 @@
 
 ## RLS And Security
 - [ ] Public can read only published posts.
+- [ ] After Phase 6B SQL is applied, public users cannot read draft, pending, rejected, or archived posts.
 - [ ] Authors can read own posts.
 - [ ] Authors can insert drafts.
 - [ ] Authors can update own draft/rejected posts.
@@ -103,6 +113,7 @@
 - [ ] Moderators/admins can review and moderate.
 - [ ] Public can read tags.
 - [ ] Public post-tag reads reveal relationships only for published posts.
+- [ ] Public routes show only tags connected to published posts.
 - [ ] Authors can manage tags only for own draft/rejected posts.
 - [ ] Moderators/admins may manage tags during moderation.
 - [ ] Public can read visible comments on published posts.
@@ -111,6 +122,12 @@
 - [ ] Moderators/admins can read/resolve reports.
 - [ ] Admins can manage roles.
 - [ ] Users cannot self-promote.
+- [ ] After Phase 6B SQL is applied, normal users cannot self-promote by updating `profiles.role`.
+- [ ] Role helper tests verify invalid roles fall back to `user` and never gain moderator/admin privileges.
+- [ ] Role helper functions are not executable by anonymous/public callers unless explicitly reviewed.
+- [ ] Normal users cannot update comment status away from `visible`.
+- [ ] Blog image delete policies do not let normal users break published posts.
+- [ ] Public like/comment counts use a future server-side aggregate/RPC/view instead of exposing all like/bookmark rows.
 - [ ] Client-provided `user_id` is never trusted.
 - [ ] Client-provided role is never trusted.
 - [ ] Public author display uses safe profile fields only.

@@ -1,6 +1,39 @@
 # Work Log
 
+## 2026-05-27
+
+### Phase 6B role helper foundation
+- Added blog role helper names for `user`, `moderator`, and `admin` roles after the Phase 6B schema was applied manually.
+- Added safe role parsing through `parseUserRole`, with invalid or missing values falling back to `user`.
+- Added blog permission helpers for moderator/admin checks, blog moderation access, and admin-only user role management.
+- Added server-side current-user role context loading from the authenticated Supabase session without trusting client-provided user IDs or roles.
+- Added `requireModeratorOrAdmin` and `requireAdmin` helpers that distinguish unauthenticated access from forbidden role access with safe errors.
+- Expanded role helper tests for invalid role fallback, moderator-only detection, blog moderation permission, admin-only role management, and non-elevation of unknown roles.
+- Updated Phase 6A QA with the role helper foundation checks.
+- Kept the work scoped to role/permission helpers; no public blog UI, editor, moderation UI, likes/comments/reports UI, RAG behavior, public tools, or SQL execution was added.
+
 ## 2026-05-26
+
+### Phase 6B blog schema SQL safety patch
+- Added a `profiles` policy preflight query to the Phase 6B SQL doc and made live profile-policy review a required manual step before applying the schema.
+- Clarified that the repo docs currently expect profile read/insert policies only, with no broad normal-user `profiles` update policy.
+- Added explicit role helper `revoke execute from public` and `grant execute to authenticated` statements.
+- Tightened comment update RLS so normal users can update only their own comments that remain `visible`, with content-only edits deferred to server actions.
+- Tightened blog image delete RLS so normal users can delete images only for their own `draft` or `rejected` posts.
+- Added notes for public tag visibility, safe public like/comment counts through future aggregate paths, and no public exposure of raw like/bookmark rows for counts.
+- Updated Phase 6A SQL planning and QA checks with the same role, comment, image, tag, and aggregate-count safety requirements.
+- Kept the patch scoped to SQL/docs review; no SQL was run, and no runtime UI, editor, community interaction UI, RAG behavior, or public tools were changed.
+
+### Phase 6B blog schema and roles foundation
+- Added repo-managed Phase 6B SQL for the blog platform schema, indexes, role helper functions, and RLS policies.
+- Planned `profiles.role` with allowed roles `user`, `moderator`, and `admin`, defaulting to `user`.
+- Added blog tables for posts, tags, post tags, likes, bookmarks, comments, reports, and images.
+- Added RLS policies for published public reads, author-owned drafts, moderator/admin review access, private bookmarks/reports, published-only likes/bookmarks/comments, and protected tag/image relationships.
+- Documented manual review notes for existing profile update policies, polymorphic report targets, one-level comment replies, stable published slugs, private bookmarks, and future like-count aggregation.
+- Added server-side role helpers for parsing roles, moderator/admin checks, admin checks, assertion helpers, and current user role loading through Supabase.
+- Added unit tests for role parsing, safe fallback behavior, moderator/admin checks, admin checks, and permission assertion failures.
+- Updated the Phase 6A QA checklist with Phase 6B schema/RLS verification items.
+- Kept this phase scoped to schema/role foundation; no SQL was run, and no public blog UI, editor, upload, likes/comments/reports runtime UI, RAG behavior, or public tools were changed.
 
 ### Phase 6A blog platform review patch
 - Patched Phase 6A blog planning docs with final pre-implementation review notes.

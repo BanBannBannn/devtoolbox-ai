@@ -25,6 +25,12 @@ check (role in ('user', 'moderator', 'admin'));
 -- Normal users must not be able to edit profiles.role through RLS or profile
 -- update actions. Role changes should be admin-only and verified server-side.
 -- Client-provided role must never be trusted.
+-- Before applying Phase 6B SQL, inspect existing profiles policies:
+-- select policyname, cmd, roles, qual, with_check
+-- from pg_policies
+-- where schemaname = 'public' and tablename = 'profiles';
+-- Do not proceed if a broad normal-user update policy could allow users to
+-- update role or plan_key.
 
 create table if not exists public.blog_posts (
   id uuid primary key default gen_random_uuid(),
@@ -236,6 +242,13 @@ Role helper planning:
 -- as $$
 --   select public.current_user_role() in ('moderator', 'admin');
 -- $$;
+--
+-- Revoke execute from public and grant only to authenticated unless a public
+-- use is explicitly needed:
+-- revoke execute on function public.current_user_role() from public;
+-- revoke execute on function public.current_user_is_moderator_or_admin() from public;
+-- grant execute on function public.current_user_role() to authenticated;
+-- grant execute on function public.current_user_is_moderator_or_admin() to authenticated;
 ```
 
 Policy plan:
@@ -257,13 +270,15 @@ Policy plan:
 - Users can read only their own bookmarks.
 - Public can read visible comments on published posts.
 - Logged-in users can insert comments only on published posts.
-- Users can update/delete their own comments when allowed.
+- Users can update their own visible comment content while status remains `visible`; status changes should go through trusted server actions.
+- Users can delete their own visible comments when allowed.
 - Moderators/admins can hide/remove comments.
 - Logged-in users can create reports.
 - Users can read their own reports.
 - Moderators/admins can read and resolve reports.
 - Admins can manage roles.
 - Users cannot self-promote.
+- Users can delete only images attached to their own draft/rejected posts; published post images should not be removable by normal users.
 
 Polymorphic report target note:
 
