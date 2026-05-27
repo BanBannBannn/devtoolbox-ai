@@ -2,6 +2,28 @@
 
 ## 2026-05-26
 
+### Phase 6A blog platform review patch
+- Patched Phase 6A blog planning docs with final pre-implementation review notes.
+- Clarified polymorphic report targets and the server-side validation required before inserting reports.
+- Clarified one-level comment reply behavior and rejection of replies to replies.
+- Strengthened role safety notes so `profiles.role` is admin-only and never trusted from client input.
+- Added slug stability guidance for published posts and future redirect planning.
+- Added recommended MVP validation limits for titles, slugs, excerpts, comments, reports, rejection reasons, and tag names.
+- Clarified safe public author display using profile fields without exposing private user data or email by default.
+- Expanded RLS planning for `blog_post_tags` so public reads reveal only published relationships and authors manage tags only for own draft/rejected posts.
+- Kept the patch documentation-only; no runtime code, SQL execution, RAG behavior, public tools, or schema changes were applied.
+
+### Phase 6A blog/community platform planning
+- Added Phase 6A planning docs for evolving DevToolBox AI into a developer knowledge publishing platform.
+- Defined the product direction: public blog/community content as a primary feature, RAG Chat as the dashboard AI workspace, and developer tools as secondary utilities.
+- Documented roles for `user`, `moderator`, and `admin`, including server-side role protection and no self-promotion.
+- Planned post lifecycle statuses, writer dashboard routes, moderation queues, admin user management, public tag/search routes, and bookmark dashboard.
+- Planned community interactions: likes, bookmarks, comments, reports, and share behavior.
+- Added SQL planning for `profiles.role`, `blog_posts`, tags, post tags, likes, bookmarks, comments, reports, optional images, indexes, and future share analytics.
+- Added RLS planning to keep drafts, reports, moderation data, bookmarks, and role changes protected while allowing public reads for published posts.
+- Added QA checklist for roles, lifecycle, community actions, sharing, editor/image planning, SQL/RLS, routes, SEO, abuse controls, and out-of-scope boundaries.
+- Kept Phase 6A documentation-only; no runtime code, SQL execution, editor, upload, like/comment/report implementation, RAG behavior change, public tool change, or secret exposure was added.
+
 ### Public positioning update
 - Repositioned the homepage from a tools-first site to an AI workspace for developer knowledge.
 - Updated hero copy to emphasize saving documents, searchable knowledge, and chatting with project context.
