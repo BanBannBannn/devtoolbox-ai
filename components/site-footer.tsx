@@ -13,8 +13,8 @@ export function SiteFooter() {
         <div>
           <p className="font-semibold text-white">DevToolBox AI</p>
           <p className="mt-2 max-w-md text-sm leading-6">
-            Free developer utilities and practical coding content. No login
-            required for v1.
+            An AI workspace for developer knowledge with practical tools for
+            everyday development tasks.
           </p>
         </div>
         <nav aria-label="Footer navigation" className="flex flex-wrap gap-4">

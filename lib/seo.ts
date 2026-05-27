@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 const siteName = "DevToolBox AI";
 const baseDescription =
-  "Free browser-based developer tools, AI coding prompts, and software testing checklists.";
+  "Save documents, chat with your own knowledge base, and use practical developer tools in one workspace.";
 
 type SeoConfig = {
   title?: string;

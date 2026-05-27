@@ -1,4 +1,4 @@
-import { Braces, CheckCircle2, Terminal, Wand2 } from "lucide-react";
+import { FileText, MessageSquareText, Search, Terminal } from "lucide-react";
 
 export function HeroVisual() {
   return (
@@ -23,35 +23,40 @@ export function HeroVisual() {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                  Active tool
+                  Knowledge workspace
                 </p>
                 <p className="mt-1 font-semibold text-slate-950">
-                  JSON Formatter
+                  Project Notes
                 </p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600 text-white">
-                <Braces aria-hidden="true" className="h-5 w-5" />
+                <FileText aria-hidden="true" className="h-5 w-5" />
               </div>
             </div>
-            <div className="mt-4 space-y-2 font-mono text-xs text-slate-600">
-              <p>{'{"status":"valid","indent":2}'}</p>
-              <p className="text-emerald-700">Output copied.</p>
+            <div className="mt-4 space-y-2 text-xs text-slate-600">
+              <p>Vectorized: onboarding notes, API docs, launch checklist</p>
+              <p className="font-medium text-emerald-700">
+                Ready for document chat.
+              </p>
             </div>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-md border border-white/10 bg-white/10 p-4 text-white">
-              <Wand2 aria-hidden="true" className="h-5 w-5 text-amber-300" />
-              <p className="mt-3 text-sm font-semibold">Prompt builder</p>
+              <MessageSquareText
+                aria-hidden="true"
+                className="h-5 w-5 text-amber-300"
+              />
+              <p className="mt-3 text-sm font-semibold">Ask documents</p>
               <p className="mt-1 text-xs leading-5 text-slate-300">
-                Context, task, constraints.
+                Answers grounded in your saved context.
               </p>
             </div>
             <div className="rounded-md border border-white/10 bg-white/10 p-4 text-white">
-              <CheckCircle2 aria-hidden="true" className="h-5 w-5 text-cyan-300" />
-              <p className="mt-3 text-sm font-semibold">QA checklist</p>
+              <Search aria-hidden="true" className="h-5 w-5 text-cyan-300" />
+              <p className="mt-3 text-sm font-semibold">Search knowledge</p>
               <p className="mt-1 text-xs leading-5 text-slate-300">
-                Smoke, edge, regression.
+                Find project details when you need them.
               </p>
             </div>
           </div>

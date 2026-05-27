@@ -3,6 +3,7 @@ import { UserMenu } from "@/components/auth/user-menu";
 import { getCurrentSupabaseUser } from "@/lib/supabase/server";
 
 const navItems = [
+  { href: "/dashboard", label: "Workspace" },
   { href: "/tools", label: "Tools" },
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "About" },

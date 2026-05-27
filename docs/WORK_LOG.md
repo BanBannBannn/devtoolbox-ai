@@ -2,6 +2,16 @@
 
 ## 2026-05-26
 
+### Public positioning update
+- Repositioned the homepage from a tools-first site to an AI workspace for developer knowledge.
+- Updated hero copy to emphasize saving documents, searchable knowledge, and chatting with project context.
+- Changed the primary homepage CTA to `Start your AI workspace` and kept `Explore tools` as the secondary CTA.
+- Added homepage feature cards for document chat, project knowledge organization, and practical developer tools.
+- Adjusted featured tools copy so tools are positioned as a secondary workspace feature.
+- Updated header navigation to put `Workspace` before `Tools` and `Blog`.
+- Updated default/home SEO descriptions and footer copy to match the AI workspace positioning.
+- Kept the product name, public tools, RAG backend, auth, Supabase, OpenRouter, vectorization, dashboard logic, model-name privacy, and secrets unchanged.
+
 ### Phase 5D-3 RAG chat session rename/delete
 - Added server-side validation for chat session titles with trim/whitespace normalization, non-empty enforcement, and a `120` character max.
 - Added owned-session rename and delete helpers that scope updates/deletes by the authenticated user's ID.
