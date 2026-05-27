@@ -3,7 +3,7 @@
 ## Goal
 Upgrade dashboard RAG chat from single-turn Q&A to multi-session chat with persisted message history.
 
-This phase is planning only. It does not implement runtime code, create routes, run SQL, add streaming, upgrade the global chatbox, add query rewriting, add conversation summaries, add public sharing, add teams/workspaces, add file upload, add payments, add benchmarking, or modify public tools.
+Phase 5D-1 implements the backend API/session persistence path. It does not implement dashboard session list UI, run SQL, add streaming, upgrade the global chatbox, add query rewriting, add conversation summaries, add public sharing, add teams/workspaces, add file upload, add payments, add benchmarking, or modify public tools.
 
 ## User Outcomes
 - A logged-in user can create multiple RAG chat sessions.
@@ -170,7 +170,7 @@ Add `chatHistoryMessages` to RAG runtime settings:
 | --- | ---: | --- | --- |
 | `chatHistoryMessages` | `6` | `0` to `20` | Number of recent same-session messages included in the LLM prompt. |
 
-Admin settings should eventually allow editing `chatHistoryMessages`, but this planning task does not implement the admin UI.
+Admin settings should eventually allow editing `chatHistoryMessages`, but Phase 5D-1 does not implement the admin UI for that setting.
 
 ## Security
 - Session ownership must be verified server-side.

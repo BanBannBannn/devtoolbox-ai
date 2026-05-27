@@ -25,6 +25,7 @@ Supported runtime settings:
 | `temperature` | `0.2` | `0` to `1` | LLM answer randomness. |
 | `sourceSnippetLength` | `240` | `80` to `500` | Length of snippets returned in sources and retrieval details. |
 | `debugRetrieval` | `false` | boolean | Controls whether safe extra retrieval diagnostics are included server-side or in admin debugging flows. |
+| `chatHistoryMessages` | `6` | `0` to `20` | Number of recent same-session chat messages included in the RAG prompt. |
 
 Recommended stored default:
 
@@ -35,7 +36,8 @@ Recommended stored default:
   "maxOutputTokens": 800,
   "temperature": 0.2,
   "sourceSnippetLength": 240,
-  "debugRetrieval": false
+  "debugRetrieval": false,
+  "chatHistoryMessages": 6
 }
 ```
 
@@ -115,6 +117,7 @@ Optional server-side emergency overrides:
 - `RAG_TEMPERATURE=`
 - `RAG_SOURCE_SNIPPET_LENGTH=`
 - `RAG_DEBUG_RETRIEVAL=`
+- `RAG_CHAT_HISTORY_MESSAGES=`
 
 Do not create `NEXT_PUBLIC_RAG_ADMIN_EMAILS`.
 Do not create `NEXT_PUBLIC_` versions of RAG tuning variables.

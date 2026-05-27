@@ -2,6 +2,17 @@
 
 ## 2026-05-26
 
+### Phase 5D-1 RAG chat sessions backend
+- Implemented backend support for persisted RAG chat sessions in `POST /api/rag/chat`.
+- Added session helpers for safe title generation, owned session loading/creation, message insertion, recent history loading, and session `updated_at` bumping.
+- The API now creates a session when `sessionId` is missing and verifies owned sessions when `sessionId` is provided.
+- User messages are saved only after auth, validation, quota checks, and session ownership checks pass.
+- Assistant success responses are saved with answer content, sources, usage, and retrieval details.
+- Added recent same-session chat history to the prompt as untrusted text while still embedding only the current user question for retrieval.
+- Added `chatHistoryMessages` runtime config with default `6`, safe range `0` to `20`, and `RAG_CHAT_HISTORY_MESSAGES` env fallback.
+- Added pure tests for session title generation, chat history prompt inclusion, and chat history runtime clamping.
+- Kept Phase 5D-1 scoped to backend persistence only; no dashboard session list UI, streaming, query rewriting, summary memory, public tool changes, SQL changes, or SQL execution were added.
+
 ### Phase 5D RAG chat sessions planning
 - Added Phase 5D planning docs for persisted dashboard RAG chat sessions and message history.
 - Documented user outcomes for creating multiple sessions, listing previous sessions, continuing a session, and seeing persisted user/assistant messages.

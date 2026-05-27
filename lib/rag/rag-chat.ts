@@ -1,4 +1,10 @@
 import type { User } from "@supabase/supabase-js";
+import {
+  bumpChatSessionUpdatedAt,
+  getOrCreateOwnedChatSession,
+  insertChatMessage,
+  listRecentChatMessages,
+} from "./chat-sessions";
 import { generateEmbedding } from "./embedding-provider";
 import { generateRagAnswer } from "./rag-llm-provider";
 import {
@@ -25,6 +31,7 @@ import {
 
 export type RagChatSuccess = {
   success: true;
+  sessionId: string;
   answer: string;
   sources: RagSource[];
   usage: RagUsageSummary;
@@ -95,7 +102,6 @@ export async function answerRagChatForCurrentUser(
     planLimits,
     dbConfig: storedRuntimeSettings,
   });
-
   const ragMessagesUsed = await countMonthlyRagMessages(supabase, user.id);
 
   if (ragMessagesUsed === null) {
@@ -106,7 +112,46 @@ export async function answerRagChatForCurrentUser(
     return createFailure("Monthly RAG chat quota is exhausted.", 429);
   }
 
-  const usageRecorded = await recordRagMessageUsageEvent(supabase, user.id);
+  const chatSession = await getOrCreateOwnedChatSession({
+    supabase,
+    userId: user.id,
+    sessionId: validation.request.sessionId,
+    firstMessage: validation.request.message,
+  });
+
+  if (!chatSession) {
+    return createFailure("Chat session not found.", 404);
+  }
+
+  const userMessageId = await insertChatMessage({
+    supabase,
+    userId: user.id,
+    sessionId: chatSession.id,
+    role: "user",
+    content: validation.request.message,
+  });
+
+  if (!userMessageId) {
+    return createFailure("Could not save your chat message.", 500);
+  }
+
+  const recentHistory = await listRecentChatMessages({
+    supabase,
+    userId: user.id,
+    sessionId: chatSession.id,
+    limit: runtimeConfig.chatHistoryMessages,
+    excludeMessageId: userMessageId,
+  });
+
+  if (!recentHistory) {
+    return createFailure("Could not load recent chat history.", 500);
+  }
+
+  const usageRecorded = await recordRagMessageUsageEvent(
+    supabase,
+    user.id,
+    chatSession.id,
+  );
 
   if (!usageRecorded) {
     return createFailure("Could not record RAG chat usage.", 500);
@@ -150,10 +195,33 @@ export async function answerRagChatForCurrentUser(
   });
 
   if (filteredChunks.length === 0) {
+    const answer =
+      "No relevant vectorized document content was found for that question. Try vectorizing a document first, or ask about content that exists in your saved documents.";
+    const assistantSaved = await insertChatMessage({
+      supabase,
+      userId: user.id,
+      sessionId: chatSession.id,
+      role: "assistant",
+      content: answer,
+      sources,
+      retrievalDetails,
+      usage,
+    });
+
+    if (!assistantSaved) {
+      return createFailure("Could not save the assistant response.", 500);
+    }
+
+    await bumpChatSessionUpdatedAt({
+      supabase,
+      userId: user.id,
+      sessionId: chatSession.id,
+    });
+
     return {
       success: true,
-      answer:
-        "No relevant vectorized document content was found for that question. Try vectorizing a document first, or ask about content that exists in your saved documents.",
+      sessionId: chatSession.id,
+      answer,
       sources,
       usage,
       retrievalDetails,
@@ -163,6 +231,7 @@ export async function answerRagChatForCurrentUser(
   const prompt = createRagPromptMessages({
     message: validation.request.message,
     chunks: filteredChunks,
+    history: recentHistory,
   });
   const answerResult = await generateRagAnswer({
     systemPrompt: prompt.system,
@@ -175,8 +244,30 @@ export async function answerRagChatForCurrentUser(
     return createFailure(answerResult.error, 502);
   }
 
+  const assistantSaved = await insertChatMessage({
+    supabase,
+    userId: user.id,
+    sessionId: chatSession.id,
+    role: "assistant",
+    content: answerResult.answer,
+    sources,
+    retrievalDetails,
+    usage,
+  });
+
+  if (!assistantSaved) {
+    return createFailure("Could not save the assistant response.", 500);
+  }
+
+  await bumpChatSessionUpdatedAt({
+    supabase,
+    userId: user.id,
+    sessionId: chatSession.id,
+  });
+
   return {
     success: true,
+    sessionId: chatSession.id,
     answer: answerResult.answer,
     sources,
     usage,
@@ -244,13 +335,16 @@ async function countMonthlyRagMessages(
 async function recordRagMessageUsageEvent(
   supabase: SupabaseServerClient,
   userId: string,
+  sessionId: string,
 ) {
   const { error } = await supabase.from("usage_events").insert({
     user_id: userId,
     event_type: "rag_message",
     quantity: 1,
     period_start: getCurrentMonthPeriodStartUtc(),
-    metadata: {},
+    metadata: {
+      sessionId,
+    },
   });
 
   return !error;

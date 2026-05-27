@@ -21,6 +21,7 @@ describe("rag runtime config", () => {
       temperature: 0.2,
       sourceSnippetLength: 240,
       debugRetrieval: false,
+      chatHistoryMessages: 6,
     });
   });
 
@@ -38,6 +39,7 @@ describe("rag runtime config", () => {
           temperature: 0.4,
           sourceSnippetLength: 300,
           debugRetrieval: true,
+          chatHistoryMessages: 12,
         },
         env: {},
       }),
@@ -48,6 +50,7 @@ describe("rag runtime config", () => {
       temperature: 0.4,
       sourceSnippetLength: 300,
       debugRetrieval: true,
+      chatHistoryMessages: 12,
     });
   });
 
@@ -65,6 +68,7 @@ describe("rag runtime config", () => {
           temperature: 2,
           sourceSnippetLength: 10,
           debugRetrieval: "yes",
+          chatHistoryMessages: 99,
         },
         env: {},
       }),
@@ -75,6 +79,7 @@ describe("rag runtime config", () => {
       temperature: 1,
       sourceSnippetLength: 80,
       debugRetrieval: false,
+      chatHistoryMessages: 20,
     });
   });
 
@@ -92,6 +97,7 @@ describe("rag runtime config", () => {
           temperature: 0.2,
           sourceSnippetLength: 120,
           debugRetrieval: false,
+          chatHistoryMessages: 5,
         },
         env: {
           RAG_RETRIEVED_CHUNKS_OVERRIDE: "8",
@@ -100,6 +106,7 @@ describe("rag runtime config", () => {
           RAG_TEMPERATURE: "0.6",
           RAG_SOURCE_SNIPPET_LENGTH: "320",
           RAG_DEBUG_RETRIEVAL: "true",
+          RAG_CHAT_HISTORY_MESSAGES: "15",
         },
       }),
     ).toEqual({
@@ -109,6 +116,7 @@ describe("rag runtime config", () => {
       temperature: 0.2,
       sourceSnippetLength: 120,
       debugRetrieval: false,
+      chatHistoryMessages: 5,
     });
   });
 
@@ -123,18 +131,21 @@ describe("rag runtime config", () => {
           retrievedChunks: 5,
           maxOutputTokens: 800,
           debugRetrieval: false,
+          chatHistoryMessages: 4,
         },
         env: {
           RAG_FORCE_ENV_OVERRIDES: "true",
           RAG_RETRIEVED_CHUNKS_OVERRIDE: "8",
           RAG_MAX_OUTPUT_TOKENS_OVERRIDE: "900",
           RAG_DEBUG_RETRIEVAL: "true",
+          RAG_CHAT_HISTORY_MESSAGES: "10",
         },
       }),
     ).toMatchObject({
       retrievedChunks: 8,
       maxOutputTokens: 900,
       debugRetrieval: true,
+      chatHistoryMessages: 10,
     });
   });
 
@@ -172,6 +183,7 @@ describe("rag runtime config", () => {
           RAG_TEMPERATURE: "-1",
           RAG_SOURCE_SNIPPET_LENGTH: "1000",
           RAG_DEBUG_RETRIEVAL: "on",
+          RAG_CHAT_HISTORY_MESSAGES: "99",
         },
       }),
     ).toEqual({
@@ -181,7 +193,20 @@ describe("rag runtime config", () => {
       temperature: 0,
       sourceSnippetLength: 500,
       debugRetrieval: true,
+      chatHistoryMessages: 20,
     });
+  });
+
+  it("clamps chat history window to zero through twenty", () => {
+    expect(
+      resolveRagRuntimeConfig({
+        planLimits,
+        dbConfig: {
+          chatHistoryMessages: -1,
+        },
+        env: {},
+      }).chatHistoryMessages,
+    ).toBe(0);
   });
 
   it("keeps effective values under runtime hard caps even when plan caps are higher", () => {
@@ -227,6 +252,7 @@ describe("rag runtime config", () => {
     formData.set("temperature", "2");
     formData.set("sourceSnippetLength", "1000");
     formData.set("debugRetrieval", "on");
+    formData.set("chatHistoryMessages", "99");
 
     expect(getRagRuntimeSettingsFromFormData(formData)).toEqual({
       retrievedChunks: 20,
@@ -235,6 +261,7 @@ describe("rag runtime config", () => {
       temperature: 1,
       sourceSnippetLength: 500,
       debugRetrieval: true,
+      chatHistoryMessages: 20,
     });
   });
 
@@ -243,11 +270,13 @@ describe("rag runtime config", () => {
       sanitizeRagRuntimeSettings({
         retrievedChunks: 10,
         maxOutputTokens: 1500,
+        chatHistoryMessages: 8,
       }),
     ).toMatchObject({
       retrievedChunks: 10,
       maxOutputTokens: 1500,
       temperature: 0.2,
+      chatHistoryMessages: 8,
     });
   });
 });

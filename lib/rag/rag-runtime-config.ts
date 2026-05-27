@@ -7,6 +7,7 @@ export type RagRuntimeSettings = {
   temperature: number;
   sourceSnippetLength: number;
   debugRetrieval: boolean;
+  chatHistoryMessages: number;
 };
 
 export type RagRuntimePlanCaps = {
@@ -23,6 +24,7 @@ export const DEFAULT_RUNTIME_SETTINGS: RagRuntimeSettings = {
   temperature: 0.2,
   sourceSnippetLength: 240,
   debugRetrieval: false,
+  chatHistoryMessages: 6,
 };
 
 export const RUNTIME_RANGES = {
@@ -31,6 +33,7 @@ export const RUNTIME_RANGES = {
   maxOutputTokens: { min: 100, max: 2000 },
   temperature: { min: 0, max: 1 },
   sourceSnippetLength: { min: 80, max: 500 },
+  chatHistoryMessages: { min: 0, max: 20 },
 } satisfies Record<Exclude<RuntimeSettingKey, "debugRetrieval">, {
   min: number;
   max: number;
@@ -43,6 +46,7 @@ const envOverrideKeys = {
   temperature: "RAG_TEMPERATURE",
   sourceSnippetLength: "RAG_SOURCE_SNIPPET_LENGTH",
   debugRetrieval: "RAG_DEBUG_RETRIEVAL",
+  chatHistoryMessages: "RAG_CHAT_HISTORY_MESSAGES",
 } satisfies Record<RuntimeSettingKey, string>;
 
 export function resolveRagRuntimeConfig({
@@ -183,6 +187,11 @@ export function getRagRuntimeSettingsFromFormData(
       RUNTIME_RANGES.sourceSnippetLength,
     ),
     debugRetrieval: formData.get("debugRetrieval") === "on",
+    chatHistoryMessages: clamp(
+      parseNumber(formData.get("chatHistoryMessages")) ??
+        DEFAULT_RUNTIME_SETTINGS.chatHistoryMessages,
+      RUNTIME_RANGES.chatHistoryMessages,
+    ),
   };
 }
 
@@ -261,6 +270,10 @@ function applyPlanCaps(
       RUNTIME_RANGES.sourceSnippetLength,
     ),
     debugRetrieval: settings.debugRetrieval,
+    chatHistoryMessages: clamp(
+      settings.chatHistoryMessages,
+      RUNTIME_RANGES.chatHistoryMessages,
+    ),
   };
 }
 

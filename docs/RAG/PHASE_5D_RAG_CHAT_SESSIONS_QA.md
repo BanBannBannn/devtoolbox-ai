@@ -2,6 +2,8 @@
 
 ## Scope
 - [ ] Phase 5D adds persisted RAG chat sessions.
+- [ ] Phase 5D-1 implements backend session persistence.
+- [ ] Phase 5D-1 does not add dashboard session list UI yet.
 - [ ] Phase 5D does not add streaming.
 - [ ] Phase 5D does not upgrade the global public chatbox.
 - [ ] Phase 5D does not add query rewriting in v1.
@@ -50,6 +52,9 @@
 - [ ] User message is saved for valid authenticated requests.
 - [ ] Assistant message is saved on successful answer.
 - [ ] Assistant message stores sources, usage, and retrieval details.
+- [ ] Provider failures may leave the user message saved.
+- [ ] Provider failures do not save an assistant error message in Phase 5D-1.
+- [ ] Session `updated_at` is bumped after valid messages are inserted.
 
 ## Context Window
 - [ ] `chatHistoryMessages` runtime setting exists.

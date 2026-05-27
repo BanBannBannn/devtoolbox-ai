@@ -3,7 +3,7 @@
 ## Goal
 Implement persisted multi-session dashboard RAG chat after the SQL has been reviewed and applied.
 
-This document is planning only. Do not implement runtime code during the documentation phase.
+Phase 5D-1 covers the backend implementation. Dashboard session list UI remains a later step.
 
 ## 1. Review Current RAG Chat
 - Confirm `POST /api/rag/chat` accepts optional `sessionId`.
@@ -85,6 +85,15 @@ Update `POST /api/rag/chat`:
 11. Call LLM.
 12. Insert assistant message with answer, sources, usage, and retrieval details.
 13. Return `sessionId`, answer, sources, usage, and retrieval details.
+
+Phase 5D-1 implementation notes:
+
+- The API creates a session when `sessionId` is missing.
+- The API verifies ownership when `sessionId` is provided.
+- The API inserts the user message after auth, validation, quota, and session ownership checks.
+- The API saves successful assistant messages with answer content, sources, usage, and retrieval details.
+- If provider work fails, the user message may remain saved and no assistant error message is saved.
+- Session `updated_at` is bumped in server code after valid message inserts.
 
 ## 6. Prompt Builder Changes
 Update prompt builder to include recent chat history as untrusted context.
