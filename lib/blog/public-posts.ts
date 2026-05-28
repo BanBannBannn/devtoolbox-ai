@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import type { EditorJsonValue } from "./post-utils";
 
 export type PublicBlogTag = {
   name: string;
@@ -10,6 +11,7 @@ export type PublicBlogPost = {
   title: string;
   slug: string;
   excerpt: string;
+  contentJson: EditorJsonValue;
   contentText: string;
   coverImageUrl: string | null;
   publishedAt: string | null;
@@ -22,6 +24,7 @@ type BlogPostRow = {
   title: string;
   slug: string;
   excerpt: string | null;
+  content_json: EditorJsonValue | null;
   content_text: string | null;
   cover_image_url: string | null;
   published_at: string | null;
@@ -40,7 +43,7 @@ type BlogPostTagRow = {
 };
 
 const publicPostFields =
-  "id,title,slug,excerpt,content_text,cover_image_url,published_at,author_id";
+  "id,title,slug,excerpt,content_json,content_text,cover_image_url,published_at,author_id";
 
 const fallbackAuthorName = "DevToolBox AI contributor";
 
@@ -70,6 +73,7 @@ export function mapPublicBlogPost(
     title: row.title,
     slug: row.slug,
     excerpt: row.excerpt ?? "",
+    contentJson: row.content_json ?? [],
     contentText: row.content_text ?? "",
     coverImageUrl: row.cover_image_url,
     publishedAt: row.published_at,

@@ -21,3 +21,109 @@ body {
 a {
   text-underline-offset: 4px;
 }
+
+.blog-editor-shell .bn-container {
+  --bn-colors-editor-text: #0f172a;
+  --bn-colors-editor-background: #ffffff;
+  --bn-font-family: Arial, Helvetica, sans-serif;
+}
+
+.blog-editor-shell .bn-editor {
+  min-height: 620px;
+  padding: 2rem clamp(1rem, 4vw, 3rem);
+}
+
+.blog-editor-shell .bn-block-content {
+  max-width: 760px;
+}
+
+.blog-editor-shell .bn-inline-content,
+.blog-editor-shell .bn-block-content {
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.blog-editor-shell .ProseMirror h2 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.blog-editor-shell .ProseMirror h1 {
+  margin: 1.5rem 0 0.75rem;
+  font-size: 2rem;
+  font-weight: 750;
+  line-height: 1.15;
+}
+
+.blog-editor-shell .ProseMirror h3 {
+  margin: 0.875rem 0 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.blog-editor-shell .ProseMirror p {
+  margin: 0.75rem 0;
+}
+
+.blog-editor-shell .ProseMirror ul {
+  margin: 0.75rem 0;
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+.blog-editor-shell .ProseMirror ol {
+  margin: 0.75rem 0;
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
+
+.blog-editor-shell .ProseMirror blockquote {
+  margin: 1rem 0;
+  border-left: 3px solid #10b981;
+  padding-left: 1rem;
+  color: #475569;
+}
+
+.blog-editor-shell .ProseMirror pre {
+  margin: 1rem 0;
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  background: #020617;
+  padding: 1rem;
+  color: #d1fae5;
+}
+
+.blog-editor-shell .ProseMirror code {
+  font-family: var(--font-mono);
+}
+
+.blog-editor-shell .ProseMirror :not(pre) > code {
+  border-radius: 0.25rem;
+  background: #f1f5f9;
+  padding: 0.1rem 0.35rem;
+  color: #0f172a;
+}
+
+.blog-editor-shell .ProseMirror a {
+  color: #047857;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.blog-editor-shell .ProseMirror img {
+  margin: 1.25rem 0;
+  max-width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+}
+
+.blog-editor-shell .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: #94a3b8;
+  pointer-events: none;
+}

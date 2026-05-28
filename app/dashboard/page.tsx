@@ -4,6 +4,7 @@ import {
   BookText,
   Gauge,
   MessageSquareText,
+  PenLine,
   Settings,
   ShieldCheck,
 } from "lucide-react";
@@ -24,6 +25,14 @@ const dashboardCards = [
     icon: BookText,
     href: "/dashboard/documents",
     cta: "Open documents",
+  },
+  {
+    title: "Blog",
+    description:
+      "Write drafts, preview posts, and submit developer articles for review.",
+    icon: PenLine,
+    href: "/dashboard/blog",
+    cta: "Open blog posts",
   },
   {
     title: "Usage",

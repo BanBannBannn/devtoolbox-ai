@@ -1,5 +1,22 @@
 # Work Log
 
+## 2026-05-28
+
+### Phase 6D BlockNote editor and image uploads
+- Patched the BlockNote editor runtime so the editor package is isolated in a dynamically loaded browser-only component and no longer runs during server prerender.
+- Moved BlockNote package CSS out of `app/globals.css` and into the browser-only editor component import path to avoid PostCSS import-order failures from package-internal CSS imports.
+- Replaced the basic blog post editor with a polished BlockNote block editor for developer blog writing.
+- Added a Notion/Medium-style editor shell with BlockNote formatting controls, slash menu blocks, headings, lists, checklist support, quotes, code blocks, links, images, dividers, and table support from the editor package.
+- Standardized the draft implementation on structured editor JSON in `content_json` and kept extracted plaintext in `content_text`.
+- Added server-side Supabase Storage image upload for inline editor images through `POST /api/blog/images/upload`, with authenticated ownership checks, editable-status checks, JPEG/PNG/WebP validation, SVG rejection, and a 5MB max size.
+- Added cover image upload/preview/remove support for saved draft or rejected posts using the same storage route.
+- Added `blog_images` row insertion for uploaded images after successful storage upload.
+- Added a safe editor JSON renderer for preview and public published posts without storing raw HTML or using `dangerouslySetInnerHTML`.
+- Documented the `blog-images` Supabase Storage bucket setup required for manual QA.
+- Kept public blog visibility rules unchanged: public routes still show only published posts.
+- Added tests for image upload validation and editor JSON plaintext extraction.
+- Kept the work scoped to editor/upload polish; no SQL was run, and no moderation UI, comments, likes, reports, RAG behavior, or public tools were changed.
+
 ## 2026-05-27
 
 ### Phase 6C public database-backed blog

@@ -167,7 +167,10 @@ Public post share UI:
 Sharing should only use public published post URLs. A future `blog_post_shares` table can track share analytics, but it is not required for MVP.
 
 ## Editor Recommendation
-Recommend Tiptap for rich text editing.
+Recommend a polished block-based editor for rich text editing. Phase 6D uses
+BlockNote because it gives the writer dashboard a more complete Notion/Medium
+style editing experience out of the box while still storing structured editor
+JSON instead of unsafe raw HTML.
 
 Storage plan:
 
@@ -316,7 +319,7 @@ Do not implement rate limiting in Phase 6A unless a project-wide pattern already
 ## Recommended Implementation Phases
 - Phase 6B: SQL schema + roles foundation.
 - Phase 6C: Public blog list/detail for published posts.
-- Phase 6D: Writer dashboard with Tiptap draft editor.
+- Phase 6D: Writer dashboard with block-based draft editor.
 - Phase 6E: Submit/review/publish moderation workflow.
 - Phase 6F: Likes and bookmarks.
 - Phase 6G: Comments.

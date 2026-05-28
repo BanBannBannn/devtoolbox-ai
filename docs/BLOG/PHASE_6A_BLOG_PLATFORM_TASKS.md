@@ -64,12 +64,12 @@ Acceptance:
 - Draft/pending/rejected/archived posts are not publicly reachable.
 - Published posts show title, excerpt, author, date, tags, content, and share UI.
 
-## Phase 6D: Writer Dashboard With Tiptap Draft Editor
+## Phase 6D: Writer Dashboard With Block-Based Draft Editor
 - Add `/dashboard/blog`.
 - Add `/dashboard/blog/new`.
 - Add `/dashboard/blog/[id]/edit`.
 - Add `/dashboard/blog/[id]/preview`.
-- Add Tiptap editor.
+- Add a polished block-based editor.
 - Store `content_json`.
 - Extract and store `content_text`.
 - Support save draft.

@@ -1,10 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { EditorJsonRenderer } from "@/components/blog/editor-json-renderer";
 import { SharePostButton } from "@/components/blog/share-post-button";
-import {
-  getContentTextParagraphs,
-  getPublishedBlogPostBySlug,
-} from "@/lib/blog/public-posts";
+import { getPublishedBlogPostBySlug } from "@/lib/blog/public-posts";
 import { createMetadata } from "@/lib/seo";
 
 type BlogPostPageProps = {
@@ -68,8 +66,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound();
   }
 
-  const paragraphs = getContentTextParagraphs(post.contentText);
-
   return (
     <article className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
       <Link
@@ -120,12 +116,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </div>
 
       <div className="mt-10 space-y-6">
-        {paragraphs.length > 0 ? (
-          paragraphs.map((paragraph) => (
-            <p key={paragraph} className="leading-7 text-slate-600">
-              {paragraph}
-            </p>
-          ))
+        {post.contentText.trim() ? (
+          <EditorJsonRenderer content={post.contentJson} />
         ) : (
           <p className="leading-7 text-slate-600">
             This published post does not have body text yet.

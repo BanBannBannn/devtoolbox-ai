@@ -73,7 +73,7 @@
 - [ ] Share analytics is documented as optional future work.
 
 ## Editor And Images
-- [ ] Tiptap is recommended for rich text editing.
+- [ ] A polished block-based editor is used for rich text editing.
 - [ ] `content_json` stores editor document JSON.
 - [ ] `content_text` stores extracted plaintext.
 - [ ] Blog image bucket is planned as `blog-images`.
