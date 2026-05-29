@@ -1,5 +1,14 @@
 # Work Log
 
+## 2026-05-29
+
+### Blog submit-for-review dashboard redirect
+- Fixed writer submit-for-review success navigation so submitted posts redirect to `/dashboard/blog?message=submitted` instead of the edit route.
+- Kept `pending_review` posts non-editable in the writer edit route and non-public in `/blog/[slug]`.
+- Added a dashboard success message clarifying that submitted posts are pending review and not public yet.
+- Added unit coverage for the writer success redirect helper so submit review stays in the private dashboard flow while draft saves still return to editable routes.
+- Kept the fix scoped to writer navigation; no public visibility rules, moderation behavior, RAG behavior, public tools, SQL, or secrets were changed.
+
 ## 2026-05-28
 
 ### Phase 6E blog moderation workflow

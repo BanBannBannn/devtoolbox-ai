@@ -81,6 +81,23 @@ export type BlogPostActionResult =
       error: string;
     };
 
+export function getBlogPostSuccessRedirect({
+  postId,
+  intent,
+  action,
+}: {
+  postId: string;
+  intent: BlogPostFormIntent;
+  action: "create" | "update";
+}) {
+  if (intent === "submit_review") {
+    return "/dashboard/blog?message=submitted";
+  }
+
+  const message = action === "create" ? "created" : "saved";
+  return `/dashboard/blog/${postId}/edit?message=${message}`;
+}
+
 type AuthenticatedBlogContext = {
   supabase: NonNullable<Awaited<ReturnType<typeof createServerSupabaseClient>>>;
   userId: string;

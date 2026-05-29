@@ -5,6 +5,7 @@ import {
   extractPlainTextFromEditorJson,
   extractPlainTextFromTiptapJson,
   getBlogPostInputFromFormData,
+  getBlogPostSuccessRedirect,
   isValidSlug,
   isSafeImageUrl,
   normalizeBlogSlug,
@@ -184,5 +185,39 @@ describe("writer blog post helpers", () => {
       contentText: "Body",
       intent: "submit_review",
     });
+  });
+
+  it("keeps submit-for-review redirects inside the dashboard flow", () => {
+    expect(
+      getBlogPostSuccessRedirect({
+        postId: "post-1",
+        intent: "submit_review",
+        action: "create",
+      }),
+    ).toBe("/dashboard/blog?message=submitted");
+    expect(
+      getBlogPostSuccessRedirect({
+        postId: "post-1",
+        intent: "submit_review",
+        action: "update",
+      }),
+    ).toBe("/dashboard/blog?message=submitted");
+  });
+
+  it("keeps draft save redirects on editable dashboard routes", () => {
+    expect(
+      getBlogPostSuccessRedirect({
+        postId: "post-1",
+        intent: "save_draft",
+        action: "create",
+      }),
+    ).toBe("/dashboard/blog/post-1/edit?message=created");
+    expect(
+      getBlogPostSuccessRedirect({
+        postId: "post-1",
+        intent: "save_draft",
+        action: "update",
+      }),
+    ).toBe("/dashboard/blog/post-1/edit?message=saved");
   });
 });
