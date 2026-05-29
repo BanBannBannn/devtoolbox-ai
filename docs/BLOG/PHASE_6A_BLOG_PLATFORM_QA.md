@@ -70,8 +70,18 @@
 - [ ] `/dashboard/bookmarks` lists the current user's saved published posts only.
 - [ ] Unpublished posts cannot be liked or bookmarked.
 - [ ] Logged-in users can comment on published posts.
+- [ ] Phase 6G comments section appears on published post detail pages.
+- [ ] Public users can read visible top-level comments.
+- [ ] Logged-out users see a login CTA instead of an active comment form.
+- [ ] Logged-in users can add comments on published posts.
+- [ ] Comment content is validated server-side at 1 to 2000 characters.
+- [ ] Logged-in users can edit their own visible comments.
+- [ ] Logged-in users can delete their own visible comments.
+- [ ] Users cannot edit or delete another user's comments.
+- [ ] Hidden, removed, and pending-review comments do not appear publicly.
 - [ ] Normal users cannot change comment moderation status through comment edits.
 - [ ] MVP comments avoid infinite nesting.
+- [ ] Phase 6G defers replies and creates top-level comments only.
 - [ ] Server actions reject replies to replies.
 - [ ] Reply parent must be visible and top-level.
 - [ ] Comment content is 1 to 2000 characters.

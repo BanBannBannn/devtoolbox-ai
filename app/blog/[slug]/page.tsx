@@ -1,15 +1,23 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BlogComments } from "@/components/blog/blog-comments";
 import { EditorJsonRenderer } from "@/components/blog/editor-json-renderer";
 import { PostInteractionButtons } from "@/components/blog/post-interaction-buttons";
 import { SharePostButton } from "@/components/blog/share-post-button";
+import {
+  getCommentErrorMessage,
+  listVisibleCommentsForPost,
+} from "@/lib/blog/comments";
 import { getPostInteractionState } from "@/lib/blog/post-interactions";
 import { getPublishedBlogPostBySlug } from "@/lib/blog/public-posts";
 import { createMetadata } from "@/lib/seo";
 import { getCurrentSupabaseUser } from "@/lib/supabase/server";
 import {
+  createBlogCommentAction,
+  deleteBlogCommentAction,
   toggleBlogPostBookmarkAction,
   toggleBlogPostLikeAction,
+  updateBlogCommentAction,
 } from "./actions";
 
 type BlogPostPageProps = {
@@ -27,6 +35,9 @@ const messages: Record<string, string> = {
   unliked: "Like removed.",
   bookmarked: "Post bookmarked.",
   unbookmarked: "Bookmark removed.",
+  comment_added: "Comment added.",
+  comment_updated: "Comment updated.",
+  comment_deleted: "Comment deleted.",
 };
 
 const errors: Record<string, string> = {
@@ -98,6 +109,12 @@ export default async function BlogPostPage({
     postId: post.id,
     userId: user?.id ?? null,
   });
+  const comments = await listVisibleCommentsForPost({
+    postId: post.id,
+    currentUserId: user?.id ?? null,
+  });
+  const errorMessage =
+    (query.error && errors[query.error]) || getCommentErrorMessage(query.error);
 
   return (
     <article className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
@@ -150,9 +167,9 @@ export default async function BlogPostPage({
             {messages[query.message]}
           </p>
         ) : null}
-        {query.error && errors[query.error] ? (
+        {errorMessage ? (
           <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-800">
-            {errors[query.error]}
+            {errorMessage}
           </p>
         ) : null}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -179,8 +196,18 @@ export default async function BlogPostPage({
       </div>
 
       <footer className="mt-12 rounded-lg border border-slate-200 bg-slate-50 p-5 text-sm leading-6 text-slate-600">
-        Comments and reports are planned for later blog platform phases.
+        Reports are planned for a later blog platform phase.
       </footer>
+
+      <BlogComments
+        postId={post.id}
+        slug={post.slug}
+        comments={comments}
+        isLoggedIn={Boolean(user)}
+        createAction={createBlogCommentAction}
+        updateAction={updateBlogCommentAction}
+        deleteAction={deleteBlogCommentAction}
+      />
     </article>
   );
 }

@@ -2,6 +2,16 @@
 
 ## 2026-05-29
 
+### Phase 6G blog comments
+- Added a comments section to published blog post detail pages.
+- Added public visible-comment loading that shows top-level `visible` comments only, sorted oldest first, with safe author display names and no email exposure.
+- Added server actions and helpers for creating, editing, and hard-deleting a logged-in user's own visible comments.
+- Enforced server-side comment validation from 1 to 2000 characters and verified that comments can only be created for published posts.
+- Deferred replies for this phase; new comments are top-level only with `parent_id = null`.
+- Added login CTA behavior for logged-out readers and edit/delete controls only for comments owned by the current user.
+- Added pure tests for comment validation, visible-comment mapping, private-field hiding, edited detection, and safe error messages.
+- Kept the work scoped to comments; no reports, comment moderation queue, notifications, editor changes, publish workflow changes, RAG behavior, public tools, SQL, API keys, service role key exposure, or model-name exposure were added.
+
 ### Phase 6F blog likes and bookmarks
 - Added published-post like and bookmark interactions on public blog detail pages.
 - Added server actions and helpers that derive the acting user from the authenticated Supabase session and verify the target post is published before toggling likes or bookmarks.
