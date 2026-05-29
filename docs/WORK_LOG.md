@@ -3,6 +3,10 @@
 ## 2026-05-28
 
 ### Phase 6D BlockNote editor and image uploads
+- Removed unsupported `editor.can(...)` calls from the custom BlockNote toolbar after runtime testing showed that API is not exposed by the installed BlockNote editor.
+- Kept Undo/Redo buttons visible with defensive BlockNote history method calls and deferred enabled/disabled history state until a supported BlockNote capability API is available.
+- Added a horizontal, mobile-scrollable formatting toolbar above the BlockNote editor content area without removing BlockNote's slash menu or floating controls.
+- Wired toolbar actions through BlockNote public APIs for undo, redo, paragraph, H1/H2/H3, bold, italic, underline, strike, inline code, bullet list, numbered list, quote, code block, link, image upload, and clear formatting.
 - Patched the BlockNote editor runtime so the editor package is isolated in a dynamically loaded browser-only component and no longer runs during server prerender.
 - Moved BlockNote package CSS out of `app/globals.css` and into the browser-only editor component import path to avoid PostCSS import-order failures from package-internal CSS imports.
 - Replaced the basic blog post editor with a polished BlockNote block editor for developer blog writing.
