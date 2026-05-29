@@ -7,10 +7,15 @@ import {
   PenLine,
   Settings,
   ShieldCheck,
+  UsersRound,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/auth/logout-button";
-import { canModerateBlog, getCurrentUserRoleContext } from "@/lib/auth/roles";
+import {
+  canManageUserRoles,
+  canModerateBlog,
+  getCurrentUserRoleContext,
+} from "@/lib/auth/roles";
 import { isRagAdminEmail } from "@/lib/rag/rag-admin";
 import { createMetadata } from "@/lib/seo";
 import {
@@ -43,6 +48,15 @@ const dashboardCards = [
     href: "/dashboard/moderation/blog",
     cta: "Open moderation",
     moderationOnly: true,
+  },
+  {
+    title: "Admin Users",
+    description:
+      "Manage blog platform roles for users, moderators, and admins.",
+    icon: UsersRound,
+    href: "/dashboard/admin/users",
+    cta: "Manage roles",
+    adminOnly: true,
   },
   {
     title: "Usage",
@@ -98,7 +112,9 @@ export default async function DashboardPage() {
 
   const roleContext = await getCurrentUserRoleContext();
   const visibleDashboardCards = dashboardCards.filter(
-    (card) => !("moderationOnly" in card) || canModerateBlog(roleContext.role),
+    (card) =>
+      (!("moderationOnly" in card) || canModerateBlog(roleContext.role)) &&
+      (!("adminOnly" in card) || canManageUserRoles(roleContext.role)),
   );
   const cards = isRagAdminEmail(user.email)
     ? [

@@ -2,6 +2,15 @@
 
 ## 2026-05-29
 
+### Phase 6J admin user role management
+- Added an admin-only `/dashboard/admin/users` route for managing blog platform user roles.
+- Added server-side admin user helpers that list profiles and update `profiles.role` only after `requireAdmin()` verifies the current authenticated session.
+- Used the existing server-only service-role Supabase helper for profile listing and role updates, without exposing the service role key to the browser.
+- Added role validation and a last-admin demotion guard so the final admin cannot be accidentally removed.
+- Added a dashboard card visible only to admins and confirmation prompts for admin promotion/demotion changes.
+- Added pure tests for role input validation, invalid role rejection, last-admin guard behavior, and safe error mapping.
+- Kept the work scoped to admin role management; no SQL was run, and no public blog visibility, moderation workflow, RAG behavior, public tools, API keys, or model names were changed.
+
 ### Blog submit-for-review dashboard redirect
 - Fixed writer submit-for-review success navigation so submitted posts redirect to `/dashboard/blog?message=submitted` instead of the edit route.
 - Kept `pending_review` posts non-editable in the writer edit route and non-public in `/blog/[slug]`.

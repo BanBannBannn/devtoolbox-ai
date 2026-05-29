@@ -18,8 +18,15 @@
 - [ ] Moderators can hide/remove comments.
 - [ ] Moderators can review reports.
 - [ ] Admins can manage roles.
+- [ ] Admin user role management exists at `/dashboard/admin/users`.
+- [ ] Only admins can access `/dashboard/admin/users`.
+- [ ] Moderators cannot access `/dashboard/admin/users`.
 - [ ] Users cannot change their own role.
 - [ ] Role changes are server-side protected.
+- [ ] Role update actions re-check admin access server-side.
+- [ ] Invalid role update values are rejected server-side.
+- [ ] The last admin cannot be demoted.
+- [ ] Admin role changes show confirmation for promotion or demotion of admin-level access.
 - [ ] `profiles.role` is not editable by normal users.
 - [ ] Existing `profiles` policies are reviewed with the Phase 6B preflight query before adding `profiles.role`.
 - [ ] After Phase 6B SQL is applied, default user role is `user`.
@@ -127,6 +134,8 @@
 - [ ] Users can create/read their own reports.
 - [ ] Moderators/admins can read/resolve reports.
 - [ ] Admins can manage roles.
+- [ ] `/dashboard/admin/users` lets admins promote users to moderator/admin and demote moderators to user.
+- [ ] `/dashboard/admin/users` blocks last-admin removal.
 - [ ] Users cannot self-promote.
 - [ ] After Phase 6B SQL is applied, normal users cannot self-promote by updating `profiles.role`.
 - [ ] Role helper tests verify invalid roles fall back to `user` and never gain moderator/admin privileges.
@@ -158,6 +167,7 @@
 - [ ] Moderation comment queue is planned.
 - [ ] Moderation reports queue is planned.
 - [ ] Admin user role management is planned.
+- [ ] Admin user role management route exists at `/dashboard/admin/users`.
 
 ## SEO
 - [ ] Published posts have title and excerpt metadata.
