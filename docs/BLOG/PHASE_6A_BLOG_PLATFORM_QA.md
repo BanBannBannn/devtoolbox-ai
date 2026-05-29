@@ -86,6 +86,13 @@
 - [ ] Reply parent must be visible and top-level.
 - [ ] Comment content is 1 to 2000 characters.
 - [ ] Logged-in users can report published posts or visible comments.
+- [ ] Phase 6H report post action exists on published post pages.
+- [ ] Phase 6H report comment action exists for visible comments.
+- [ ] Logged-out users see a login CTA before reporting.
+- [ ] Report reason is required and validated server-side.
+- [ ] Report details are optional and capped at 1000 characters.
+- [ ] Users cannot report unpublished posts.
+- [ ] Users cannot report hidden or removed comments.
 - [ ] Report target existence is validated server-side before insert.
 - [ ] Post reports can target only published posts.
 - [ ] Comment reports can target only visible comments on published posts.
@@ -150,6 +157,10 @@
 - [ ] Users can read only their own bookmarks.
 - [ ] Users can create/read their own reports.
 - [ ] Moderators/admins can read/resolve reports.
+- [ ] `/dashboard/moderation/reports` is accessible only to moderator/admin.
+- [ ] Moderators/admins can mark reports as reviewed, dismissed, or action taken.
+- [ ] `/dashboard/moderation/comments` is accessible only to moderator/admin.
+- [ ] Moderators/admins can hide, remove, or restore comments.
 - [ ] Admins can manage roles.
 - [ ] `/dashboard/admin/users` lets admins promote users to moderator/admin and demote moderators to user.
 - [ ] `/dashboard/admin/users` blocks last-admin removal.
@@ -182,7 +193,9 @@
 - [ ] Moderation blog queue is planned.
 - [ ] Moderation blog queue exists at `/dashboard/moderation/blog`.
 - [ ] Moderation comment queue is planned.
+- [ ] Moderation comment queue exists at `/dashboard/moderation/comments`.
 - [ ] Moderation reports queue is planned.
+- [ ] Moderation reports queue exists at `/dashboard/moderation/reports`.
 - [ ] Admin user role management is planned.
 - [ ] Admin user role management route exists at `/dashboard/admin/users`.
 

@@ -3,17 +3,20 @@ import { notFound } from "next/navigation";
 import { BlogComments } from "@/components/blog/blog-comments";
 import { EditorJsonRenderer } from "@/components/blog/editor-json-renderer";
 import { PostInteractionButtons } from "@/components/blog/post-interaction-buttons";
+import { ReportContentForm } from "@/components/blog/report-content-form";
 import { SharePostButton } from "@/components/blog/share-post-button";
 import {
   getCommentErrorMessage,
   listVisibleCommentsForPost,
 } from "@/lib/blog/comments";
 import { getPostInteractionState } from "@/lib/blog/post-interactions";
+import { getReportErrorMessage } from "@/lib/blog/reports";
 import { getPublishedBlogPostBySlug } from "@/lib/blog/public-posts";
 import { createMetadata } from "@/lib/seo";
 import { getCurrentSupabaseUser } from "@/lib/supabase/server";
 import {
   createBlogCommentAction,
+  createContentReportAction,
   deleteBlogCommentAction,
   toggleBlogPostBookmarkAction,
   toggleBlogPostLikeAction,
@@ -38,6 +41,7 @@ const messages: Record<string, string> = {
   comment_added: "Comment added.",
   comment_updated: "Comment updated.",
   comment_deleted: "Comment deleted.",
+  report_submitted: "Report submitted for moderator review.",
 };
 
 const errors: Record<string, string> = {
@@ -114,7 +118,9 @@ export default async function BlogPostPage({
     currentUserId: user?.id ?? null,
   });
   const errorMessage =
-    (query.error && errors[query.error]) || getCommentErrorMessage(query.error);
+    (query.error && errors[query.error]) ||
+    getCommentErrorMessage(query.error) ||
+    getReportErrorMessage(query.error);
 
   return (
     <article className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
@@ -183,6 +189,14 @@ export default async function BlogPostPage({
           />
           <SharePostButton title={post.title} />
         </div>
+        <ReportContentForm
+          targetType="post"
+          targetId={post.id}
+          slug={post.slug}
+          isLoggedIn={Boolean(user)}
+          action={createContentReportAction}
+          label="Report post"
+        />
       </div>
 
       <div className="mt-10 space-y-6">
@@ -207,6 +221,7 @@ export default async function BlogPostPage({
         createAction={createBlogCommentAction}
         updateAction={updateBlogCommentAction}
         deleteAction={deleteBlogCommentAction}
+        reportAction={createContentReportAction}
       />
     </article>
   );

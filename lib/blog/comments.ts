@@ -1,4 +1,9 @@
 import {
+  RoleAuthenticationError,
+  RolePermissionError,
+  requireModeratorOrAdmin,
+} from "../auth/roles";
+import {
   createServerSupabaseClient,
   createServiceRoleSupabaseClient,
 } from "../supabase/server";
@@ -13,6 +18,21 @@ export type PublicBlogComment = {
   canManage: boolean;
 };
 
+export type ModerationCommentStatus = "visible" | "hidden" | "removed";
+
+export type ModerationComment = {
+  id: string;
+  postId: string;
+  postTitle: string;
+  postSlug: string;
+  authorDisplayName: string;
+  content: string;
+  status: ModerationCommentStatus;
+  createdAt: string;
+  updatedAt: string;
+  reportCount: number;
+};
+
 export type CommentActionResult =
   | {
       success: true;
@@ -23,6 +43,7 @@ export type CommentActionResult =
       code:
         | "auth_required"
         | "invalid_comment"
+        | "invalid_status"
         | "not_found"
         | "forbidden"
         | "storage_unavailable"
@@ -38,6 +59,10 @@ type CommentRow = {
   parent_id: string | null;
   created_at: string;
   updated_at: string;
+};
+
+type ModerationCommentRow = CommentRow & {
+  post_id: string;
 };
 
 type PublishedPostReference = {
@@ -69,6 +94,8 @@ export function getCommentErrorMessage(code?: string) {
       return "Sign in to comment.";
     case "invalid_comment":
       return "Comment must be between 1 and 2000 characters.";
+    case "invalid_status":
+      return "Select a valid comment moderation status.";
     case "not_found":
       return "This published post or visible comment was not found.";
     case "forbidden":
@@ -80,6 +107,12 @@ export function getCommentErrorMessage(code?: string) {
     default:
       return undefined;
   }
+}
+
+export function isModerationCommentStatus(
+  value: unknown,
+): value is ModerationCommentStatus {
+  return value === "visible" || value === "hidden" || value === "removed";
 }
 
 function isEditedComment(createdAt: string, updatedAt: string) {
@@ -107,6 +140,38 @@ export function mapVisibleCommentsForPublic({
       isEdited: isEditedComment(comment.created_at, comment.updated_at),
       canManage: Boolean(currentUserId && currentUserId === comment.user_id),
     }));
+}
+
+export function mapModerationComments({
+  comments,
+  authorNamesById,
+  postsById,
+  reportCountsByCommentId,
+}: {
+  comments: ModerationCommentRow[];
+  authorNamesById: Map<string, string>;
+  postsById: Map<string, { title: string; slug: string }>;
+  reportCountsByCommentId: Map<string, number>;
+}) {
+  return comments
+    .filter((comment) => isModerationCommentStatus(comment.status))
+    .map((comment) => {
+      const post = postsById.get(comment.post_id);
+
+      return {
+        id: comment.id,
+        postId: comment.post_id,
+        postTitle: post?.title ?? "Post unavailable",
+        postSlug: post?.slug ?? "",
+        authorDisplayName:
+          authorNamesById.get(comment.user_id) ?? fallbackCommentAuthor,
+        content: comment.content,
+        status: comment.status as ModerationCommentStatus,
+        createdAt: comment.created_at,
+        updatedAt: comment.updated_at,
+        reportCount: reportCountsByCommentId.get(comment.id) ?? 0,
+      };
+    });
 }
 
 async function getPublishedPostReference(
@@ -153,6 +218,45 @@ async function requireCommentUser() {
   return {
     supabase,
     userId: user.id,
+  };
+}
+
+async function requireCommentModerationContext() {
+  try {
+    await requireModeratorOrAdmin();
+  } catch (error) {
+    if (error instanceof RoleAuthenticationError) {
+      return {
+        success: false as const,
+        code: "auth_required" as const,
+        error: "Authentication is required.",
+      };
+    }
+
+    if (error instanceof RolePermissionError) {
+      return {
+        success: false as const,
+        code: "forbidden" as const,
+        error: "Moderator or admin access is required.",
+      };
+    }
+
+    throw error;
+  }
+
+  const supabase = createServiceRoleSupabaseClient();
+
+  if (!supabase) {
+    return {
+      success: false as const,
+      code: "storage_unavailable" as const,
+      error: "Comment moderation storage is not configured.",
+    };
+  }
+
+  return {
+    success: true as const,
+    supabase,
   };
 }
 
@@ -415,5 +519,143 @@ export async function deleteOwnComment(
   return {
     success: true,
     slug: reference.post.slug,
+  };
+}
+
+async function getPostTitlesById(postIds: string[]) {
+  const supabase = createServiceRoleSupabaseClient();
+  const postsById = new Map<string, { title: string; slug: string }>();
+  const uniquePostIds = Array.from(new Set(postIds)).filter(Boolean);
+
+  if (!supabase || uniquePostIds.length === 0) {
+    return postsById;
+  }
+
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select("id,title,slug")
+    .in("id", uniquePostIds);
+
+  if (error || !data) {
+    return postsById;
+  }
+
+  for (const post of data as Array<{ id: string; title: string; slug: string }>) {
+    postsById.set(post.id, {
+      title: post.title,
+      slug: post.slug,
+    });
+  }
+
+  return postsById;
+}
+
+async function getReportCountsByCommentId(commentIds: string[]) {
+  const supabase = createServiceRoleSupabaseClient();
+  const reportCountsByCommentId = new Map<string, number>();
+  const uniqueCommentIds = Array.from(new Set(commentIds)).filter(Boolean);
+
+  if (!supabase || uniqueCommentIds.length === 0) {
+    return reportCountsByCommentId;
+  }
+
+  const { data, error } = await supabase
+    .from("content_reports")
+    .select("target_id")
+    .eq("target_type", "comment")
+    .in("target_id", uniqueCommentIds);
+
+  if (error || !data) {
+    return reportCountsByCommentId;
+  }
+
+  for (const report of data as Array<{ target_id: string }>) {
+    reportCountsByCommentId.set(
+      report.target_id,
+      (reportCountsByCommentId.get(report.target_id) ?? 0) + 1,
+    );
+  }
+
+  return reportCountsByCommentId;
+}
+
+export async function listCommentsForModeration(status?: string) {
+  const context = await requireCommentModerationContext();
+
+  if (!context.success) {
+    return [];
+  }
+
+  const statusFilter = isModerationCommentStatus(status) ? status : null;
+  let query = context.supabase
+    .from("blog_comments")
+    .select("id,post_id,user_id,content,status,parent_id,created_at,updated_at")
+    .is("parent_id", null)
+    .order("created_at", { ascending: false })
+    .limit(100);
+
+  if (statusFilter) {
+    query = query.eq("status", statusFilter);
+  }
+
+  const { data, error } = await query;
+
+  if (error || !data) {
+    return [];
+  }
+
+  const comments = data as ModerationCommentRow[];
+  const [authorNamesById, postsById, reportCountsByCommentId] =
+    await Promise.all([
+      getAuthorNamesById(comments.map((comment) => comment.user_id)),
+      getPostTitlesById(comments.map((comment) => comment.post_id)),
+      getReportCountsByCommentId(comments.map((comment) => comment.id)),
+    ]);
+
+  return mapModerationComments({
+    comments,
+    authorNamesById,
+    postsById,
+    reportCountsByCommentId,
+  });
+}
+
+export async function updateCommentModerationStatus({
+  commentId,
+  status,
+}: {
+  commentId: string;
+  status: ModerationCommentStatus | null;
+}): Promise<CommentActionResult> {
+  const context = await requireCommentModerationContext();
+
+  if (!context.success) {
+    return context;
+  }
+
+  if (!status) {
+    return {
+      success: false,
+      code: "invalid_status",
+      error: "Select a valid comment status.",
+    };
+  }
+
+  const { error } = await context.supabase
+    .from("blog_comments")
+    .update({ status })
+    .eq("id", commentId);
+
+  if (error) {
+    return {
+      success: false,
+      code: "save_failed",
+      error: "Could not update comment status.",
+    };
+  }
+
+  return {
+    success: true,
+    slug: "",
   };
 }

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type React from "react";
 import { useFormStatus } from "react-dom";
+import { ReportContentForm } from "@/components/blog/report-content-form";
 import type { PublicBlogComment } from "@/lib/blog/comments";
 
 type BlogCommentsProps = {
@@ -13,6 +14,7 @@ type BlogCommentsProps = {
   createAction: (formData: FormData) => void;
   updateAction: (formData: FormData) => void;
   deleteAction: (formData: FormData) => void;
+  reportAction: (formData: FormData) => void;
 };
 
 function formatCommentDate(value: string) {
@@ -59,6 +61,7 @@ export function BlogComments({
   createAction,
   updateAction,
   deleteAction,
+  reportAction,
 }: BlogCommentsProps) {
   return (
     <section
@@ -139,8 +142,18 @@ export function BlogComments({
                 {comment.content}
               </p>
 
-              {comment.canManage ? (
-                <div className="mt-4 space-y-3">
+              <div className="mt-4 space-y-3">
+                <ReportContentForm
+                  targetType="comment"
+                  targetId={comment.id}
+                  slug={slug}
+                  isLoggedIn={isLoggedIn}
+                  action={reportAction}
+                  label="Report comment"
+                />
+
+                {comment.canManage ? (
+                  <>
                   <details className="rounded-md border border-slate-200 bg-white p-3">
                     <summary className="cursor-pointer text-sm font-semibold text-slate-700">
                       Edit comment
@@ -173,8 +186,9 @@ export function BlogComments({
                     <input type="hidden" name="slug" value={slug} />
                     <SubmitButton variant="danger">Delete comment</SubmitButton>
                   </form>
-                </div>
-              ) : null}
+                  </>
+                ) : null}
+              </div>
             </article>
           ))
         )}

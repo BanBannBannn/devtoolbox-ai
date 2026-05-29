@@ -5,6 +5,7 @@ import {
   BookText,
   Gauge,
   MessageSquareText,
+  MessageSquareWarning,
   PenLine,
   Settings,
   ShieldCheck,
@@ -56,6 +57,24 @@ const dashboardCards = [
     icon: ShieldCheck,
     href: "/dashboard/moderation/blog",
     cta: "Open moderation",
+    moderationOnly: true,
+  },
+  {
+    title: "Comment Moderation",
+    description:
+      "Review recent blog comments, hide harmful comments, and restore safe ones.",
+    icon: MessageSquareWarning,
+    href: "/dashboard/moderation/comments",
+    cta: "Moderate comments",
+    moderationOnly: true,
+  },
+  {
+    title: "Content Reports",
+    description:
+      "Review reports for published posts and visible comments.",
+    icon: ShieldCheck,
+    href: "/dashboard/moderation/reports",
+    cta: "Review reports",
     moderationOnly: true,
   },
   {

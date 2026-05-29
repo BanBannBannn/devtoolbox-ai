@@ -2,6 +2,15 @@
 
 ## 2026-05-29
 
+### Phase 6H blog reports and moderation queues
+- Added report actions for published blog posts and visible comments, with logged-out readers sent to sign in before reporting.
+- Added server-side report validation for target type, target existence, report reason, and optional details capped at 1000 characters.
+- Added `/dashboard/moderation/reports` for moderator/admin review of private content reports, with actions to mark reports reviewed, dismissed, or action taken.
+- Added `/dashboard/moderation/comments` for moderator/admin comment moderation, with actions to hide, remove, or restore top-level comments.
+- Kept reports private to reporter/moderator/admin and kept reporter email/private profile data out of moderation UI.
+- Added pure tests for report reason/status/detail validation, report queue sorting, comment moderation status validation, and moderation comment mapping.
+- Kept the work scoped to reports and comment moderation; no notifications, email alerts, editor changes, post publish workflow changes, RAG behavior, public tools, SQL, API keys, service role key exposure, or model-name exposure were added.
+
 ### Phase 6G blog comments
 - Added a comments section to published blog post detail pages.
 - Added public visible-comment loading that shows top-level `visible` comments only, sorted oldest first, with safe author display names and no email exposure.

@@ -7,6 +7,7 @@ import {
   deleteOwnComment,
   updateOwnComment,
 } from "@/lib/blog/comments";
+import { createContentReport } from "@/lib/blog/reports";
 import {
   togglePostBookmark,
   togglePostLike,
@@ -22,6 +23,16 @@ function getCommentIdFromFormData(formData: FormData) {
 
 function getCommentContentFromFormData(formData: FormData) {
   return String(formData.get("content") ?? "");
+}
+
+function getReportTargetTypeFromFormData(formData: FormData) {
+  const value = formData.get("target_type");
+
+  return value === "post" || value === "comment" ? value : "post";
+}
+
+function getReportTargetIdFromFormData(formData: FormData) {
+  return String(formData.get("target_id") ?? "").trim();
 }
 
 function getCurrentSlugFromFormData(formData: FormData) {
@@ -128,4 +139,24 @@ export async function deleteBlogCommentAction(formData: FormData) {
 
   revalidatePath(`/blog/${result.slug}`);
   redirect(`/blog/${result.slug}?message=comment_deleted#comments`);
+}
+
+export async function createContentReportAction(formData: FormData) {
+  const currentSlug = getCurrentSlugFromFormData(formData);
+  const result = await createContentReport({
+    targetType: getReportTargetTypeFromFormData(formData),
+    targetId: getReportTargetIdFromFormData(formData),
+    reason: formData.get("reason"),
+    details: String(formData.get("details") ?? ""),
+  });
+
+  if (!result.success) {
+    if (result.code === "auth_required") {
+      redirect(`/login?next=/blog/${currentSlug}`);
+    }
+
+    redirect(`/blog/${currentSlug}?error=${result.code}#comments`);
+  }
+
+  redirect(`/blog/${result.slug ?? currentSlug}?message=report_submitted#comments`);
 }
