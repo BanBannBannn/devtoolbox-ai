@@ -2,6 +2,15 @@
 
 ## 2026-05-29
 
+### Phase 6F blog likes and bookmarks
+- Added published-post like and bookmark interactions on public blog detail pages.
+- Added server actions and helpers that derive the acting user from the authenticated Supabase session and verify the target post is published before toggling likes or bookmarks.
+- Added safe server-side like counting without exposing liker rows or identities.
+- Added `/dashboard/bookmarks` as a protected saved-posts page that lists only the current user's bookmarked published posts.
+- Added a dashboard card for saved posts and login CTA behavior for logged-out readers.
+- Added pure tests for like count fallbacks, bookmark mapping, private-field hiding, and safe interaction errors.
+- Kept public blog visibility restricted to published posts and left comments, reports, notifications, editor behavior, moderation workflow, RAG behavior, public tools, SQL, API keys, service role keys, and model names unchanged.
+
 ### Phase 6J admin user role management
 - Added an admin-only `/dashboard/admin/users` route for managing blog platform user roles.
 - Added server-side admin user helpers that list profiles and update `profiles.role` only after `requireAdmin()` verifies the current authenticated session.

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  Bookmark,
   BookText,
   Gauge,
   MessageSquareText,
@@ -39,6 +40,14 @@ const dashboardCards = [
     icon: PenLine,
     href: "/dashboard/blog",
     cta: "Open blog posts",
+  },
+  {
+    title: "Saved Posts",
+    description:
+      "Open your private reading list of bookmarked published blog articles.",
+    icon: Bookmark,
+    href: "/dashboard/bookmarks",
+    cta: "Open saved posts",
   },
   {
     title: "Blog Moderation",

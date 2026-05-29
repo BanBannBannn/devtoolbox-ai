@@ -56,12 +56,19 @@
 
 ## Community Interactions
 - [ ] Logged-in users can like published posts.
+- [ ] Phase 6F like button exists on published post detail pages.
+- [ ] Logged-out users see a login CTA instead of an active like action.
 - [ ] Like is toggleable.
 - [ ] One like per user per post.
+- [ ] Public post detail shows like count without exposing liker identities.
 - [ ] Logged-in users can bookmark published posts.
+- [ ] Phase 6F bookmark button exists on published post detail pages.
+- [ ] Logged-out users see a login CTA instead of an active bookmark action.
 - [ ] Bookmark is toggleable.
 - [ ] One bookmark per user per post.
 - [ ] Bookmarks are private.
+- [ ] `/dashboard/bookmarks` lists the current user's saved published posts only.
+- [ ] Unpublished posts cannot be liked or bookmarked.
 - [ ] Logged-in users can comment on published posts.
 - [ ] Normal users cannot change comment moderation status through comment edits.
 - [ ] MVP comments avoid infinite nesting.

@@ -232,6 +232,32 @@ export async function getPublishedBlogPostBySlug(slug: string) {
   return post ?? null;
 }
 
+export async function getPublishedBlogPostsByIds(postIds: string[]) {
+  const supabase = createPublicBlogClient();
+  const uniquePostIds = Array.from(new Set(postIds)).filter(Boolean);
+
+  if (!supabase || uniquePostIds.length === 0) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select(publicPostFields)
+    .eq("status", "published")
+    .in("id", uniquePostIds);
+
+  if (error || !data) {
+    return [];
+  }
+
+  const posts = await attachPublicPostMetadata(data as BlogPostRow[]);
+  const postsById = new Map(posts.map((post) => [post.id, post]));
+
+  return uniquePostIds
+    .map((postId) => postsById.get(postId))
+    .filter((post): post is PublicBlogPost => Boolean(post));
+}
+
 export async function getPublishedPostsByTagSlug(tagSlug: string) {
   const supabase = createPublicBlogClient();
 
