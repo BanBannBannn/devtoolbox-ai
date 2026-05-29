@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { canModerateBlog, getCurrentUserRoleContext } from "@/lib/auth/roles";
 import { isRagAdminEmail } from "@/lib/rag/rag-admin";
 import { createMetadata } from "@/lib/seo";
 import {
@@ -33,6 +34,15 @@ const dashboardCards = [
     icon: PenLine,
     href: "/dashboard/blog",
     cta: "Open blog posts",
+  },
+  {
+    title: "Blog Moderation",
+    description:
+      "Review submitted posts, publish approved articles, and archive public posts.",
+    icon: ShieldCheck,
+    href: "/dashboard/moderation/blog",
+    cta: "Open moderation",
+    moderationOnly: true,
   },
   {
     title: "Usage",
@@ -86,9 +96,13 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  const roleContext = await getCurrentUserRoleContext();
+  const visibleDashboardCards = dashboardCards.filter(
+    (card) => !("moderationOnly" in card) || canModerateBlog(roleContext.role),
+  );
   const cards = isRagAdminEmail(user.email)
     ? [
-        ...dashboardCards,
+        ...visibleDashboardCards,
         {
           title: "Admin RAG Settings",
           description:
@@ -98,7 +112,7 @@ export default async function DashboardPage() {
           cta: "Open admin settings",
         },
       ]
-    : dashboardCards;
+    : visibleDashboardCards;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">

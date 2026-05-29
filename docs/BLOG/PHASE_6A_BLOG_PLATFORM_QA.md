@@ -37,6 +37,12 @@
 - [ ] `rejection_reason` max length is 1000 characters.
 - [ ] Archived posts are hidden from public.
 - [ ] Only moderator/admin can publish/archive.
+- [ ] Phase 6E moderation route lets moderator/admin approve pending posts.
+- [ ] Phase 6E moderation route lets moderator/admin reject pending posts with a required reason.
+- [ ] Phase 6E moderation route lets moderator/admin archive/unpublish published posts.
+- [ ] Normal users cannot access `/dashboard/moderation/blog`.
+- [ ] Published approved posts appear on `/blog`.
+- [ ] Rejected and archived posts do not appear publicly.
 - [ ] Published slugs are treated as stable.
 - [ ] Authors cannot freely change slug after publish.
 - [ ] Redirects are planned for any future published slug change.
@@ -148,6 +154,7 @@
 - [ ] Writer `/dashboard/blog/[id]/preview` is planned.
 - [ ] `/dashboard/bookmarks` is planned.
 - [ ] Moderation blog queue is planned.
+- [ ] Moderation blog queue exists at `/dashboard/moderation/blog`.
 - [ ] Moderation comment queue is planned.
 - [ ] Moderation reports queue is planned.
 - [ ] Admin user role management is planned.

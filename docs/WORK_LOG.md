@@ -2,6 +2,14 @@
 
 ## 2026-05-28
 
+### Phase 6E blog moderation workflow
+- Added a protected `/dashboard/moderation/blog` route for moderator/admin review of pending, published, rejected, and archived blog posts.
+- Added moderation actions for approving pending posts, rejecting pending posts with a required reason, and archiving published posts without deleting them.
+- Kept moderation checks server-side through authenticated role helpers and never trusts client-provided role or user IDs.
+- Reused the private dashboard preview route for moderator/admin previews and kept public blog visibility restricted to published posts only.
+- Added pure tests for moderation status transitions and rejection reason validation.
+- Kept this phase scoped to blog moderation; no SQL was run, and no comments, likes, bookmarks, reports UI, admin role management, RAG behavior, or public tools were changed.
+
 ### Phase 6D BlockNote editor and image uploads
 - Removed unsupported `editor.can(...)` calls from the custom BlockNote toolbar after runtime testing showed that API is not exposed by the installed BlockNote editor.
 - Kept Undo/Redo buttons visible with defensive BlockNote history method calls and deferred enabled/disabled history state until a supported BlockNote capability API is available.
