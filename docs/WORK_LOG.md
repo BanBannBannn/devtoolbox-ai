@@ -2,6 +2,16 @@
 
 ## 2026-05-31
 
+### Phase G1 GraphRAG planning
+- Added a documentation-only GraphRAG planning package for an optional graph-assisted RAG beta mode while keeping Standard RAG as the default.
+- Defined private user-owned graph entities, evidence-backed relations, and chunk/entity links that cascade with source document and chunk deletion.
+- Planned bounded server-side extraction, strict JSON parsing, graph-assisted query expansion, safe source grounding, and failure isolation so graph extraction cannot break ordinary vectorization.
+- Added a review-only Postgres schema proposal with conservative RLS, authenticated owner reads, and no direct browser extraction writes.
+- Tightened the G2 SQL guidance around server-only service-role extraction writes, owner-only browser reads, recommended extraction-run tracking, nullable chunk mention offsets, and longer bounded relation evidence.
+- Defined bounded `graphTrace` retrieval diagnostics and future dashboard visualization guidance without exposing chain-of-thought, prompts, raw embeddings, provider payloads, exact model names, keys, or cross-user data.
+- Split future delivery into G2 schema/helpers, G3 extraction, G4 explorer, G5 query mode, G6 visualization, G7 comparison, and G8 evaluation.
+- Kept this phase documentation-only; no SQL was run, and no RAG runtime, blog, or public-tool behavior changed.
+
 ### Public blog search and filter polish
 - Replaced the client-only `/blog` text filter with URL-driven server rendering for `q`, `tag`, `sort`, and `page` query parameters.
 - Added case-insensitive published-post search across title, excerpt, and `content_text`, with combined published-tag filtering.
