@@ -15,14 +15,15 @@ Planning only. Do not run SQL or implement runtime behavior in G1.
 
 ## G2: SQL Schema And Helpers
 - [ ] Review and apply the final graph schema manually in Supabase.
-- [ ] Add `graph_entities`, `chunk_entities`, and `graph_relations`.
+- [x] Prepare final manual-run SQL for `graph_entities`, `chunk_entities`, `graph_relations`, and `graph_extraction_runs`.
 - [ ] Enable RLS and grant authenticated users read access only to owned rows.
 - [ ] Keep browser insert/update/delete access revoked.
 - [ ] Confirm document and chunk deletion cascades.
-- [ ] Decide whether to add `graph_extraction_runs`.
-- [ ] Add pure normalization, validation, and safe mapping helpers.
-- [ ] Add server-only graph data-access helpers with explicit ownership input from trusted auth flow.
-- [ ] Test normalization, bounded parsing, ownership-safe mapping, and source deletion assumptions.
+- [x] Include `graph_extraction_runs` separately from vector status.
+- [x] Add pure normalization, validation, and safe mapping helpers.
+- [x] Add authenticated owner-scoped graph read helpers.
+- [x] Add unused G3 service-role write stubs.
+- [x] Test normalization, extraction status parsing, and ownership-safe mapping.
 
 ## G3: Document Graph Extraction
 - [ ] Add an explicit beta `Graphize document` action after vectorization.
@@ -76,7 +77,7 @@ Planning only. Do not run SQL or implement runtime behavior in G1.
 
 ## Blocking Decisions Before G2/G3
 - [ ] Confirm explicit graphize action versus automatic post-vectorization extraction.
-- [ ] Confirm whether `graph_extraction_runs` belongs in G2.
+- [x] Include `graph_extraction_runs` in G2.
 - [ ] Confirm entity normalization and alias strategy.
 - [ ] Confirm evidence-granular relation storage.
 - [ ] Define provider quotas and usage event names for graph extraction.

@@ -18,7 +18,7 @@
 - [ ] Browser insert/update/delete access is revoked.
 - [ ] Trusted graph writers validate document, chunk, entity, and relation ownership.
 - [ ] Cross-table ownership enforcement strategy is reviewed before applying SQL.
-- [ ] Need for `graph_extraction_runs` is decided before G3.
+- [x] `graph_extraction_runs` is included in G2 separately from vector status.
 
 ## Future Extraction QA
 - [ ] Only logged-in users can graphize a document.

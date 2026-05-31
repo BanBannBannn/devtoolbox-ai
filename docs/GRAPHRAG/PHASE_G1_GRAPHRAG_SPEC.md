@@ -75,6 +75,8 @@ Links private source chunks to user-owned entities.
 - `chunk_id uuid references document_chunks(id) on delete cascade`
 - `entity_id uuid references graph_entities(id) on delete cascade`
 - `mention_text text`
+- `start_offset integer nullable`
+- `end_offset integer nullable`
 - `created_at timestamptz`
 
 Prefer a unique constraint or index on `(chunk_id, entity_id, mention_text)` where practical.
@@ -98,10 +100,9 @@ For the MVP, keep relation rows evidence-granular. Multiple chunks may support t
 ### Optional Later Tables
 - `graph_entity_aliases`
 - `graph_entity_embeddings`
-- `graph_extraction_runs`
 - `graph_query_traces`
 
-`graph_extraction_runs` is a likely G3 addition if the beta workflow needs status, retry, cost, or safe error tracking separate from `documents.vector_status`.
+Create `graph_extraction_runs` in G2 so graph extraction status, retry metadata, and safe errors stay separate from `documents.vector_status`.
 
 ## Ingestion Plan
 1. Start from already-created `document_chunks`.
@@ -119,7 +120,7 @@ Recommended initial extraction bounds:
 
 - maximum entities per chunk: `20`,
 - maximum relations per chunk: `30`,
-- maximum relation evidence snippet: `240` characters,
+- maximum relation evidence snippet: `500` characters,
 - minimum useful chunk length: `80` characters.
 
 These values are starting points for G3 review, not current runtime settings.
@@ -314,7 +315,7 @@ Out of scope for G1:
 
 ## Decisions Before Implementation
 1. Choose the G3 extraction trigger: explicit `Graphize document` beta action is recommended before automatic post-vectorization extraction.
-2. Decide whether G2 includes `graph_extraction_runs` immediately or G3 adds it alongside extraction.
+2. Keep `graph_extraction_runs` in G2 and keep graph extraction state separate from vectorization state.
 3. Confirm normalization rules for entity names and nullable entity types.
 4. Confirm relation deduplication: evidence-granular rows are recommended for MVP provenance.
 5. Define GraphRAG-specific quotas and `usage_events` types before provider work is added.

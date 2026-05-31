@@ -2,6 +2,15 @@
 
 ## 2026-05-31
 
+### Phase G2 GraphRAG schema and helper preparation
+- Added a final review-ready manual Supabase SQL document for private GraphRAG entities, chunk links, evidence-backed relations, and extraction runs.
+- Kept authenticated browser clients owner-read-only and documented server-only service-role writes after authenticated ownership checks.
+- Kept the nullable-type expression unique index for graph entities and documented select-before-insert handling for future extraction writes.
+- Added GraphRAG TypeScript types, safe row mappers, entity normalization, extraction-status parsing, evidence snippet bounding, and owner-scoped server read helpers.
+- Added explicit unused G3 write stubs so extraction mutations cannot accidentally ship before ownership-checked ingestion is implemented.
+- Added pure helper tests and a G2 QA checklist for manual SQL review, browser write denial, and Standard RAG regression checks.
+- Kept the work scoped to G2 preparation; no SQL was run, and no extraction, GraphRAG chat mode, graph UI, Standard RAG, blog, or public-tool behavior changed.
+
 ### Phase G1 GraphRAG planning
 - Added a documentation-only GraphRAG planning package for an optional graph-assisted RAG beta mode while keeping Standard RAG as the default.
 - Defined private user-owned graph entities, evidence-backed relations, and chunk/entity links that cascade with source document and chunk deletion.
