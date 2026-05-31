@@ -10,6 +10,7 @@ import {
   slugifyTitle,
   type EditorJsonValue,
 } from "@/lib/blog/post-utils";
+import { validateBlogImageFile } from "@/lib/blog/image-upload";
 
 const BlockNoteBlogEditor = dynamic(
   () =>
@@ -158,6 +159,14 @@ export function BlogPostForm({
 
     if (!postId) {
       setUploadError("Save the draft once before uploading a cover image.");
+      event.target.value = "";
+      return;
+    }
+
+    const validation = validateBlogImageFile(file);
+
+    if (!validation.success) {
+      setUploadError(validation.error);
       event.target.value = "";
       return;
     }
@@ -316,7 +325,7 @@ export function BlogPostForm({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={currentCoverImageUrl}
-              alt=""
+              alt={currentTitle ? `${currentTitle} cover image` : "Blog post cover image"}
               className="aspect-[16/9] w-full object-cover"
             />
             <div className="flex items-center justify-between gap-3 border-t border-slate-200 px-4 py-3">
@@ -325,7 +334,10 @@ export function BlogPostForm({
               </p>
               <button
                 type="button"
-                onClick={() => setCurrentCoverImageUrl("")}
+                onClick={() => {
+                  setCurrentCoverImageUrl("");
+                  setEditorMessage("Cover image removed. Save the draft to keep this change.");
+                }}
                 className="shrink-0 rounded-md border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-50"
               >
                 Remove

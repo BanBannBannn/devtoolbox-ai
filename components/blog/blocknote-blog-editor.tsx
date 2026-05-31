@@ -11,6 +11,7 @@ import {
   type EditorJsonNode,
   type EditorJsonValue,
 } from "@/lib/blog/post-utils";
+import { validateBlogImageFile } from "@/lib/blog/image-upload";
 
 type BlockNoteBlogEditorProps = {
   initialBlocks: EditorJsonNode[];
@@ -45,6 +46,12 @@ async function uploadInlineBlogImage({
   file: File;
   postId: string;
 }) {
+  const validation = validateBlogImageFile(file);
+
+  if (!validation.success) {
+    throw new Error(validation.error);
+  }
+
   const formData = new FormData();
   formData.set("file", file);
   formData.set("postId", postId);

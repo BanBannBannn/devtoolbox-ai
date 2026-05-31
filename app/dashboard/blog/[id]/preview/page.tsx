@@ -91,7 +91,7 @@ export default async function PreviewBlogPostPage({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={post.cover_image_url}
-            alt=""
+            alt={`${post.title} cover image`}
             className="aspect-[16/9] w-full object-cover"
           />
         </div>

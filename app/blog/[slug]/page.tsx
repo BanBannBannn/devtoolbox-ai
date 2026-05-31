@@ -161,7 +161,7 @@ export default async function BlogPostPage({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={post.coverImageUrl}
-            alt=""
+            alt={`${post.title} cover image`}
             className="aspect-[16/9] w-full object-cover"
           />
         </div>

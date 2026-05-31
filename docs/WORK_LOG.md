@@ -1,5 +1,22 @@
 # Work Log
 
+## 2026-05-31
+
+### Phase 6I blog image upload polish
+- Hardened blog image upload paths so authenticated user, post, and generated filename segments are sanitized before Storage writes.
+- Added client-side JPEG/PNG/WebP and 5MB preflight validation while keeping the server-side upload route as the source of truth.
+- Tightened the internal upload route so invalid image upload kinds are rejected instead of silently defaulting to inline uploads.
+- Improved cover image alt text and inline image rendering with safe alt fallbacks, responsive sizing, and lazy loading.
+- Expanded image upload tests for editable post statuses and safe Storage path generation.
+- Updated the Storage setup guide with a review-only authenticated insert policy and documented deferred orphan/replacement cleanup.
+- Kept the work scoped to image upload polish; no SQL was run, and no public visibility rules, moderation behavior, RAG behavior, public tools, service role key exposure, API key exposure, or model-name exposure were changed.
+
+### Phase 6I Storage policy guidance hardening
+- Renamed the image Storage setup guide for Phase 6I and replaced the minimum insert policy guidance with a review-only defense-in-depth policy that checks bucket, user folder, owned editable post folder, and allowed image extension.
+- Added an optional review-only delete policy for future cleanup that prevents normal users from deleting images attached to published posts.
+- Clarified the public-bucket MVP read strategy and the future signed-URL path for private buckets.
+- Confirmed that the runtime upload path already uses `{userId}/{postId}/{random-file-name}` and kept the change docs-only; no SQL was run.
+
 ## 2026-05-29
 
 ### Phase 6H blog reports and moderation queues

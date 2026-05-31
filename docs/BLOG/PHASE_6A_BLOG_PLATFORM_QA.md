@@ -119,6 +119,11 @@
 - [ ] Storage paths are planned as `userId/postId/fileName`.
 - [ ] Normal users can delete only images attached to their own draft/rejected posts.
 - [ ] Normal users cannot delete images attached to published posts.
+- [ ] Cover and inline image uploads require a saved draft or rejected post owned by the authenticated user.
+- [ ] Blog image upload rejects SVG, non-image files, empty files, and files larger than 5MB server-side.
+- [ ] Storage paths use authenticated user ID, post ID, and a generated safe filename rather than trusting the original filename.
+- [ ] Inline images render responsively from safe editor JSON without raw HTML.
+- [ ] Cover image removal is saved through the writer form; storage-object cleanup remains deferred.
 
 ## SQL Planning
 - [ ] `profiles.role` is planned.

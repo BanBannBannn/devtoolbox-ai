@@ -78,6 +78,20 @@ export function isEditableBlogImagePostStatus(status: string | null | undefined)
   return status === "draft" || status === "rejected";
 }
 
+export function sanitizeBlogImageStorageSegment(value: string) {
+  const segment = value
+    .trim()
+    .replace(/[^a-zA-Z0-9_-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  if (!segment) {
+    throw new Error("Blog image storage path segment is empty.");
+  }
+
+  return segment;
+}
+
 export function createBlogImageStoragePath({
   userId,
   postId,
@@ -89,5 +103,5 @@ export function createBlogImageStoragePath({
   mimeType: BlogImageMimeType;
   randomId: string;
 }) {
-  return `${userId}/${postId}/${randomId}.${getBlogImageFileExtension(mimeType)}`;
+  return `${sanitizeBlogImageStorageSegment(userId)}/${sanitizeBlogImageStorageSegment(postId)}/${sanitizeBlogImageStorageSegment(randomId)}.${getBlogImageFileExtension(mimeType)}`;
 }

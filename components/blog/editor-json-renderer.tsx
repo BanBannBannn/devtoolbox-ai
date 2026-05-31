@@ -358,11 +358,13 @@ function renderBlock(node: EditorJsonNode, key: string): ReactNode {
           ? props.src
           : "";
     const alt =
-      typeof props.caption === "string"
+      typeof props.caption === "string" && props.caption.trim()
         ? props.caption
-        : typeof props.alt === "string"
+        : typeof props.alt === "string" && props.alt.trim()
           ? props.alt
-          : "";
+          : typeof props.name === "string"
+            ? props.name
+            : "";
 
     if (!isSafeImageUrl(src) || !src) {
       return null;
@@ -371,7 +373,12 @@ function renderBlock(node: EditorJsonNode, key: string): ReactNode {
     return (
       <figure key={key} className="overflow-hidden rounded-lg border border-slate-200">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt={alt} className="w-full object-cover" />
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          className="max-h-[720px] w-full object-contain"
+        />
         {alt ? (
           <figcaption className="border-t border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-500">
             {alt}

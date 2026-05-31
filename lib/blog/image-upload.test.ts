@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   BLOG_IMAGE_MAX_BYTES,
   createBlogImageStoragePath,
+  isEditableBlogImagePostStatus,
+  sanitizeBlogImageStorageSegment,
   validateBlogImageFile,
 } from "./image-upload";
 
@@ -51,5 +53,27 @@ describe("blog image upload helpers", () => {
         randomId: "abc",
       }),
     ).toBe("user-1/post-1/abc.webp");
+  });
+
+  it("sanitizes storage segments instead of trusting filenames or path separators", () => {
+    expect(sanitizeBlogImageStorageSegment(" original file/name?.png ")).toBe(
+      "original-file-name-png",
+    );
+    expect(
+      createBlogImageStoragePath({
+        userId: "user/1",
+        postId: "post 1",
+        mimeType: "image/jpeg",
+        randomId: "random?.jpg",
+      }),
+    ).toBe("user-1/post-1/random-jpg.jpg");
+  });
+
+  it("allows image uploads only for editable writer post statuses", () => {
+    expect(isEditableBlogImagePostStatus("draft")).toBe(true);
+    expect(isEditableBlogImagePostStatus("rejected")).toBe(true);
+    expect(isEditableBlogImagePostStatus("pending_review")).toBe(false);
+    expect(isEditableBlogImagePostStatus("published")).toBe(false);
+    expect(isEditableBlogImagePostStatus("archived")).toBe(false);
   });
 });

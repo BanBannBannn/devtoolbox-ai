@@ -21,8 +21,8 @@ function jsonError(message: string, status: number) {
   );
 }
 
-function parseUploadKind(value: FormDataEntryValue | null): UploadKind {
-  return value === "cover" ? "cover" : "inline";
+function parseUploadKind(value: FormDataEntryValue | null): UploadKind | null {
+  return value === "cover" || value === "inline" ? value : null;
 }
 
 function getSafeAltText(value: FormDataEntryValue | null) {
@@ -56,6 +56,10 @@ export async function POST(request: Request) {
 
   if (!postId) {
     return jsonError("Save the draft before uploading images.", 400);
+  }
+
+  if (!kind) {
+    return jsonError("Choose a valid blog image upload type.", 400);
   }
 
   if (!(file instanceof File)) {
