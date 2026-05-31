@@ -1,4 +1,11 @@
-import { PublicBlogList } from "@/components/blog/public-blog-list";
+import type { Metadata } from "next";
+import { PublicBlogBrowser } from "@/components/blog/public-blog-browser";
+import {
+  filterAndSortPublishedBlogPosts,
+  getPublishedBlogTags,
+  paginatePublicBlogPosts,
+  parsePublicBlogQuery,
+} from "@/lib/blog/public-blog-query";
 import { getPublishedBlogPosts } from "@/lib/blog/public-posts";
 import { createMetadata } from "@/lib/seo";
 
@@ -12,21 +19,48 @@ const baseMetadata = createMetadata({
   path: "/blog",
 });
 
-export const metadata = {
-  ...baseMetadata,
-  title: pageTitle,
-  openGraph: {
-    ...baseMetadata.openGraph,
-    title: pageTitle,
-  },
-  twitter: {
-    ...baseMetadata.twitter,
-    title: pageTitle,
-  },
+type BlogPageProps = {
+  searchParams: Promise<{
+    q?: string | string[];
+    tag?: string | string[];
+    sort?: string | string[];
+    page?: string | string[];
+  }>;
 };
 
-export default async function BlogPage() {
+export async function generateMetadata({
+  searchParams,
+}: BlogPageProps): Promise<Metadata> {
+  const query = parsePublicBlogQuery(await searchParams);
+  const hasQueryParams =
+    Boolean(query.q || query.tag) || query.sort !== "newest" || query.page > 1;
+
+  return {
+    ...baseMetadata,
+    title: pageTitle,
+    openGraph: {
+      ...baseMetadata.openGraph,
+      title: pageTitle,
+    },
+    twitter: {
+      ...baseMetadata.twitter,
+      title: pageTitle,
+    },
+    robots: hasQueryParams
+      ? {
+          index: false,
+          follow: true,
+        }
+      : undefined,
+  };
+}
+
+export default async function BlogPage({ searchParams }: BlogPageProps) {
+  const query = parsePublicBlogQuery(await searchParams);
   const posts = await getPublishedBlogPosts();
+  const tags = getPublishedBlogTags(posts);
+  const filteredPosts = filterAndSortPublishedBlogPosts(posts, query);
+  const pagination = paginatePublicBlogPosts(filteredPosts, query.page);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
@@ -55,7 +89,7 @@ export default async function BlogPage() {
           </p>
         </div>
       ) : (
-        <PublicBlogList posts={posts} />
+        <PublicBlogBrowser tags={tags} query={query} {...pagination} />
       )}
     </div>
   );

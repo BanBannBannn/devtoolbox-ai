@@ -2,6 +2,17 @@
 
 ## 2026-05-31
 
+### Public blog search and filter polish
+- Replaced the client-only `/blog` text filter with URL-driven server rendering for `q`, `tag`, `sort`, and `page` query parameters.
+- Added case-insensitive published-post search across title, excerpt, and `content_text`, with combined published-tag filtering.
+- Derived visible filter tags only from published public posts so tags attached exclusively to private review states do not appear.
+- Added newest and oldest sorting, with liked/commented sorting deferred until a safe batch aggregate path exists.
+- Added 12-item pagination with shareable previous/next URLs that preserve active query state.
+- Added `noindex` metadata for parameterized `/blog` result pages while keeping canonical public tag pages indexable.
+- Added pure tests for query parsing, fallback sorting, empty search behavior, combined search/tag filtering, published-tag derivation, pagination, and URL generation.
+- Kept the MVP implementation simple by filtering the public published result set server-side; database-level full-text search and aggregate sorting remain future scaling steps.
+- Kept the change scoped to public blog discovery; no SQL was run, and no writer editor, moderation workflow, likes/comments/reports behavior, RAG behavior, public tools, secrets, private posts, or model names were changed.
+
 ### Homepage and navigation knowledge-platform repositioning
 - Repositioned the public homepage around developer knowledge publishing, community articles, and the private AI workspace.
 - Replaced placeholder homepage articles with the latest database-backed published posts only.

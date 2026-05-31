@@ -218,6 +218,12 @@
 - [ ] Dashboard routes emit `noindex` metadata.
 - [ ] Public article share UI offers copy link, native share when supported, and public social share links.
 - [ ] Public blog filtering searches loaded published posts only.
+- [ ] `/blog?q=keyword` searches published title, excerpt, and `content_text` case-insensitively.
+- [ ] `/blog?tag=slug` shows only published posts connected to that published-post tag.
+- [ ] Search and tag filters combine without exposing unpublished posts.
+- [ ] `/blog?sort=newest` and `/blog?sort=oldest` preserve shareable URL state.
+- [ ] Filtered `/blog` result pages emit `noindex` metadata while canonical tag pages remain available.
+- [ ] `/blog` pagination keeps filters and sort state across previous/next links.
 
 ## Abuse Planning
 - [ ] Comment rate limiting is documented for later.
