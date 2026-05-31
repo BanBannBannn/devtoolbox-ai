@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PublicBlogCard } from "@/components/blog/public-blog-card";
 import { getPublishedPostsByTagSlug } from "@/lib/blog/public-posts";
 import { createMetadata } from "@/lib/seo";
 
@@ -8,18 +9,6 @@ type BlogTagPageProps = {
     slug: string;
   }>;
 };
-
-function formatDate(date: string | null) {
-  if (!date) {
-    return "Published";
-  }
-
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(date));
-}
 
 export async function generateMetadata({ params }: BlogTagPageProps) {
   const { slug } = await params;
@@ -79,25 +68,9 @@ export default async function BlogTagPage({ params }: BlogTagPageProps) {
           </p>
         </div>
       ) : (
-        <div className="mt-10 space-y-4">
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
           {posts.map((post) => (
-            <Link
-              key={post.id}
-              href={`/blog/${post.slug}`}
-              className="block rounded-lg border border-slate-200 bg-white p-6 transition hover:border-emerald-300 hover:shadow-sm"
-            >
-              <p className="text-sm font-medium text-slate-500">
-                {formatDate(post.publishedAt)} by {post.authorDisplayName}
-              </p>
-              <h2 className="mt-3 text-xl font-semibold text-slate-950">
-                {post.title}
-              </h2>
-              {post.excerpt ? (
-                <p className="mt-3 text-sm leading-6 text-slate-600">
-                  {post.excerpt}
-                </p>
-              ) : null}
-            </Link>
+            <PublicBlogCard key={post.id} post={post} />
           ))}
         </div>
       )}

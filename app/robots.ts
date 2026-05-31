@@ -1,13 +1,5 @@
 import type { MetadataRoute } from "next";
-
-const fallbackSiteUrl = "https://devtoolbox-ai-murex.vercel.app";
-
-function getSiteUrl() {
-  return (process.env.NEXT_PUBLIC_SITE_URL || fallbackSiteUrl).replace(
-    /\/$/,
-    "",
-  );
-}
+import { getSiteUrl } from "@/lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();
@@ -16,6 +8,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: ["/api/", "/dashboard/"],
     },
     sitemap: `${siteUrl}/sitemap.xml`,
   };

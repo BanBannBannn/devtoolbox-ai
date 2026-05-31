@@ -1,15 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getPublishedBlogPosts } from "@/lib/blog/public-posts";
+import { getPublishedBlogSitemapPaths } from "@/lib/blog/public-seo";
+import { getSiteUrl } from "@/lib/seo";
 import { tools } from "@/lib/tools";
-
-const fallbackSiteUrl = "https://devtoolbox-ai-murex.vercel.app";
-
-function getSiteUrl() {
-  return (process.env.NEXT_PUBLIC_SITE_URL || fallbackSiteUrl).replace(
-    /\/$/,
-    "",
-  );
-}
 
 function createSitemapEntry(
   path: string,
@@ -29,11 +22,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const availableToolPaths = tools
     .filter((tool) => tool.status === "available")
     .map((tool) => tool.href);
-  const blogPostPaths = (await getPublishedBlogPosts()).map(
-    (post) => `/blog/${post.slug}`,
+  const blogPaths = getPublishedBlogSitemapPaths(
+    (await getPublishedBlogPosts()).map((post) => ({
+      slug: post.slug,
+      status: "published",
+      tags: post.tags,
+    })),
   );
 
-  const paths = ["/", "/tools", ...availableToolPaths, "/blog", ...blogPostPaths];
+  const paths = [
+    "/",
+    "/about",
+    "/contact",
+    "/privacy-policy",
+    "/terms",
+    "/tools",
+    ...availableToolPaths,
+    "/blog",
+    ...blogPaths,
+  ];
 
   return paths.map((path) =>
     createSitemapEntry(path, lastModified, path === "/" ? 1 : 0.8),

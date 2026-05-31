@@ -3,6 +3,14 @@ import type { Metadata } from "next";
 const siteName = "DevToolBox AI";
 const baseDescription =
   "Save documents, chat with your own knowledge base, and use practical developer tools in one workspace.";
+const fallbackSiteUrl = "https://devtoolbox-ai-murex.vercel.app";
+
+export function getSiteUrl() {
+  return (process.env.NEXT_PUBLIC_SITE_URL || fallbackSiteUrl).replace(
+    /\/$/,
+    "",
+  );
+}
 
 type SeoConfig = {
   title?: string;

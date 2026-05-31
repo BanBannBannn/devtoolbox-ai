@@ -12,7 +12,11 @@ import {
 import { getPostInteractionState } from "@/lib/blog/post-interactions";
 import { getReportErrorMessage } from "@/lib/blog/reports";
 import { getPublishedBlogPostBySlug } from "@/lib/blog/public-posts";
-import { createMetadata } from "@/lib/seo";
+import {
+  createPublicBlogPostMetadata,
+  getPublicBlogShareUrl,
+} from "@/lib/blog/public-seo";
+import { getSiteUrl } from "@/lib/seo";
 import { getCurrentSupabaseUser } from "@/lib/supabase/server";
 import {
   createBlogCommentAction,
@@ -67,34 +71,10 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
   const post = await getPublishedBlogPostBySlug(slug);
 
   if (!post) {
-    return createMetadata({
-      title: "Blog Post Not Found",
-      path: `/blog/${slug}`,
-    });
+    notFound();
   }
 
-  const metadata = createMetadata({
-    title: post.title,
-    description: post.excerpt || "Read this published DevToolBox AI article.",
-    path: `/blog/${post.slug}`,
-  });
-
-  if (!post.coverImageUrl) {
-    return metadata;
-  }
-
-  return {
-    ...metadata,
-    openGraph: {
-      ...metadata.openGraph,
-      images: [
-        {
-          url: post.coverImageUrl,
-          alt: post.title,
-        },
-      ],
-    },
-  };
+  return createPublicBlogPostMetadata(post);
 }
 
 export default async function BlogPostPage({
@@ -187,7 +167,10 @@ export default async function BlogPostPage({
             likeAction={toggleBlogPostLikeAction}
             bookmarkAction={toggleBlogPostBookmarkAction}
           />
-          <SharePostButton title={post.title} />
+          <SharePostButton
+            title={post.title}
+            url={getPublicBlogShareUrl(getSiteUrl(), post.slug)}
+          />
         </div>
         <ReportContentForm
           targetType="post"
@@ -208,10 +191,6 @@ export default async function BlogPostPage({
           </p>
         )}
       </div>
-
-      <footer className="mt-12 rounded-lg border border-slate-200 bg-slate-50 p-5 text-sm leading-6 text-slate-600">
-        Reports are planned for a later blog platform phase.
-      </footer>
 
       <BlogComments
         postId={post.id}

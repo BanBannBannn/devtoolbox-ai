@@ -1,25 +1,29 @@
-import Link from "next/link";
+import { PublicBlogList } from "@/components/blog/public-blog-list";
 import { getPublishedBlogPosts } from "@/lib/blog/public-posts";
 import { createMetadata } from "@/lib/seo";
 
-export const metadata = createMetadata({
-  title: "Developer Knowledge Blog",
+const pageTitle = "DevToolBox AI Blog - Developer Knowledge and AI Workflows";
+const pageDescription =
+  "Read developer articles, AI workflow notes, coding guides, and practical tool tips from the DevToolBox AI community.";
+const baseMetadata = createMetadata({
+  title: pageTitle,
   description:
-    "Read published developer articles from the DevToolBox AI knowledge platform.",
+    pageDescription,
   path: "/blog",
 });
 
-function formatDate(date: string | null) {
-  if (!date) {
-    return "Published";
-  }
-
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(date));
-}
+export const metadata = {
+  ...baseMetadata,
+  title: pageTitle,
+  openGraph: {
+    ...baseMetadata.openGraph,
+    title: pageTitle,
+  },
+  twitter: {
+    ...baseMetadata.twitter,
+    title: pageTitle,
+  },
+};
 
 export default async function BlogPage() {
   const posts = await getPublishedBlogPosts();
@@ -34,9 +38,8 @@ export default async function BlogPage() {
           Developer knowledge from the community
         </h1>
         <p className="mt-5 text-lg leading-8 text-slate-600">
-          Read published guides, notes, and project knowledge from DevToolBox AI.
-          Writing, moderation, likes, comments, and bookmarks are coming in the
-          next phases.
+          Explore practical developer articles, coding notes, AI workflows, and
+          useful ideas shared through DevToolBox AI.
         </p>
       </div>
 
@@ -52,51 +55,7 @@ export default async function BlogPage() {
           </p>
         </div>
       ) : (
-        <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
-            <Link
-              key={post.id}
-              href={`/blog/${post.slug}`}
-              className="overflow-hidden rounded-lg border border-slate-200 bg-white transition hover:border-emerald-300 hover:shadow-sm"
-            >
-              {post.coverImageUrl ? (
-                <div className="aspect-[16/9] w-full bg-slate-100">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={post.coverImageUrl}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ) : null}
-              <div className="p-6">
-                <p className="text-sm font-medium text-slate-500">
-                  {formatDate(post.publishedAt)} by {post.authorDisplayName}
-                </p>
-                <h2 className="mt-3 text-xl font-semibold text-slate-950">
-                  {post.title}
-                </h2>
-                {post.excerpt ? (
-                  <p className="mt-3 text-sm leading-6 text-slate-600">
-                    {post.excerpt}
-                  </p>
-                ) : null}
-                {post.tags.length > 0 ? (
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {post.tags.map((tag) => (
-                      <span
-                        key={tag.slug}
-                        className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600"
-                      >
-                        {tag.name}
-                      </span>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            </Link>
-          ))}
-        </div>
+        <PublicBlogList posts={posts} />
       )}
     </div>
   );

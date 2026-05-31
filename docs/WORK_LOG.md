@@ -2,6 +2,17 @@
 
 ## 2026-05-31
 
+### Phase 6K blog SEO, share, sitemap, and public polish
+- Updated `/blog` positioning metadata and copy for developer knowledge, AI workflows, coding notes, and practical tools.
+- Added published article metadata with safe content-text description fallback, canonical URLs, cover-image Open Graph support, published time, author display name, and tags.
+- Added published-only sitemap helpers so public article and tag paths exclude draft, pending, rejected, and archived content.
+- Expanded `robots.txt` guidance at runtime by disallowing crawler access to dashboard and API paths, and added dashboard-wide `noindex` metadata.
+- Polished public article cards and reused them on tag pages, with responsive cover images, safe author display names, dates, excerpts, and tags.
+- Added a lightweight client-side filter over already-loaded published posts only.
+- Expanded article sharing with copy-link state, native browser sharing when supported, and public X, LinkedIn, and Facebook share links.
+- Added pure tests for metadata fallback, safe metadata mapping, published-only sitemap paths, and public blog share URLs.
+- Kept the work scoped to public blog polish; no SQL was run, and no editor, moderation, RAG behavior, public tools, secrets, private posts, or model names were changed.
+
 ### Phase 6I blog image upload polish
 - Hardened blog image upload paths so authenticated user, post, and generated filename segments are sanitized before Storage writes.
 - Added client-side JPEG/PNG/WebP and 5MB preflight validation while keeping the server-side upload route as the source of truth.

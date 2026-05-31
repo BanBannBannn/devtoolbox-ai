@@ -211,6 +211,13 @@
 - [ ] Published time, author, and tags are planned.
 - [ ] Only published posts appear in sitemap.
 - [ ] Draft/rejected/pending/archived posts are not indexed.
+- [ ] `/blog` metadata describes developer knowledge and AI workflow articles truthfully.
+- [ ] Published article metadata includes safe description fallback, author display name, tags, and published time.
+- [ ] Sitemap includes tag pages only when connected to published posts.
+- [ ] Robots excludes dashboard and API routes from crawling.
+- [ ] Dashboard routes emit `noindex` metadata.
+- [ ] Public article share UI offers copy link, native share when supported, and public social share links.
+- [ ] Public blog filtering searches loaded published posts only.
 
 ## Abuse Planning
 - [ ] Comment rate limiting is documented for later.
