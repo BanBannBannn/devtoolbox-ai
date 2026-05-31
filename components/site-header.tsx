@@ -1,17 +1,25 @@
 import Link from "next/link";
 import { UserMenu } from "@/components/auth/user-menu";
+import {
+  canManageUserRoles,
+  canModerateBlog,
+  getCurrentUserRoleContext,
+} from "@/lib/auth/roles";
+import { isRagAdminEmail } from "@/lib/rag/rag-admin";
 import { getCurrentSupabaseUser } from "@/lib/supabase/server";
 
 const navItems = [
-  { href: "/dashboard", label: "Workspace" },
-  { href: "/tools", label: "Tools" },
   { href: "/blog", label: "Blog" },
+  { href: "/dashboard/blog/new", label: "Write" },
+  { href: "/dashboard", label: "AI Workspace" },
+  { href: "/tools", label: "Tools" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
 export async function SiteHeader() {
   const user = await getCurrentSupabaseUser();
+  const roleContext = user ? await getCurrentUserRoleContext() : null;
   const avatarUrl =
     typeof user?.user_metadata.avatar_url === "string"
       ? user.user_metadata.avatar_url
@@ -42,7 +50,17 @@ export async function SiteHeader() {
             </Link>
           ))}
           {user ? (
-            <UserMenu email={user.email} avatarUrl={avatarUrl} />
+            <UserMenu
+              email={user.email}
+              avatarUrl={avatarUrl}
+              canModerate={Boolean(
+                roleContext && canModerateBlog(roleContext.role),
+              )}
+              canManageRoles={Boolean(
+                roleContext && canManageUserRoles(roleContext.role),
+              )}
+              canManageRag={isRagAdminEmail(user.email)}
+            />
           ) : (
             <Link
               href="/login"

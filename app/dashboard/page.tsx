@@ -171,8 +171,8 @@ export default async function DashboardPage() {
           <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
             You are signed in as{" "}
             <span className="font-semibold text-slate-950">{user.email}</span>.
-            This shell is ready for the later document, usage, vectorization,
-            and RAG chat phases.
+            Write and save articles, return to bookmarked posts, manage your
+            documents, and chat with your private knowledge base.
           </p>
         </div>
         <LogoutButton />

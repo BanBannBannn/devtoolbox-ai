@@ -5,6 +5,9 @@ import { LogoutButton } from "@/components/auth/logout-button";
 type UserMenuProps = {
   email?: string | null;
   avatarUrl?: string | null;
+  canModerate?: boolean;
+  canManageRoles?: boolean;
+  canManageRag?: boolean;
 };
 
 function getInitials(email?: string | null) {
@@ -21,7 +24,13 @@ function getInitials(email?: string | null) {
     .join("");
 }
 
-export function UserMenu({ email, avatarUrl }: UserMenuProps) {
+export function UserMenu({
+  email,
+  avatarUrl,
+  canModerate,
+  canManageRoles,
+  canManageRag,
+}: UserMenuProps) {
   const initials = getInitials(email);
 
   return (
@@ -43,7 +52,7 @@ export function UserMenu({ email, avatarUrl }: UserMenuProps) {
         )}
       </summary>
 
-      <div className="absolute right-0 z-20 mt-3 w-64 rounded-lg border border-slate-200 bg-white p-2 shadow-lg">
+      <div className="absolute right-0 z-20 mt-3 max-h-[min(32rem,calc(100vh-6rem))] w-64 overflow-y-auto rounded-lg border border-slate-200 bg-white p-2 shadow-lg">
         <div className="border-b border-slate-100 px-3 py-2">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
             Signed in
@@ -59,6 +68,54 @@ export function UserMenu({ email, avatarUrl }: UserMenuProps) {
           >
             Dashboard
           </Link>
+          <Link
+            href="/dashboard/blog"
+            className="block rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+          >
+            My blog posts
+          </Link>
+          <Link
+            href="/dashboard/rag-chat"
+            className="block rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+          >
+            RAG Chat
+          </Link>
+          <Link
+            href="/dashboard/documents"
+            className="block rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+          >
+            Documents
+          </Link>
+          <Link
+            href="/dashboard/bookmarks"
+            className="block rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+          >
+            Saved posts
+          </Link>
+          {canModerate ? (
+            <Link
+              href="/dashboard/moderation/blog"
+              className="block rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+            >
+              Moderation
+            </Link>
+          ) : null}
+          {canManageRoles ? (
+            <Link
+              href="/dashboard/admin/users"
+              className="block rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+            >
+              User roles
+            </Link>
+          ) : null}
+          {canManageRag ? (
+            <Link
+              href="/dashboard/admin/rag-settings"
+              className="block rounded-md px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+            >
+              RAG settings
+            </Link>
+          ) : null}
           <LogoutButton variant="menu" />
         </div>
       </div>

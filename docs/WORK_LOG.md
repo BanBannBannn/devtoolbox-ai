@@ -2,6 +2,15 @@
 
 ## 2026-05-31
 
+### Homepage and navigation knowledge-platform repositioning
+- Repositioned the public homepage around developer knowledge publishing, community articles, and the private AI workspace.
+- Replaced placeholder homepage articles with the latest database-backed published posts only.
+- Added clear homepage paths for exploring the blog, starting a draft, opening saved posts, using RAG Chat, managing documents, and browsing practical tools.
+- Moved Blog and Write to the front of the public navigation and renamed the workspace navigation label to AI Workspace.
+- Expanded the signed-in user menu with direct links to blog posts, RAG Chat, documents, bookmarks, and role-gated moderation/admin surfaces.
+- Updated footer positioning and the dashboard intro to match the implemented product surface.
+- Kept the change scoped to public positioning and navigation; no SQL was run, and no RAG behavior, blog moderation logic, editor behavior, database schema, public tools, secrets, or model names were changed.
+
 ### Phase 6K blog SEO, share, sitemap, and public polish
 - Updated `/blog` positioning metadata and copy for developer knowledge, AI workflows, coding notes, and practical tools.
 - Added published article metadata with safe content-text description fallback, canonical URLs, cover-image Open Graph support, published time, author display name, and tags.

@@ -1,49 +1,50 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  Bookmark,
+  BookOpenText,
   FileText,
+  Heart,
   MessageSquareText,
-  Sparkles,
+  PenLine,
+  ShieldCheck,
   Wrench,
 } from "lucide-react";
+import { PublicBlogCard } from "@/components/blog/public-blog-card";
 import { HeroVisual } from "@/components/hero-visual";
 import { ToolCard } from "@/components/tool-card";
+import { getPublishedBlogPosts } from "@/lib/blog/public-posts";
 import { createMetadata } from "@/lib/seo";
-import { getFeaturedTools, tools } from "@/lib/tools";
+import { getFeaturedTools } from "@/lib/tools";
 
-const latestArticles = [
-  {
-    title: "How to write better AI coding prompts",
-    description:
-      "A practical guide to giving coding assistants clearer context, constraints, and expected output.",
-    date: "Coming soon",
-  },
-  {
-    title: "A beginner-friendly manual testing checklist",
-    description:
-      "The core flows, edge cases, and regression checks to review before shipping a feature.",
-    date: "Coming soon",
-  },
-  {
-    title: "When to format, validate, or lint JSON",
-    description:
-      "Simple differences that help developers debug API payloads and configuration files faster.",
-    date: "Coming soon",
-  },
-];
-
-export const metadata = createMetadata({
-  title: "AI Workspace for Developer Knowledge",
-  description:
-    "Save documents, chat with your own knowledge base, and use practical developer tools in one workspace.",
+const pageTitle = "DevToolBox AI - Developer Knowledge Platform with AI Workspace";
+const pageDescription =
+  "Read and publish developer articles, chat with your own knowledge base, and use practical developer tools in one workspace.";
+const baseMetadata = createMetadata({
+  title: pageTitle,
+  description: pageDescription,
   path: "/",
 });
 
-export default function HomePage() {
-  const featuredTools = getFeaturedTools();
-  const availableToolCount = tools.filter(
-    (tool) => tool.status === "available",
-  ).length;
+export const metadata = {
+  ...baseMetadata,
+  title: pageTitle,
+  openGraph: {
+    ...baseMetadata.openGraph,
+    title: pageTitle,
+  },
+  twitter: {
+    ...baseMetadata.twitter,
+    title: pageTitle,
+  },
+};
+
+export default async function HomePage() {
+  const [publishedPosts, featuredTools] = await Promise.all([
+    getPublishedBlogPosts(),
+    Promise.resolve(getFeaturedTools()),
+  ]);
+  const latestPosts = publishedPosts.slice(0, 3);
 
   return (
     <>
@@ -55,46 +56,44 @@ export default function HomePage() {
         <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-20">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-800">
-              <Sparkles aria-hidden="true" className="h-4 w-4" />
-              AI workspace for developer knowledge
+              <BookOpenText aria-hidden="true" className="h-4 w-4" />
+              Developer knowledge platform
             </div>
             <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-              Your AI workspace for developer knowledge
+              Write, share, and explore developer knowledge with AI.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-              Save documents, turn them into searchable knowledge, and chat
-              with your own project context. Built-in developer tools are
-              included when you need quick utilities.
+              Read developer articles, publish your own technical notes, save
+              documents, chat with your knowledge base, and use practical tools
+              when you need them.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/dashboard"
+                href="/blog"
                 className="inline-flex items-center gap-2 rounded-md bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
               >
-                Start your AI workspace
+                Explore Blog
                 <ArrowRight aria-hidden="true" className="h-4 w-4" />
               </Link>
               <Link
-                href="/tools"
+                href="/dashboard/blog/new"
                 className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-100"
               >
-                <Wrench aria-hidden="true" className="h-4 w-4" />
-                Explore tools
+                <PenLine aria-hidden="true" className="h-4 w-4" />
+                Start Writing
               </Link>
             </div>
             <div className="mt-10 grid gap-3 sm:grid-cols-3">
               {[
-                ["Docs", "saved knowledge"],
-                ["RAG", "document chat"],
-                [String(availableToolCount), "developer tools"],
+                ["Blog", "community articles"],
+                ["Workspace", "document chat"],
+                ["Tools", "quick utilities"],
               ].map(([value, label]) => (
                 <div
                   key={label}
                   className="rounded-lg border border-slate-200 bg-white/80 p-4 shadow-sm"
                 >
-                  <p className="text-2xl font-semibold text-slate-950">
-                    {value}
-                  </p>
+                  <p className="text-lg font-semibold text-slate-950">{value}</p>
                   <p className="mt-1 text-sm text-slate-600">{label}</p>
                 </div>
               ))}
@@ -104,78 +103,158 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="max-w-2xl">
-          <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
-            Build a workspace around your project context
-          </h2>
-          <p className="mt-3 text-slate-600">
-            DevToolBox AI helps you collect developer knowledge, find it again,
-            and ask questions when you need a practical answer.
-          </p>
-        </div>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {[
-            {
-              title: "Chat with your documents",
-              description:
-                "Ask questions against your saved and vectorized project notes, specs, guides, and checklists.",
-              icon: MessageSquareText,
-            },
-            {
-              title: "Organize project knowledge",
-              description:
-                "Create and manage text or Markdown documents so useful context does not disappear across chats and tasks.",
-              icon: FileText,
-            },
-            {
-              title: "Use practical developer tools",
-              description:
-                "Jump into focused utilities for JSON, Git, timestamps, QR codes, README drafts, prompts, and more.",
-              icon: Wrench,
-            },
-          ].map((feature) => (
-            <article
-              key={feature.title}
-              className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
-            >
-              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
-                <feature.icon aria-hidden="true" className="h-5 w-5" />
-              </div>
-              <h3 className="mt-5 text-lg font-semibold text-slate-950">
-                {feature.title}
-              </h3>
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                {feature.description}
+      <section className="bg-slate-50">
+        <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+                Latest knowledge
               </p>
-            </article>
-          ))}
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+                Explore developer articles
+              </h2>
+              <p className="mt-2 max-w-2xl text-slate-600">
+                Read published technical notes, practical guides, and AI
+                workflow ideas from the community.
+              </p>
+            </div>
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+            >
+              View all articles
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          </div>
+          {latestPosts.length > 0 ? (
+            <div className="mt-8 grid gap-5 md:grid-cols-3">
+              {latestPosts.map((post) => (
+                <PublicBlogCard key={post.id} post={post} />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-8 rounded-lg border border-dashed border-slate-300 bg-white p-6">
+              <p className="text-sm leading-6 text-slate-600">
+                Published community articles will appear here after moderator
+                review. The writing workspace is ready for the first posts.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
+      <section className="bg-white">
+        <div className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
             <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
-              Developer tools when you need them
+              Write and share technical knowledge
             </h2>
-            <p className="mt-2 max-w-2xl text-slate-600">
-              The workspace is the center of the product. These small utilities
-              stay nearby for quick formatting, generating, calculating, and
-              checking tasks.
+            <p className="mt-3 text-slate-600">
+              Turn useful lessons into articles, send drafts through review,
+              and keep the public knowledge base thoughtful and useful.
             </p>
           </div>
-          <Link
-            href="/tools"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
-          >
-            View all tools
-            <ArrowRight aria-hidden="true" className="h-4 w-4" />
-          </Link>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {[
+              {
+                title: "Publish developer articles",
+                description:
+                  "Draft technical notes with a polished editor, preview your work, and submit articles for moderation.",
+                icon: PenLine,
+              },
+              {
+                title: "Keep useful posts nearby",
+                description:
+                  "Like thoughtful articles, bookmark references, and join discussions through public comments.",
+                icon: Bookmark,
+              },
+              {
+                title: "Build a moderated community",
+                description:
+                  "Reports and moderator review help keep published knowledge relevant and respectful.",
+                icon: ShieldCheck,
+              },
+            ].map((feature) => (
+              <article
+                key={feature.title}
+                className="rounded-lg border border-slate-200 bg-slate-50 p-6"
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
+                  <feature.icon aria-hidden="true" className="h-5 w-5" />
+                </div>
+                <h3 className="mt-5 text-lg font-semibold text-slate-950">
+                  {feature.title}
+                </h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">
+                  {feature.description}
+                </p>
+              </article>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/dashboard/blog/new"
+              className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
+            >
+              Start writing
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/dashboard/bookmarks"
+              className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+            >
+              <Heart aria-hidden="true" className="h-4 w-4" />
+              Open saved posts
+            </Link>
+          </div>
         </div>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {featuredTools.map((tool) => (
-            <ToolCard key={tool.slug} tool={tool} />
+      </section>
+
+      <section className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-14 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+            AI workspace
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+            Chat with your own project documents
+          </h2>
+          <p className="mt-3 leading-7 text-slate-600">
+            Save Markdown or text documents, turn them into searchable
+            knowledge, and ask questions against your own project context.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/dashboard/rag-chat"
+              className="inline-flex items-center gap-2 rounded-md bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              <MessageSquareText aria-hidden="true" className="h-4 w-4" />
+              Open RAG Chat
+            </Link>
+            <Link
+              href="/dashboard/documents"
+              className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+            >
+              <FileText aria-hidden="true" className="h-4 w-4" />
+              Manage documents
+            </Link>
+          </div>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {[
+            ["Documents", "Save project notes, specs, and checklists."],
+            ["Vectorization", "Prepare saved content for retrieval."],
+            ["RAG Chat", "Ask questions with cited document sources."],
+            ["Sessions", "Return to earlier knowledge conversations."],
+          ].map(([title, description]) => (
+            <article
+              key={title}
+              className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
+            >
+              <h3 className="font-semibold text-slate-950">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                {description}
+              </p>
+            </article>
           ))}
         </div>
       </section>
@@ -185,37 +264,34 @@ export default function HomePage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
-                Latest articles
+                Practical developer tools
               </h2>
               <p className="mt-2 max-w-2xl text-slate-600">
-                Guides will focus on practical workflows for students,
-                beginners, AI-assisted development, and knowledge workflows.
+                Use focused utilities for quick formatting, generating,
+                calculating, and checking tasks without losing your flow.
               </p>
             </div>
             <Link
-              href="/blog"
-              className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+              href="/tools"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
             >
-              View blog
+              View all tools
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
             </Link>
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {latestArticles.map((article) => (
-              <article
-                key={article.title}
-                className="rounded-lg border border-slate-200 bg-slate-50 p-6"
-              >
-                <p className="text-sm font-medium text-slate-500">
-                  {article.date}
-                </p>
-                <h3 className="mt-3 text-lg font-semibold text-slate-950">
-                  {article.title}
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-slate-600">
-                  {article.description}
-                </p>
-              </article>
+            {featuredTools.map((tool) => (
+              <ToolCard key={tool.slug} tool={tool} />
             ))}
+          </div>
+          <div className="mt-8">
+            <Link
+              href="/tools"
+              className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
+            >
+              <Wrench aria-hidden="true" className="h-4 w-4" />
+              Explore tools
+            </Link>
           </div>
         </div>
       </section>

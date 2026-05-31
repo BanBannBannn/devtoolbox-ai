@@ -1,6 +1,10 @@
 import Link from "next/link";
 
 const footerLinks = [
+  { href: "/blog", label: "Blog" },
+  { href: "/dashboard/blog/new", label: "Write" },
+  { href: "/dashboard", label: "AI Workspace" },
+  { href: "/tools", label: "Tools" },
   { href: "/privacy-policy", label: "Privacy Policy" },
   { href: "/terms", label: "Terms" },
   { href: "/contact", label: "Contact" },
@@ -13,8 +17,8 @@ export function SiteFooter() {
         <div>
           <p className="font-semibold text-white">DevToolBox AI</p>
           <p className="mt-2 max-w-md text-sm leading-6">
-            An AI workspace for developer knowledge with practical tools for
-            everyday development tasks.
+            A developer knowledge platform for publishing articles, chatting
+            with your documents, and using practical tools.
           </p>
         </div>
         <nav aria-label="Footer navigation" className="flex flex-wrap gap-4">
